@@ -1,0 +1,527 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #0f2544;
+  --primary-mid: #1a3a6e;
+  --primary-light: #e8edf5;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --text-main: #0f172a;
+  --text-sub: #475569;
+  --text-muted: #94a3b8;
+  --border: #e2e8f0;
+  --bg-input: #f8fafc;
+  --white: #ffffff;
+  --shadow-card: 0 20px 60px rgba(15, 37, 68, 0.18);
+  --radius-input: 8px;
+  --radius-btn: 8px;
+  --panel-w: 440px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.lp-root {
+  font-family: "DM Sans", sans-serif;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Full-screen background */
+.lp-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.lp-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 37, 68, 0.82) 0%,
+    rgba(15, 37, 68, 0.6) 40%,
+    rgba(15, 37, 68, 0.75) 100%
+  );
+  z-index: 1;
+}
+
+/* Main wrapper — two panels side by side */
+.lp-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: min(920px, 95vw);
+  height: min(620px, 96vh);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* ── SLIDING OVERLAY (the navy panel that moves left↔right) ── */
+.lp-slider {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(160deg, #0f2544 0%, #1a3a6e 100%);
+  border-radius: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+  text-align: center;
+  transition: transform 0.72s cubic-bezier(0.77, 0, 0.175, 1);
+  will-change: transform;
+}
+
+.lp-slider.is-forgot {
+  transform: translateX(-100%);
+}
+
+.lp-slider__tagline {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(147, 197, 253, 0.7);
+  margin-bottom: 14px;
+}
+
+.lp-slider__title {
+  font-size: clamp(26px, 3.5vw, 36px);
+  font-weight: 700;
+  font-style: italic;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.lp-slider__desc {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.65;
+  margin-bottom: 36px;
+  max-width: 240px;
+}
+
+.lp-slider__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 32px;
+  border-radius: 100px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.lp-slider__btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #fff;
+  transform: translateY(-1px);
+}
+
+.lp-slider {
+  background: none;
+}
+
+.lp-slider__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.lp-slider__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(15, 37, 68, 0.72) 0%,
+    rgba(15, 37, 68, 0.52) 100%
+  );
+  z-index: 1;
+}
+
+.lp-slider > *:not(.lp-slider__bg):not(.lp-slider__overlay) {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── FORM PANELS ── */
+.lp-panels {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.lp-panel {
+  flex: 0 0 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 44px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+/* Login panel – right when forgot is active */
+.lp-panel--login {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Forgot panel */
+.lp-panel--forgot {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Logo */
+.lp-logo {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.lp-logo img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  /* filter: brightness(0) invert(1); */
+}
+
+.lp-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.lp-subheading {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  margin-bottom: 28px;
+  line-height: 1.55;
+}
+
+/* Ant Design overrides for dark glassy panel */
+.lp-form .ant-form-item {
+  margin-bottom: 14px;
+}
+
+.lp-form .ant-input-affix-wrapper {
+  height: 48px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(8px);
+  font-size: 14px !important;
+  padding: 0 14px !important;
+  color: #fff !important;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s !important;
+}
+
+.lp-form .ant-input-affix-wrapper input {
+  background: transparent !important;
+  color: #fff !important;
+  font-size: 14px !important;
+}
+
+.lp-form .ant-input-affix-wrapper input::placeholder {
+  color: rgba(255, 255, 255, 0.38) !important;
+}
+
+.lp-form .ant-input-prefix {
+  color: rgba(147, 197, 253, 0.8) !important;
+  margin-right: 10px !important;
+}
+
+.lp-form .ant-input-suffix {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.lp-form .ant-input-password-icon {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.lp-form .ant-input-affix-wrapper:hover {
+  border-color: rgba(147, 197, 253, 0.6) !important;
+}
+
+.lp-form .ant-input-affix-wrapper-focused,
+.lp-form .ant-input-affix-wrapper:focus-within {
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.2) !important;
+}
+
+.lp-form .ant-form-item-explain-error {
+  color: #fca5a5 !important;
+  font-size: 12px !important;
+  margin-top: 4px;
+}
+
+/* ── DATEPICKER ── */
+.lp-datepicker.ant-picker {
+  height: 48px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(8px);
+  padding: 0 14px !important;
+  color: #fff !important;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s !important;
+}
+
+.lp-datepicker.ant-picker:hover {
+  border-color: rgba(147, 197, 253, 0.6) !important;
+}
+
+.lp-datepicker.ant-picker-focused,
+.lp-datepicker.ant-picker:focus-within {
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.2) !important;
+}
+
+.lp-datepicker .ant-picker-input input {
+  color: #fff !important;
+  font-size: 14px !important;
+  background: transparent !important;
+}
+
+.lp-datepicker .ant-picker-input input::placeholder {
+  color: rgba(255, 255, 255, 0.38) !important;
+}
+
+.lp-datepicker .ant-picker-suffix {
+  color: rgba(147, 197, 253, 0.8) !important;
+}
+
+.lp-datepicker .ant-picker-clear {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* FORCE style cho selector */
+.lp-form .lp-select.ant-select .ant-select-selector {
+  height: 48px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(8px) !important;
+
+  display: flex !important;
+  align-items: center !important;
+
+  padding: 0 14px !important;
+  box-shadow: none !important;
+}
+
+/* Hover */
+.lp-form .lp-select.ant-select:hover .ant-select-selector {
+  border-color: rgba(147, 197, 253, 0.6) !important;
+}
+
+/* Focus */
+.lp-form .lp-select.ant-select.ant-select-focused .ant-select-selector,
+.lp-form .lp-select.ant-select.ant-select-open .ant-select-selector {
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.2) !important;
+}
+
+/* Select dropdown popup */
+.lp-select-dropdown.ant-select-dropdown {
+  background: #0f2544 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(16px);
+  padding: 4px !important;
+}
+
+.lp-select-dropdown .ant-select-item {
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-size: 14px !important;
+  border-radius: 7px !important;
+  transition: background 0.15s !important;
+}
+
+.lp-select-dropdown .ant-select-item:hover,
+.lp-select-dropdown .ant-select-item-option-active {
+  background: rgba(147, 197, 253, 0.12) !important;
+  color: #fff !important;
+}
+
+.lp-select-dropdown .ant-select-item-option-selected {
+  background: rgba(37, 99, 235, 0.28) !important;
+  color: #93c5fd !important;
+  font-weight: 600 !important;
+}
+
+.lp-submit-btn {
+  height: 48px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  background: linear-gradient(135deg, #1a3a6e 0%, #0f2544 100%) !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.22s ease !important;
+  box-shadow: 0 6px 20px rgba(15, 37, 68, 0.5) !important;
+  margin-top: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.lp-submit-btn:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1a3a6e 100%) !important;
+  box-shadow: 0 8px 28px rgba(37, 99, 235, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.lp-submit-btn:active {
+  transform: scale(0.98);
+}
+
+.lp-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 6px;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+  width: 100%;
+}
+
+.lp-divider::before,
+.lp-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Success state */
+.lp-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  animation: lp-fadeIn 0.4s ease;
+}
+
+.lp-success__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(147, 197, 253, 0.15);
+  border: 2px solid rgba(147, 197, 253, 0.5);
+  color: #93c5fd;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lp-success p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.lp-link-btn {
+  background: none;
+  border: none;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #93c5fd;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lp-link-btn:hover {
+  color: #bfdbfe;
+}
+
+@keyframes lp-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .lp-container {
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    border-radius: 0;
+  }
+  .lp-slider {
+    display: none;
+  }
+  .lp-panel {
+    flex: 0 0 100%;
+  }
+}
