@@ -1,7 +1,7 @@
-import Login from "./pages/Login";
+import AuthPage from "./pages/auth/AuthPage";
 
 function App() {
-  return <Login />;
+  return <AuthPage />;
 }
 
 export default App;

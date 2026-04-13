@@ -1,15 +1,30 @@
 import dayjs from "dayjs";
+import type { User } from "./user";
+
+export interface LoginPayload {
+  userId: string;
+  password: string;
+  factory: string;
+  exponentPushToken: string;
+  DeviceInfo: string;
+}
 
 export interface LoginFormValues {
-  idNumber: string;
+  userId: string;
   password: string;
+  factory: string;
 }
 
 export interface ForgotFormValues {
-  accountNumber: string;
+  userId: string;
   idNumber: string;
-  issueDate: dayjs.Dayjs;
+  receivedDate: dayjs.Dayjs;
   birthDate: dayjs.Dayjs;
   factory: string;
   newPassword: string;
+}
+
+export interface AuthPayload {
+  accessToken: string;
+  user: User;
 }

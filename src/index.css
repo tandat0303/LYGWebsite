@@ -346,60 +346,153 @@
   color: rgba(255, 255, 255, 0.4) !important;
 }
 
-/* FORCE style cho selector */
-.lp-form .lp-select.ant-select .ant-select-selector {
-  height: 48px !important;
-  border-radius: 10px !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(8px) !important;
-
-  display: flex !important;
-  align-items: center !important;
-
-  padding: 0 14px !important;
-  box-shadow: none !important;
+.lp-cselect {
+  position: relative;
+  width: 100%;
 }
 
-/* Hover */
-.lp-form .lp-select.ant-select:hover .ant-select-selector {
-  border-color: rgba(147, 197, 253, 0.6) !important;
+/* Trigger */
+.lp-cselect__trigger {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  padding: 0 14px;
+  cursor: pointer;
+  gap: 10px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  user-select: none;
 }
 
-/* Focus */
-.lp-form .lp-select.ant-select.ant-select-focused .ant-select-selector,
-.lp-form .lp-select.ant-select.ant-select-open .ant-select-selector {
-  border-color: #93c5fd !important;
-  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.2) !important;
+.lp-cselect__trigger:hover {
+  border-color: rgba(147, 197, 253, 0.6);
 }
 
-/* Select dropdown popup */
-.lp-select-dropdown.ant-select-dropdown {
-  background: #0f2544 !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
-  backdrop-filter: blur(16px);
-  padding: 4px !important;
+.lp-cselect.is-open .lp-cselect__trigger {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.2);
 }
 
-.lp-select-dropdown .ant-select-item {
-  color: rgba(255, 255, 255, 0.75) !important;
-  font-size: 14px !important;
-  border-radius: 7px !important;
-  transition: background 0.15s !important;
+.lp-cselect__icon {
+  color: rgba(147, 197, 253, 0.8);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.lp-select-dropdown .ant-select-item:hover,
-.lp-select-dropdown .ant-select-item-option-active {
-  background: rgba(147, 197, 253, 0.12) !important;
-  color: #fff !important;
+.lp-cselect__value {
+  flex: 1;
+  font-size: 14px;
+  font-family: "DM Sans", sans-serif;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.lp-select-dropdown .ant-select-item-option-selected {
-  background: rgba(37, 99, 235, 0.28) !important;
-  color: #93c5fd !important;
-  font-weight: 600 !important;
+.lp-cselect__value.is-placeholder {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.lp-cselect__chevron {
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  transition: transform 0.22s ease;
+}
+
+.lp-cselect.is-open .lp-cselect__chevron {
+  transform: rotate(180deg);
+}
+
+.lp-cselect__dropdown {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 28, 56, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  overflow: hidden;
+  animation: lp-cselect-down 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lp-cselect__dropdown.opens-up {
+  animation: lp-cselect-up 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes lp-cselect-down {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes lp-cselect-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.lp-cselect__dropdown-inner {
+  padding: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.lp-cselect__dropdown-inner::-webkit-scrollbar {
+  width: 4px;
+}
+.lp-cselect__dropdown-inner::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.lp-cselect__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: "DM Sans", sans-serif;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition:
+    background 0.13s,
+    color 0.13s;
+}
+
+.lp-cselect__option:hover {
+  background: rgba(147, 197, 253, 0.1);
+  color: #fff;
+}
+
+.lp-cselect__option.is-selected {
+  background: rgba(37, 99, 235, 0.22);
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.lp-cselect__check {
+  color: #93c5fd;
+  flex-shrink: 0;
 }
 
 .lp-submit-btn {
@@ -497,6 +590,197 @@
 
 .lp-link-btn:hover {
   color: #bfdbfe;
+}
+
+/* ===== LANGUAGE BADGE ===== */
+.lp-lang {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  z-index: 50;
+  font-family: "DM Sans", sans-serif;
+}
+
+/* ── Trigger pill ── */
+.lp-lang__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px 9px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.22s ease;
+  user-select: none;
+  min-width: 150px;
+  justify-content: space-between;
+}
+
+.lp-lang__trigger:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(147, 197, 253, 0.55);
+  transform: translateY(-1px);
+}
+
+.lp-lang__trigger.is-open {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(147, 197, 253, 0.7);
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.12);
+  transform: translateY(-1px);
+}
+
+/* Shared flag image style */
+.lp-lang__flag {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Flag circle in trigger */
+.lp-lang__flag-wrap {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.lp-lang__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+}
+
+/* Chevron — rotates when .is-open */
+.lp-lang__chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2px;
+  transition: transform 0.22s ease;
+}
+
+.lp-lang__trigger.is-open .lp-lang__chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Dropdown ── */
+.lp-lang__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 210px;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(8, 20, 45, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  animation: lp-lang-down 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes lp-lang-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.lp-lang__section-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: rgba(147, 197, 253, 0.45);
+  padding: 6px 10px 4px;
+}
+
+.lp-lang__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.13s ease;
+}
+
+.lp-lang__option:hover {
+  background: rgba(147, 197, 253, 0.08);
+}
+
+.lp-lang__option.is-selected {
+  background: rgba(37, 99, 235, 0.2);
+}
+
+/* Flag circle in each option */
+.lp-lang__option-flag-wrap {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.lp-lang__option-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lp-lang__option-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1;
+}
+
+.lp-lang__option.is-selected .lp-lang__option-name {
+  color: #93c5fd;
+}
+
+.lp-lang__option-native {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Checkmark bubble */
+.lp-lang__check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.3);
+  border: 1px solid rgba(147, 197, 253, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 @keyframes lp-fadeIn {

@@ -1,84 +1,74 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
+import type { AuthPayload } from "../types/auth";
+import type { User } from "./../types/user";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface AuthState {
-  user: { id: string; email: string; name: string } | null;
-  token: string | null;
-  loading: boolean;
-  error: string | null;
+  user: User | null;
+  accessToken: string | null;
+  isAuthenticated: boolean;
+  isHydrated: boolean;
 }
-
-export interface LoginCredentials {
-  idNumber: string;
-  password: string;
-}
-
-export const loginThunk = createAsyncThunk<
-  { token: string; user: AuthState["user"] },
-  LoginCredentials,
-  { rejectValue: string }
->("auth/login", async (credentials, { rejectWithValue }) => {
-  try {
-    // Mock
-    await new Promise((r) => setTimeout(r, 1000));
-    if (credentials.password === "wrong")
-      throw new Error("Invalid credentials");
-    return {
-      token: "mock-jwt-token",
-      user: { id: "1", email: credentials.idNumber, name: "User" },
-    };
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Erreur de connexion";
-    return rejectWithValue(message);
-  }
-});
 
 const initialState: AuthState = {
   user: null,
-  token: null,
-  loading: false,
-  error: null,
+  accessToken: null,
+  isAuthenticated: false,
+  isHydrated: false,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setToken(state, action: PayloadAction<AuthPayload>) {
+      state.accessToken = action.payload.accessToken;
+      state.user = action.payload.user;
+      state.isAuthenticated = true;
+    },
+
     logout(state) {
+      state.accessToken = null;
       state.user = null;
-      state.token = null;
-      state.error = null;
+      state.isAuthenticated = false;
     },
-    clearError(state) {
-      state.error = null;
+
+    hydrateAuth(state, action: PayloadAction<AuthPayload | null>) {
+      if (action.payload) {
+        state.accessToken = action.payload.accessToken;
+        state.user = action.payload.user;
+        state.isAuthenticated = true;
+      } else {
+        state.accessToken = null;
+        state.user = null;
+        state.isAuthenticated = false;
+      }
+
+      state.isHydrated = true;
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(loginThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        loginThunk.fulfilled,
-        (
-          state,
-          action: PayloadAction<{ token: string; user: AuthState["user"] }>,
-        ) => {
-          state.loading = false;
-          state.token = action.payload.token;
-          state.user = action.payload.user;
-        },
-      )
-      .addCase(loginThunk.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? "Unknown error";
-      });
-  },
+  // extraReducers: (builder) => {
+  //   builder
+  //     .addCase(loginThunk.pending, (state) => {
+  //       state.loading = true;
+  //       state.error = null;
+  //     })
+  //     .addCase(
+  //       loginThunk.fulfilled,
+  //       (
+  //         state,
+  //         action: PayloadAction<{ token: string; user: AuthState["user"] }>,
+  //       ) => {
+  //         state.loading = false;
+  //         state.token = action.payload.token;
+  //         state.user = action.payload.user;
+  //       },
+  //     )
+  //     .addCase(loginThunk.rejected, (state, action) => {
+  //       state.loading = false;
+  //       state.error = action.payload ?? "Unknown error";
+  //     });
+  // },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { setToken, logout, hydrateAuth } = authSlice.actions;
 export default authSlice.reducer;
