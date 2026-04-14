@@ -148,7 +148,7 @@ const AuthPage = () => {
               <button
                 className="lp-slider__btn"
                 onClick={switchToForgot}
-                disabled={!loading}
+                disabled={loading}
               >
                 Reset Password <ArrowRightOutlined />
               </button>
@@ -163,7 +163,7 @@ const AuthPage = () => {
               <button
                 className="lp-slider__btn"
                 onClick={switchToLogin}
-                disabled={!loading}
+                disabled={loading}
               >
                 <ArrowLeftOutlined /> Sign In
               </button>
