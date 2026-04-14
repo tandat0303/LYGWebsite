@@ -8,3 +8,10 @@ export interface StorageSchema {
     // authenticate: boolean;
   };
 }
+
+export interface Lang {
+  code: string;
+  label: string;
+  native: string;
+  flag: string;
+}

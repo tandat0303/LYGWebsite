@@ -4,29 +4,70 @@ import BgImg from "../../assets/bgImg.jpg";
 import Logo from "../../assets/logo-LY.png";
 import SliderImg from "../../assets/slider.avif";
 import { SLIDE_DURATION } from "../../libs/constance";
-import type { ForgotFormValues, LoginFormValues } from "../../types/auth";
+import type {
+  ForgotFormValues,
+  LoginFormValues,
+  LoginPayload,
+} from "../../types/auth";
 import { LoginForm } from "./LoginForm";
 import { ForgotForm } from "./ForgotForm";
 import { LanguageBadge } from "../../components/ui/LanguageBadge";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../hooks/auth";
+import authApi from "../../api/auth";
+import { setToken } from "../../features/authSlice";
+import { AppAlert } from "../../components/ui/AppAlert";
+import { getApiErrorMessage } from "../../libs/helper";
+import Loading from "../../components/ui/Loading";
 
 type Mode = "login" | "forgot";
 
 const AuthPage = () => {
   const [loading, setLoading] = useState(false);
-  // const [navigating, setNavigating] = useState(false);
+  const [navigating, setNavigating] = useState(false);
   const [mode, setMode] = useState<Mode>("login");
   const [sliderContent, setSliderContent] = useState<Mode>("login");
 
   const isLogin = mode === "login";
 
-  // const navigate = useNavigate();
-  // const dispatch = useAppDispatch();
-  // const { accessToken, user, isHydrated } = useAppSelector((s) => s.auth);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { accessToken, user, isHydrated } = useAppSelector((s) => s.auth);
+
+  if (!isHydrated) return null;
+  if (navigating) return <Loading fullScreen />;
+  if (!navigating && accessToken && user) return <Navigate to="/" replace />;
 
   const handleLogin = async (values: LoginFormValues) => {
     setLoading(true);
-    console.log("Login:", values);
-    setTimeout(() => setLoading(false), 1500);
+    try {
+      const payload: LoginPayload = {
+        userId: values.userId,
+        password: values.password,
+        factory: values.factory,
+        exponentPushToken: "NO_ACCESS_TO_NOTIFY",
+        DeviceInfo: "web_meeting_room",
+      };
+      const data = await authApi.login(payload);
+      const accessToken = data?.accessToken;
+      const user = data?.user;
+
+      if (data.authenticated) {
+        dispatch(setToken({ accessToken, user: user }));
+        setNavigating(true);
+        setTimeout(() => navigate("/", { replace: true }), 1000);
+      } else {
+        AppAlert({ icon: "error", title: "Invalid information" });
+      }
+    } catch (error: any) {
+      if (error?.response?.message === "saiThongTinDangNhap") {
+        AppAlert({ icon: "error", title: "Invalid information" });
+      } else {
+        AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleForgot = async (values: ForgotFormValues) => {
@@ -104,7 +145,11 @@ const AuthPage = () => {
                 <br />
                 Password?
               </h2>
-              <button className="lp-slider__btn" onClick={switchToForgot}>
+              <button
+                className="lp-slider__btn"
+                onClick={switchToForgot}
+                disabled={!loading}
+              >
                 Reset Password <ArrowRightOutlined />
               </button>
             </>
@@ -115,7 +160,11 @@ const AuthPage = () => {
                 <br />
                 Access?
               </h2>
-              <button className="lp-slider__btn" onClick={switchToLogin}>
+              <button
+                className="lp-slider__btn"
+                onClick={switchToLogin}
+                disabled={!loading}
+              >
                 <ArrowLeftOutlined /> Sign In
               </button>
             </>

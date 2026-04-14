@@ -9,6 +9,13 @@ export interface LoginPayload {
   DeviceInfo: string;
 }
 
+export interface LoginResponse {
+  authenticated: boolean;
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface LoginFormValues {
   userId: string;
   password: string;
