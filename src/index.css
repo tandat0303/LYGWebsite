@@ -22,6 +22,17 @@
   --panel-w: 440px;
 }
 
+/* Dark theme (default) */
+html.dark,
+html {
+  color-scheme: dark;
+}
+
+/* Light theme */
+html.light {
+  color-scheme: light;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
