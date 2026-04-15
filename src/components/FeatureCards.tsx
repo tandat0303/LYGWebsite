@@ -110,11 +110,11 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
           justify-content: center;
           gap: 12px;
           padding: 16px;
-          border-radius: 12px;
+          border-radius: 14px;
           border: 1px solid transparent;
           background: var(--card-bg);
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           overflow: hidden;
           font-family: 'DM Sans', sans-serif;
@@ -126,7 +126,7 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
           inset: 0;
           background: var(--card-hover-overlay);
           opacity: 0;
-          transition: opacity 0.2s ease;
+          transition: opacity 0.3s ease;
         }
 
         .feature-card > * {
@@ -138,35 +138,39 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
           isLarge
             ? `
           .feature-card {
-            padding: 20px;
+            padding: 24px 20px;
             grid-column: span 1;
+            min-height: 140px;
           }
 
           .dark .feature-card.large {
-            --card-bg: rgba(37, 99, 235, 0.15);
-            --card-hover-overlay: rgba(147, 197, 253, 0.15);
-            border-color: rgba(147, 197, 253, 0.2);
+            --card-bg: linear-gradient(135deg, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.12) 100%);
+            --card-hover-overlay: rgba(147, 197, 253, 0.2);
+            border-color: rgba(147, 197, 253, 0.25);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
           }
 
           .light .feature-card.large {
-            --card-bg: rgba(37, 99, 235, 0.08);
-            --card-hover-overlay: rgba(37, 99, 235, 0.1);
-            border-color: rgba(37, 99, 235, 0.15);
+            --card-bg: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.08) 100%);
+            --card-hover-overlay: rgba(37, 99, 235, 0.12);
+            border-color: rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
           }
 
           .feature-card.large:hover {
             border-color: var(--card-hover-border);
             box-shadow: var(--card-shadow);
+            transform: translateY(-4px);
           }
 
           .dark .feature-card.large:hover {
-            --card-hover-border: rgba(147, 197, 253, 0.5);
-            --card-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+            --card-hover-border: rgba(147, 197, 253, 0.6);
+            --card-shadow: 0 16px 36px rgba(37, 99, 235, 0.2);
           }
 
           .light .feature-card.large:hover {
-            --card-hover-border: rgba(37, 99, 235, 0.3);
-            --card-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+            --card-hover-border: rgba(37, 99, 235, 0.4);
+            --card-shadow: 0 16px 36px rgba(37, 99, 235, 0.15);
           }
 
           .feature-card.large::before {
@@ -175,34 +179,39 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
           `
             : `
           .feature-card {
-            padding: 18px 12px;
+            padding: 20px 16px;
             grid-column: span 1;
-            min-height: 120px;
+            min-height: 130px;
           }
 
           .dark .feature-card.small {
-            --card-bg: rgba(30, 41, 59, 0.8);
-            --card-hover-overlay: rgba(147, 197, 253, 0.1);
-            border-color: rgba(148, 163, 184, 0.2);
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --card-hover-overlay: rgba(147, 197, 253, 0.15);
+            border-color: rgba(148, 163, 184, 0.25);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
           }
 
           .light .feature-card.small {
-            --card-bg: rgba(226, 232, 240, 0.5);
-            --card-hover-overlay: rgba(37, 99, 235, 0.08);
-            border-color: rgba(148, 163, 184, 0.15);
+            --card-bg: rgba(226, 232, 240, 0.6);
+            --card-hover-overlay: rgba(37, 99, 235, 0.1);
+            border-color: rgba(148, 163, 184, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
           }
 
           .feature-card.small:hover {
             border-color: var(--card-hover-border);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: var(--card-hover-shadow);
           }
 
           .dark .feature-card.small:hover {
-            --card-hover-border: rgba(147, 197, 253, 0.3);
+            --card-hover-border: rgba(147, 197, 253, 0.4);
+            --card-hover-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
           }
 
           .light .feature-card.small:hover {
-            --card-hover-border: rgba(37, 99, 235, 0.2);
+            --card-hover-border: rgba(37, 99, 235, 0.3);
+            --card-hover-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
           }
 
           .feature-card.small::before {
@@ -212,20 +221,26 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
         }
 
         .feature-icon {
-          font-size: ${isLarge ? '48px' : '32px'};
+          font-size: ${isLarge ? '52px' : '36px'};
           line-height: 1;
+          transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+          transform: scale(1.1);
         }
 
         .feature-label {
-          font-size: ${isLarge ? '15px' : '14px'};
+          font-size: ${isLarge ? '16px' : '14px'};
           font-weight: 600;
           text-align: center;
           color: var(--label-color);
-          line-height: 1.2;
+          line-height: 1.3;
+          letter-spacing: -0.3px;
         }
 
         .dark .feature-label {
-          --label-color: rgba(255, 255, 255, 0.9);
+          --label-color: rgba(255, 255, 255, 0.95);
         }
 
         .light .feature-label {
@@ -236,12 +251,12 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
           font-size: 12px;
           color: var(--desc-color);
           text-align: center;
-          line-height: 1.3;
+          line-height: 1.4;
           max-width: 100%;
         }
 
         .dark .feature-description {
-          --desc-color: rgba(255, 255, 255, 0.6);
+          --desc-color: rgba(255, 255, 255, 0.65);
         }
 
         .light .feature-description {
@@ -279,24 +294,25 @@ export const FeatureCards = () => {
 
         .featured-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-          gap: 12px;
-          margin-bottom: 24px;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+          margin-bottom: 32px;
         }
 
         .features-section {
-          margin-bottom: 24px;
+          margin-bottom: 32px;
         }
 
         .features-title {
-          font-size: 16px;
+          font-size: 18px;
           font-weight: 700;
-          margin-bottom: 12px;
+          margin-bottom: 16px;
           color: var(--title-color);
+          letter-spacing: -0.3px;
         }
 
         .dark .features-title {
-          --title-color: rgba(255, 255, 255, 0.9);
+          --title-color: rgba(255, 255, 255, 0.95);
         }
 
         .light .features-title {
@@ -305,19 +321,70 @@ export const FeatureCards = () => {
 
         .features-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-          gap: 12px;
+          grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+          gap: 14px;
         }
 
-        @media (max-width: 480px) {
+        /* Tablet view */
+        @media (max-width: 1024px) {
           .featured-grid {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+          }
+
+          .features-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+          }
+
+          .features-section {
+            margin-bottom: 28px;
+          }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+          .featured-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
           }
 
           .features-grid {
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
+          }
+
+          .features-section {
+            margin-bottom: 24px;
+          }
+
+          .features-title {
+            font-size: 16px;
+            margin-bottom: 12px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .featured-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+          }
+
+          .features-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+          }
+
+          .features-section {
+            margin-bottom: 20px;
+          }
+
+          .features-title {
+            font-size: 14px;
+            margin-bottom: 10px;
           }
         }
       `}</style>

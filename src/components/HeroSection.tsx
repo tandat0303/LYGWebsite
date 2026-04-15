@@ -89,10 +89,13 @@ export const HeroSection = () => {
         .hero-section {
           position: relative;
           width: 100%;
-          height: 200px;
+          height: 240px;
           overflow: hidden;
-          border-radius: 12px;
-          margin-bottom: 24px;
+          border-radius: 16px;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         .hero-background {
@@ -106,7 +109,7 @@ export const HeroSection = () => {
         .hero-svg {
           width: 100%;
           height: 100%;
-          filter: brightness(${theme === 'dark' ? 0.85 : 1.1});
+          filter: brightness(${theme === 'dark' ? 0.8 : 1.05});
         }
 
         .hero-content {
@@ -115,12 +118,13 @@ export const HeroSection = () => {
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
-          padding: 24px;
+          padding: 32px;
           z-index: 10;
           background: linear-gradient(
-            180deg,
-            transparent 0%,
-            rgba(0, 0, 0, 0.3) 100%
+            to top,
+            rgba(0, 0, 0, 0.45) 0%,
+            rgba(0, 0, 0, 0.25) 40%,
+            transparent 100%
           );
         }
 
@@ -129,24 +133,25 @@ export const HeroSection = () => {
         }
 
         .hero-greeting {
-          font-size: 24px;
+          font-size: 32px;
           font-weight: 700;
           line-height: 1.2;
-          margin-bottom: 2px;
-          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          margin-bottom: 8px;
+          letter-spacing: -0.5px;
+          text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
         }
 
         .hero-name {
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.9);
-          margin-bottom: 8px;
+          font-size: 18px;
+          color: rgba(255, 255, 255, 0.95);
+          margin-bottom: 6px;
           font-weight: 500;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+          text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
         }
 
         .hero-location {
-          font-size: 12px;
-          color: rgba(255, 255, 255, 0.8);
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.85);
           display: flex;
           align-items: center;
           gap: 6px;
@@ -154,8 +159,57 @@ export const HeroSection = () => {
         }
 
         .hero-location svg {
-          width: 14px;
-          height: 14px;
+          width: 16px;
+          height: 16px;
+        }
+
+        @media (max-width: 768px) {
+          .hero-section {
+            height: 200px;
+          }
+
+          .hero-content {
+            padding: 24px;
+          }
+
+          .hero-greeting {
+            font-size: 26px;
+            margin-bottom: 6px;
+          }
+
+          .hero-name {
+            font-size: 16px;
+            margin-bottom: 4px;
+          }
+
+          .hero-location {
+            font-size: 13px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-section {
+            height: 160px;
+            border-radius: 12px;
+          }
+
+          .hero-content {
+            padding: 20px;
+          }
+
+          .hero-greeting {
+            font-size: 22px;
+            margin-bottom: 4px;
+          }
+
+          .hero-name {
+            font-size: 14px;
+            margin-bottom: 2px;
+          }
+
+          .hero-location {
+            font-size: 12px;
+          }
         }
       `}</style>
     </section>

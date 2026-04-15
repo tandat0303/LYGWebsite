@@ -4,49 +4,29 @@ import { useTheme } from '../contexts/ThemeContext';
 interface NavItem {
   id: string;
   label: string;
-  icon: React.ReactNode;
+  icon: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
   {
     id: 'home',
     label: 'Trang chủ',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        <polyline points="9 22 9 12 15 12 15 22" />
-      </svg>
-    ),
+    icon: '/icons/home.svg',
   },
   {
     id: 'salary',
     label: 'Lương',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-      </svg>
-    ),
+    icon: '/icons/salary.svg',
   },
   {
     id: 'contact',
     label: 'Liên hệ',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-        <polyline points="22 6 12 13 2 6" />
-      </svg>
-    ),
+    icon: '/icons/contact.svg',
   },
   {
     id: 'settings',
     label: 'Cài đặt',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="3" />
-        <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m2.12 2.12l4.24 4.24M1 12h6m6 0h6m-15.78 7.78l4.24-4.24m2.12-2.12l4.24-4.24" />
-      </svg>
-    ),
+    icon: '/icons/settings.svg',
   },
 ];
 
@@ -63,7 +43,9 @@ export const BottomNavigation = () => {
           onClick={() => setActiveItem(item.id)}
           title={item.label}
         >
-          <div className="nav-icon">{item.icon}</div>
+          <div className="nav-icon">
+            <img src={item.icon} alt={item.label} width="24" height="24" />
+          </div>
           <span className="nav-label">{item.label}</span>
           {activeItem === item.id && <div className="nav-indicator" />}
         </button>

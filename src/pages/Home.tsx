@@ -1,73 +1,97 @@
 import { Header } from '../components/Header';
+import { Sidebar } from '../components/Sidebar';
 import { HeroSection } from '../components/HeroSection';
 import { FeatureCards } from '../components/FeatureCards';
 import { BottomNavigation } from '../components/BottomNavigation';
 
 export default function Home() {
   return (
-    <div className="home-page">
+    <div className="home-wrapper">
       <Header />
-      <main className="home-main">
-        <div className="home-content">
-          <HeroSection />
-          <FeatureCards />
-        </div>
-      </main>
+      <div className="home-layout">
+        <Sidebar />
+        <main className="home-main">
+          <div className="home-content">
+            <HeroSection />
+            <FeatureCards />
+          </div>
+        </main>
+      </div>
       <BottomNavigation />
 
       <style>{`
-        .home-page {
+        .home-wrapper {
           width: 100%;
           min-height: 100vh;
           background: var(--page-bg);
           color: var(--page-text);
           transition: background 0.3s ease, color 0.3s ease;
-          padding-bottom: 80px;
+          display: flex;
+          flex-direction: column;
         }
 
-        .dark .home-page {
+        .dark .home-wrapper {
           --page-bg: linear-gradient(135deg, #0f1b2e 0%, #1a2f4d 100%);
           --page-text: rgba(255, 255, 255, 0.9);
         }
 
-        .light .home-page {
+        .light .home-wrapper {
           --page-bg: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
           --page-text: var(--primary);
         }
 
-        .home-main {
+        .home-layout {
+          display: flex;
+          flex: 1;
           width: 100%;
-          max-width: 100%;
+          overflow: hidden;
+        }
+
+        .home-main {
+          flex: 1;
+          width: 100%;
+          overflow-y: auto;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
         }
 
         .home-content {
           width: 100%;
-          padding: 24px 16px;
-          margin: 0 auto;
+          padding: 32px 40px;
+          display: flex;
+          flex-direction: column;
+          gap: 32px;
         }
 
-        @media (min-width: 480px) {
+        /* Tablet & below - hide sidebar, stack vertically */
+        @media (max-width: 1024px) {
+          .home-layout {
+            flex-direction: column;
+          }
+
           .home-content {
             padding: 24px 20px;
+            gap: 24px;
           }
         }
 
-        @media (min-width: 768px) {
-          .home-page {
-            padding-bottom: 0;
+        /* Mobile */
+        @media (max-width: 768px) {
+          .home-wrapper {
+            padding-bottom: 80px;
           }
 
           .home-content {
-            max-width: 800px;
-            padding: 32px 24px;
-            margin: 0 auto;
+            padding: 20px 16px;
+            gap: 20px;
           }
         }
 
-        @media (min-width: 1024px) {
+        @media (max-width: 480px) {
           .home-content {
-            max-width: 1000px;
-            padding: 40px 32px;
+            padding: 16px 12px;
+            gap: 16px;
           }
         }
       `}</style>

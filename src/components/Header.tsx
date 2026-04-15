@@ -27,18 +27,7 @@ export const Header = () => {
             aria-label="Menu"
             title="Menu"
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
+            <img src="/icons/hamburger.svg" alt="Menu" width="24" height="24" />
           </button>
         </div>
 
@@ -50,17 +39,7 @@ export const Header = () => {
             aria-label="Notifications"
             title="Notifications"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
+            <img src="/icons/notification.svg" alt="Notifications" width="20" height="20" />
             <span className="notification-badge">1</span>
           </button>
 
@@ -70,19 +49,7 @@ export const Header = () => {
             aria-label="QR Code"
             title="QR Code"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="3" y="3" width="7" height="7" />
-              <rect x="14" y="3" width="7" height="7" />
-              <rect x="14" y="14" width="7" height="7" />
-              <rect x="3" y="14" width="4" height="4" />
-            </svg>
+            <img src="/icons/qr-code.svg" alt="QR Code" width="20" height="20" />
           </button>
 
           {/* Theme Toggle */}
@@ -479,6 +446,15 @@ export const Header = () => {
             opacity: 1;
             transform: translateY(0);
           }
+        }
+
+        /* Fix LanguageBadge z-index to prevent overlap */
+        :global(.lp-lang) {
+          z-index: 50 !important;
+        }
+
+        :global(.lp-lang__dropdown) {
+          z-index: 51 !important;
         }
 
         @media (max-width: 768px) {
