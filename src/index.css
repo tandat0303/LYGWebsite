@@ -1,8 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,700&display=swap");
+@import "tailwindcss";
 
 /* @tailwind base;
-@tailwind components; */
-@tailwind utilities;
+@tailwind components;
+@tailwind utilities; */
 
 :root {
   --primary: #0f2544;
@@ -20,6 +21,17 @@
   --radius-input: 8px;
   --radius-btn: 8px;
   --panel-w: 440px;
+}
+
+/* Dark theme (default) */
+html.dark,
+html {
+  color-scheme: dark;
+}
+
+/* Light theme */
+html.light {
+  color-scheme: light;
 }
 
 * {
