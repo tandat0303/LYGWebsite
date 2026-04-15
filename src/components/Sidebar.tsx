@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSidebar } from '../contexts/SidebarContext';
 
 interface SidebarMenuItem {
   label: string;
@@ -42,9 +43,19 @@ const SIDEBAR_SECTIONS: SidebarSection[] = [
 
 export const Sidebar = () => {
   const [activeItem, setActiveItem] = useState<string>('Thông tin');
+  const { isOpen, closeSidebar } = useSidebar();
 
   return (
-    <aside className="sidebar">
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="sidebar-overlay"
+          onClick={closeSidebar}
+          aria-hidden="true"
+        />
+      )}
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       {/* Logo Section */}
       <div className="sidebar-header">
         <div className="sidebar-logo">
@@ -90,7 +101,37 @@ export const Sidebar = () => {
         ))}
       </div>
 
-      <style>{`
+      </aside>
+    </>
+  );
+};
+
+const SidebarStyles = () => (
+  <style>{`
+        .sidebar-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 29;
+          animation: fadeIn 0.2s ease;
+          display: none;
+        }
+
+        @media (max-width: 1024px) {
+          .sidebar-overlay {
+            display: block;
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
         .sidebar {
           width: 280px;
           height: 100vh;
@@ -361,10 +402,32 @@ export const Sidebar = () => {
 
         @media (max-width: 1024px) {
           .sidebar {
-            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            height: calc(100vh - 60px);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 35;
+          }
+
+          .sidebar.open {
+            transform: translateX(0);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .sidebar {
+            width: 250px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .sidebar {
+            width: 100%;
           }
         }
       `}</style>
-    </aside>
+    </>
   );
 };

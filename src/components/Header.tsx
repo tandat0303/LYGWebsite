@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useSidebar } from '../contexts/SidebarContext';
 import { LanguageBadge } from './ui/LanguageBadge';
 
 export const Header = () => {
   const { theme, toggleTheme } = useTheme();
+  const { toggleSidebar } = useSidebar();
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -20,12 +22,13 @@ export const Header = () => {
   return (
     <header className="header-wrapper">
       <div className="header-container">
-        {/* Left section - Menu toggle (placeholder) */}
+        {/* Left section - Menu toggle */}
         <div className="header-left">
           <button
             className="header-icon-btn"
             aria-label="Menu"
-            title="Menu"
+            title="Toggle sidebar"
+            onClick={toggleSidebar}
           >
             <img src="/icons/hamburger.svg" alt="Menu" width="24" height="24" />
           </button>
@@ -446,15 +449,6 @@ export const Header = () => {
             opacity: 1;
             transform: translateY(0);
           }
-        }
-
-        /* Fix LanguageBadge z-index to prevent overlap */
-        :global(.lp-lang) {
-          z-index: 50 !important;
-        }
-
-        :global(.lp-lang__dropdown) {
-          z-index: 51 !important;
         }
 
         @media (max-width: 768px) {
