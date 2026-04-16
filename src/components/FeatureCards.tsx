@@ -1,9 +1,19 @@
 // import { useTheme } from '../contexts/ThemeContext';
+import Clock from "../assets/clock.png";
+import Vacation from "../assets/vacations.png";
+import Overtime from "../assets/overtime.png";
+import Salary from "../assets/salary.png";
+import Reward from "../assets/reward.png";
+import FireSalary from "../assets/fire-salary.png";
+import Notebook from "../assets/notebook.png";
+import UserInfo from "../assets/user-info.png";
+import Contact from "../assets/contact.png";
+import News from "../assets/news.png";
 
 interface Feature {
   id: string;
   label: string;
-  icon: string;
+  icon: React.ReactNode | string;
   description?: string;
   size?: "large" | "small";
   highlight?: boolean;
@@ -11,9 +21,9 @@ interface Feature {
 
 const LARGE_FEATURES: Feature[] = [
   {
-    id: "quyet-the",
+    id: "quet-the",
     label: "Giờ quét thể",
-    icon: "🕐",
+    icon: Clock,
     description: "Quản lý giờ làm việc",
     size: "large",
     highlight: true,
@@ -21,7 +31,7 @@ const LARGE_FEATURES: Feature[] = [
   {
     id: "ngay-nghi",
     label: "Ngày nghỉ",
-    icon: "🏖️",
+    icon: Vacation,
     description: "Xem lịch nghỉ",
     size: "large",
     highlight: true,
@@ -29,7 +39,7 @@ const LARGE_FEATURES: Feature[] = [
   {
     id: "tang-ca",
     label: "Tăng ca",
-    icon: "👨‍💼",
+    icon: Overtime,
     description: "Yêu cầu tăng ca",
     size: "large",
     highlight: true,
@@ -40,43 +50,43 @@ const SMALL_FEATURES: Feature[] = [
   {
     id: "luong",
     label: "Lương",
-    icon: "💵",
+    icon: Salary,
     size: "small",
   },
   {
     id: "thuong",
-    label: "Thường",
-    icon: "📅",
+    label: "Thưởng",
+    icon: Reward,
     size: "small",
   },
   {
     id: "luong-thoi-viec",
     label: "Lương thôi việc",
-    icon: "👤",
+    icon: FireSalary,
     size: "small",
   },
   {
     id: "so-tay",
     label: "Số tay/Quy trình",
-    icon: "📖",
+    icon: Notebook,
     size: "small",
   },
   {
     id: "ca-nhan",
     label: "Thông tin cá nhân",
-    icon: "👤",
+    icon: UserInfo,
     size: "small",
   },
   {
     id: "lien-he",
     label: "Liên hệ",
-    icon: "📋",
+    icon: Contact,
     size: "small",
   },
   {
     id: "ban-tin",
     label: "Bản tin",
-    icon: "📄",
+    icon: News,
     size: "small",
   },
 ];
@@ -89,15 +99,26 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
   // const { theme } = useTheme();
   const isLarge = feature.size === "large";
 
+  const renderIcon = () => {
+    if (typeof feature.icon === "string") {
+      return (
+        <img
+          src={feature.icon}
+          alt={feature.label}
+          className="feature-icon-img"
+        />
+      );
+    }
+
+    return <div className="feature-icon-lib">{feature.icon}</div>;
+  };
+
   return (
-    <button
-      className={`feature-card ${isLarge ? "large" : "small"}`}
-      onClick={() => {
-        console.log(`Clicked: ${feature.label}`);
-      }}
-    >
-      <div className="feature-icon">{feature.icon}</div>
+    <button className={`feature-card ${isLarge ? "large" : "small"}`}>
+      {renderIcon()}
+
       <span className="feature-label">{feature.label}</span>
+
       {feature.description && (
         <span className="feature-description">{feature.description}</span>
       )}
@@ -220,10 +241,18 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
           `
         }
 
-        .feature-icon {
-          font-size: ${isLarge ? "52px" : "36px"};
-          line-height: 1;
-          transition: transform 0.3s ease;
+        .feature-icon-img,
+        .feature-icon-lib{
+          width:${isLarge ? "52px" : "36px"};
+          height:${isLarge ? "52px" : "36px"};
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          transition:all .3s ease;
+        }
+
+        .feature-icon-img{
+          object-fit:contain;
         }
 
         .feature-card:hover .feature-icon {
@@ -279,7 +308,7 @@ export const FeatureCards = () => {
 
       {/* Small Feature Cards */}
       <div className="features-section">
-        <h2 className="features-title">Khác</h2>
+        <h2 className="features-title">Tính năng</h2>
         <div className="features-grid">
           {SMALL_FEATURES.map((feature) => (
             <FeatureCard key={feature.id} feature={feature} />
