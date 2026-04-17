@@ -6,28 +6,27 @@ import { BottomNavigation } from "../components/BottomNavigation";
 
 export default function Home() {
   return (
-    <div className="home-wrapper">
-      <Header />
-      <div className="home-layout">
+    <div className="home-wrapper w-full h-screen overflow-hidden transition-colors duration-300 ease-[ease]">
+      <div className="flex w-full h-full">
         <Sidebar />
-        <main className="home-main">
-          <div className="home-content">
-            <HeroSection />
-            <FeatureCards />
-          </div>
-        </main>
+
+        <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
+          <Header />
+          <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+            <div className="home-content">
+              <HeroSection />
+              <FeatureCards />
+            </div>
+          </main>
+        </div>
       </div>
+
       <BottomNavigation />
 
       <style>{`
         .home-wrapper {
-          width: 100%;
-          min-height: 100vh;
           background: var(--page-bg);
           color: var(--page-text);
-          transition: background 0.3s ease, color 0.3s ease;
-          display: flex;
-          flex-direction: column;
         }
 
         .dark .home-wrapper {
@@ -40,22 +39,6 @@ export default function Home() {
           --page-text: var(--primary);
         }
 
-        .home-layout {
-          display: flex;
-          flex: 1;
-          width: 100%;
-          overflow: hidden;
-        }
-
-        .home-main {
-          flex: 1;
-          width: 100%;
-          overflow-y: auto;
-          overflow-x: hidden;
-          display: flex;
-          flex-direction: column;
-        }
-
         .home-content {
           width: 100%;
           padding: 32px 40px;
@@ -64,24 +47,17 @@ export default function Home() {
           gap: 32px;
         }
 
-        /* Tablet & below - hide sidebar, stack vertically */
         @media (max-width: 1024px) {
-          .home-layout {
-            flex-direction: column;
-          }
-
           .home-content {
             padding: 24px 20px;
             gap: 24px;
           }
         }
 
-        /* Mobile */
         @media (max-width: 768px) {
           .home-wrapper {
             padding-bottom: 80px;
           }
-
           .home-content {
             padding: 20px 16px;
             gap: 20px;

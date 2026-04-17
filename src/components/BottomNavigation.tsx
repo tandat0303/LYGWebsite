@@ -1,38 +1,28 @@
 import { useState } from "react";
+import type { SidebarIcon } from "../types/sidebar";
+import { NAV_ITEMS } from "../libs/constance";
 // import { useTheme } from '../contexts/ThemeContext';
-
-interface NavItem {
-  id: string;
-  label: string;
-  icon: string;
-}
-
-const NAV_ITEMS: NavItem[] = [
-  {
-    id: "home",
-    label: "Trang chủ",
-    icon: "/icons/home.svg",
-  },
-  {
-    id: "salary",
-    label: "Lương",
-    icon: "/icons/salary.svg",
-  },
-  {
-    id: "contact",
-    label: "Liên hệ",
-    icon: "/icons/contact.svg",
-  },
-  {
-    id: "settings",
-    label: "Cài đặt",
-    icon: "/icons/settings.svg",
-  },
-];
 
 export const BottomNavigation = () => {
   // const { theme } = useTheme();
   const [activeItem, setActiveItem] = useState("home");
+
+  const renderIcon = (icon: SidebarIcon) => {
+    if (typeof icon === "string") {
+      return <img src={icon} className="nav-icon" />;
+    }
+
+    if (typeof icon === "function") {
+      const Icon = icon;
+      return (
+        <span className="nav-icon">
+          <Icon size={18} />
+        </span>
+      );
+    }
+
+    return <span className="nav-icon">{icon}</span>;
+  };
 
   return (
     <nav className="bottom-nav">
@@ -43,11 +33,9 @@ export const BottomNavigation = () => {
           onClick={() => setActiveItem(item.id)}
           title={item.label}
         >
-          <div className="nav-icon">
-            <img src={item.icon} alt={item.label} width="24" height="24" />
-          </div>
+          {renderIcon(item.icon)}
           <span className="nav-label">{item.label}</span>
-          {activeItem === item.id && <div className="nav-indicator" />}
+          {/* {activeItem === item.id && <div className="nav-indicator" />} */}
         </button>
       ))}
 

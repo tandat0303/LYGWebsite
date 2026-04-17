@@ -1,5 +1,5 @@
 import { useTheme } from "../contexts/ThemeContext";
-import HeroImg from "../assets/hero_banner.jpg";
+import HeroImg from "../assets/images/hero_banner.jpg";
 import { useAppSelector } from "../hooks/auth";
 
 export const HeroSection = () => {
@@ -16,7 +16,7 @@ export const HeroSection = () => {
   return (
     <section className="hero-section">
       <div className="hero-background">
-        <img src={HeroImg} />
+        <img src={HeroImg} className="hero-image" />
       </div>
 
       {/* Content Overlay */}
@@ -49,6 +49,16 @@ export const HeroSection = () => {
           width: 100%;
           height: 100%;
           overflow: hidden;
+        }
+
+        .hero-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center center;
+          display: block;
+          transform: scale(1.02);
+          filter: brightness(${theme === "dark" ? 0.78 : 1});
         }
 
         .hero-svg {
@@ -108,9 +118,20 @@ export const HeroSection = () => {
           height: 16px;
         }
 
+        @media (max-width: 1024px) {
+          .hero-image {
+            object-position: center;
+          }
+        }
+
         @media (max-width: 768px) {
           .hero-section {
             height: 200px;
+            border-radius: 14px;
+          }
+
+          .hero-image {
+            object-position: 58% center;
           }
 
           .hero-content {
@@ -138,6 +159,10 @@ export const HeroSection = () => {
             border-radius: 12px;
           }
 
+          .hero-image {
+            object-position: 62% center;
+          }
+
           .hero-content {
             padding: 20px;
           }
@@ -154,6 +179,7 @@ export const HeroSection = () => {
 
           .hero-location {
             font-size: 12px;
+            max-width: 90%;
           }
         }
       `}</style>

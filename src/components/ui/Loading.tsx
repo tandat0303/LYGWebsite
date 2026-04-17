@@ -1,5 +1,5 @@
 import React from "react";
-import LottieImport from "lottie-react";
+import { Player } from "@lottiefiles/react-lottie-player";
 import loadingAnimation from "../../assets/lottie/app-loading.json";
 
 interface LoadingProps {
@@ -7,8 +7,6 @@ interface LoadingProps {
   fullScreen?: boolean;
   overlay?: boolean;
 }
-
-const Lottie = (LottieImport as any).default || LottieImport;
 
 const Loading: React.FC<LoadingProps> = ({
   size = 150,
@@ -27,9 +25,15 @@ const Loading: React.FC<LoadingProps> = ({
         zIndex: 9999,
       }}
     >
-      <div style={{ width: size, height: size }}>
-        <Lottie animationData={loadingAnimation} loop />
-      </div>
+      <Player
+        autoplay
+        loop
+        src={loadingAnimation}
+        style={{
+          width: size,
+          height: size,
+        }}
+      />
     </div>
   );
 };
