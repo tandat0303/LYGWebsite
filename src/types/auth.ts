@@ -35,3 +35,20 @@ export interface AuthPayload {
   accessToken: string;
   user: User;
 }
+
+export interface ChangePasswordPayload {
+  userId: string;
+  factory: string;
+  password: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordResponse {
+  status: boolean;
+  message: string;
+}
+export interface ChangePasswordValues {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}

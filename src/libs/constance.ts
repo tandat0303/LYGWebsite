@@ -20,6 +20,11 @@ import { RiContactsBook3Line } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { RiHome3Line } from "react-icons/ri";
 
+export const ROUTE_MAP: Record<string, string> = {
+  "Trang chủ": "/",
+  "Đổi mật khẩu": "/change-password",
+};
+
 export const REQUIRE_MESSAGE = "Please do not leave it blank";
 
 export const SLIDE_DURATION = 360;

@@ -7,8 +7,8 @@ import React, {
 } from "react";
 
 interface SidebarContextType {
-  isOpen: boolean; // mobile: overlay open/close
-  isCollapsed: boolean; // desktop: thu gọn/mở rộng
+  isOpen: boolean;
+  isCollapsed: boolean;
   toggleSidebar: () => void;
   closeSidebar: () => void;
 }
