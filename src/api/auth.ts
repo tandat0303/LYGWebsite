@@ -15,7 +15,10 @@ const authApi = {
   changePassword: async (
     payload: ChangePasswordPayload,
   ): Promise<ChangePasswordResponse> => {
-    const res = await apiClient.post(`/${payload.factory}/user/changePassword`);
+    const res = await apiClient.post(
+      `/${payload.factory}/user/changePassword`,
+      payload,
+    );
     return res.data;
   },
 };

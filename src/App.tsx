@@ -5,6 +5,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import Home from "./pages/Home";
 import MainLayout from "./layout/MainLayout";
 import ChangePassword from "./pages/auth/ChangePassword";
+import UserInfo from "./pages/UserInfo";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
 
             <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/user-info" element={<UserInfo />} />
           </Route>
         </Route>
       </Route>

@@ -19,10 +19,12 @@ import { PiCreditCard } from "react-icons/pi";
 import { RiContactsBook3Line } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { RiHome3Line } from "react-icons/ri";
+import type { FieldKey } from "../types/user";
 
 export const ROUTE_MAP: Record<string, string> = {
-  "Trang chủ": "/",
-  "Đổi mật khẩu": "/change-password",
+  home: "/",
+  "change-pass": "/change-password",
+  info: "/user-info",
 };
 
 export const REQUIRE_MESSAGE = "Please do not leave it blank";
@@ -39,6 +41,35 @@ export const FACTORY_OPTIONS = [
   { value: "LTB", label: "LTB" },
   { value: "LDT", label: "LDT" },
   { value: "JZS", label: "JZS" },
+];
+
+export const MASKED_FIELDS: FieldKey[] = [
+  "birthday",
+  "phone",
+  "idCard",
+  "idIssueDate",
+  "permanentAddress",
+  "transport",
+  "temporaryAddress",
+];
+export const EDITABLE_FIELDS: FieldKey[] = [
+  "birthday",
+  "phone",
+  "idCard",
+  "idIssueDate",
+  "transport",
+  "temporaryAddress",
+];
+
+export const DATE_FIELDS: FieldKey[] = ["birthday", "idIssueDate"];
+
+export const TRANSPORT_OPTIONS = [
+  { label: "Xe máy", value: "Motorcycle" },
+  { label: "Ô tô", value: "car" },
+  { label: "Xe đạp", value: "bicycle" },
+  { label: "Đi bộ", value: "walk" },
+  { label: "Xe buýt", value: "bus" },
+  { label: "Khác", value: "other" },
 ];
 
 export const LANGS: Lang[] = [

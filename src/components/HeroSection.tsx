@@ -1,118 +1,91 @@
 import { useTheme } from "../contexts/ThemeContext";
-import HeroImg from "../assets/images/hero_banner.jpg";
+import HeroImgDay from "../assets/images/hero_banner_day.jpg";
+import HeroImgAfternoon from "../assets/images/hero_banner_afternoon.jpg";
+import HeroImgNight from "../assets/images/hero_banner_night.jpg";
 import { useAppSelector } from "../hooks/auth";
+import { useEffect, useState } from "react";
 
 export const HeroSection = () => {
   const { theme } = useTheme();
   const { user } = useAppSelector((s) => s.auth);
 
+  const [city, setCity] = useState("");
+
+  const hour = new Date().getHours();
+
+  const isMorning = hour < 12;
+  const isAfternoon = hour < 18;
+
   const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Chào buổi sáng";
-    if (hour < 18) return "Chào buổi chiều";
+    if (isMorning) return "Chào buổi sáng";
+    if (isAfternoon) return "Chào buổi chiều";
     return "Chào buổi tối";
   };
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
+      );
+
+      const data = await res.json();
+
+      setCity(
+        data.address.city ||
+          data.address.town ||
+          data.address.state ||
+          data.address.county,
+      );
+    });
+  }, []);
+
   return (
-    <section className="hero-section">
-      <div className="hero-background">
-        <img src={HeroImg} className="hero-image" />
+    <section
+      className="relative w-full h-[240px] overflow-hidden rounded-2xl
+                        flex flex-col justify-end shadow-[0_12px_40px_rgba(0,0,0,0.15)]
+                        hero-section"
+    >
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <img
+          src={
+            isMorning
+              ? HeroImgDay
+              : isAfternoon
+                ? HeroImgAfternoon
+                : HeroImgNight
+          }
+          className={`w-full h-full object-cover object-center block scale-[1.02]
+                    ${theme === "dark" ? "brightness-[0.78]" : "brightness-100"} hero-image`}
+        />
       </div>
 
       {/* Content Overlay */}
-      <div className="hero-content">
-        <div className="hero-text">
-          <h1 className="hero-greeting">{getGreeting()} !</h1>
-          <p className="hero-name">{user.fullName}</p>
-          <p className="hero-location">
-            {user.nameshow} - {user.factory}
+      <div
+        className="absolute inset-0 flex flex-col justify-end z-10
+                    bg-[linear-gradient(to_top,rgba(0,0,0,0.45)_0%,rgba(0,0,0,0.25)_40%,transparent_100%)]
+                    hero-content"
+        style={{ padding: "32px" }}
+      >
+        <div className="text-white">
+          <h1
+            className="text-[32px] font-bold leading-[1.2] mb-2 tracking-[-0.5px]
+                          [text-shadow:0_2px_12px_rgba(0,0,0,0.4)] hero-greeting"
+          >
+            {getGreeting()} !
+          </h1>
+          <p className="text-[18px] text-white/95 mb-1.5 font-medium [text-shadow:0_1px_6px_rgba(0,0,0,0.3)] hero-name">
+            {user.fullName}
+          </p>
+          <p className="text-[14px] text-white/85 flex items-center gap-1.5 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)] hero-location">
+            {city} - {user.factory}
           </p>
         </div>
       </div>
 
       <style>{`
-        .hero-section {
-          position: relative;
-          width: 100%;
-          height: 240px;
-          overflow: hidden;
-          border-radius: 16px;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .hero-background {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-        }
-
-        .hero-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: center center;
-          display: block;
-          transform: scale(1.02);
-          filter: brightness(${theme === "dark" ? 0.78 : 1});
-        }
-
-        .hero-svg {
-          width: 100%;
-          height: 100%;
-          filter: brightness(${theme === "dark" ? 0.8 : 1.05});
-        }
-
-        .hero-content {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          padding: 32px;
-          z-index: 10;
-          background: linear-gradient(
-            to top,
-            rgba(0, 0, 0, 0.45) 0%,
-            rgba(0, 0, 0, 0.25) 40%,
-            transparent 100%
-          );
-        }
-
-        .hero-text {
-          color: white;
-        }
-
-        .hero-greeting {
-          font-size: 32px;
-          font-weight: 700;
-          line-height: 1.2;
-          margin-bottom: 8px;
-          letter-spacing: -0.5px;
-          text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-        }
-
-        .hero-name {
-          font-size: 18px;
-          color: rgba(255, 255, 255, 0.95);
-          margin-bottom: 6px;
-          font-weight: 500;
-          text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero-location {
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.85);
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-        }
-
         .hero-location svg {
           width: 16px;
           height: 16px;

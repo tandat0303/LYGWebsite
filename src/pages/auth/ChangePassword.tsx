@@ -1,48 +1,81 @@
 import { useState } from "react";
 import { Form, Input, Button } from "antd";
-import { KeyRound, ShieldCheck, CheckCircle2, RotateCcw } from "lucide-react";
+import {
+  KeyRound,
+  ShieldCheck,
+  // CheckCircle2, RotateCcw
+} from "lucide-react";
 import { Icon } from "../../components/ui/Icon";
 import bannerImg from "../../assets/images/reset-password.png";
 import { REQUIRE_MESSAGE } from "../../libs/constance";
-import type { ChangePasswordValues } from "../../types/auth";
+import type {
+  ChangePasswordPayload,
+  ChangePasswordValues,
+} from "../../types/auth";
+import { useAppSelector } from "../../hooks/auth";
+import authApi from "../../api/auth";
+import { AppAlert } from "../../components/ui/AppAlert";
 
 export default function ChangePassword() {
+  const user = useAppSelector((s) => s.auth.user);
+
   const [form] = Form.useForm<ChangePasswordValues>();
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  // const [success, setSuccess] = useState(false);
 
   const handleFinish = async (values: ChangePasswordValues) => {
-    setLoading(true);
+    if (!user) return;
     try {
-      console.log("Change password payload:", values);
-      await new Promise((r) => setTimeout(r, 1200));
-      setSuccess(true);
-      form.resetFields();
-    } catch {
-      // handle error
+      setLoading(true);
+
+      const payload: ChangePasswordPayload = {
+        userId: user.userId,
+        factory: user.factory,
+        password: values.password,
+        newPassword: values.newPassword,
+      };
+
+      const res = await authApi.changePassword(payload);
+
+      if (res.status) {
+        // setSuccess(true);
+        AppAlert({ icon: "success", title: "Password changed successfully" });
+        form.resetFields();
+      } else {
+        AppAlert({ icon: "error", title: "Invalid information" });
+      }
+    } catch (error) {
+      if (!error?.response?.status) {
+        AppAlert({ icon: "error", title: "Invalid information" });
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="cp-page">
-      <div className="cp-inner">
-        <div className="cp-hero">
+    <div
+      className="w-full h-full flex items-center justify-center box-border cp-page"
+      style={{ padding: "32px 24px" }}
+    >
+      <div className="w-full max-w-[400px] flex flex-col items-center gap-8 animate-[cp-rise_0.38s_cubic-bezier(0.22,1,0.36,1)_both]">
+        <div className="flex flex-col items-center gap-2.5 text-center">
           <img
             src={bannerImg}
             alt="Đổi mật khẩu"
-            className="cp-hero__img"
+            className="w-20 h-20 object-contain select-none transition-[filter] duration-300 ease-[ease] cp-hero__img"
             draggable={false}
           />
-          <h1 className="cp-hero__title">Đổi mật khẩu</h1>
+          <h1 className="text-[22px] font-bold m-0 tracking-[-0.2px] transition-colors duration-300 ease-[ease] cp-hero__title">
+            Đổi mật khẩu
+          </h1>
           {/* <p className="cp-hero__sub">
             Cập nhật mật khẩu để bảo vệ tài khoản của bạn
           </p> */}
         </div>
 
         {/* ── Success ── */}
-        {success && (
+        {/* {success && (
           <div className="cp-success">
             <CheckCircle2
               size={48}
@@ -57,158 +90,120 @@ export default function ChangePassword() {
               <RotateCcw size={13} /> Đổi lại mật khẩu
             </button>
           </div>
-        )}
+        )} */}
 
         {/* ── Form ── */}
-        {!success && (
-          <Form
-            form={form}
-            onFinish={handleFinish}
-            layout="vertical"
-            requiredMark={false}
-            className="lp-form cp-form"
-            autoComplete="off"
-          >
-            <div className="cp-field-group">
-              <label className="cp-label">Mật khẩu hiện tại</label>
-              <Form.Item
-                name="currentPassword"
-                rules={[{ required: true, message: REQUIRE_MESSAGE }]}
-              >
-                <Input.Password
-                  prefix={
-                    <Icon>
-                      <KeyRound size={15} />
-                    </Icon>
-                  }
-                  placeholder="Nhập mật khẩu hiện tại"
-                  size="large"
-                />
-              </Form.Item>
-            </div>
-
-            <div className="cp-field-group">
-              <label className="cp-label">Mật khẩu mới</label>
-              <Form.Item
-                name="newPassword"
-                rules={[
-                  { required: true, message: REQUIRE_MESSAGE },
-                  { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
-                ]}
-              >
-                <Input.Password
-                  prefix={
-                    <Icon>
-                      <ShieldCheck size={15} />
-                    </Icon>
-                  }
-                  placeholder="Nhập mật khẩu mới"
-                  size="large"
-                />
-              </Form.Item>
-            </div>
-
-            <div className="cp-field-group">
-              <label className="cp-label">Xác nhận mật khẩu mới</label>
-              <Form.Item
-                name="confirmPassword"
-                dependencies={["newPassword"]}
-                rules={[
-                  { required: true, message: REQUIRE_MESSAGE },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue("newPassword") === value)
-                        return Promise.resolve();
-                      return Promise.reject(
-                        new Error("Mật khẩu xác nhận không khớp"),
-                      );
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password
-                  prefix={
-                    <Icon>
-                      <ShieldCheck size={15} />
-                    </Icon>
-                  }
-                  placeholder="Nhập lại mật khẩu mới"
-                  size="large"
-                />
-              </Form.Item>
-            </div>
-
-            <Form.Item style={{ marginBottom: 0 }}>
-              <Button
-                htmlType="submit"
-                loading={loading}
-                block
-                className="lp-submit-btn"
-              >
-                Cập nhật mật khẩu
-              </Button>
+        {/* {!success && ( */}
+        <Form
+          form={form}
+          onFinish={handleFinish}
+          layout="vertical"
+          requiredMark={false}
+          className="lp-form w-full"
+          autoComplete="off"
+        >
+          <div className="flex flex-col mb-1">
+            <label className="text-[13px] font-semibold mb-1.5 transition-colors duration-300 ease-[ease] cp-label">
+              Mật khẩu hiện tại
+            </label>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+            >
+              <Input.Password
+                prefix={
+                  <Icon>
+                    <KeyRound size={15} />
+                  </Icon>
+                }
+                placeholder="Nhập mật khẩu hiện tại"
+                size="large"
+              />
             </Form.Item>
-          </Form>
-        )}
+          </div>
+
+          <div className="flex flex-col mb-1">
+            <label className="text-[13px] font-semibold mb-1.5 transition-colors duration-300 ease-[ease] cp-label">
+              Mật khẩu mới
+            </label>
+            <Form.Item
+              name="newPassword"
+              rules={[
+                { required: true, message: REQUIRE_MESSAGE },
+                { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
+              ]}
+            >
+              <Input.Password
+                prefix={
+                  <Icon>
+                    <ShieldCheck size={15} />
+                  </Icon>
+                }
+                placeholder="Nhập mật khẩu mới"
+                size="large"
+              />
+            </Form.Item>
+          </div>
+
+          <div className="flex flex-col mb-1">
+            <label className="text-[13px] font-semibold mb-1.5 transition-colors duration-300 ease-[ease] cp-label">
+              Xác nhận mật khẩu mới
+            </label>
+            <Form.Item
+              name="confirmPassword"
+              dependencies={["newPassword"]}
+              rules={[
+                { required: true, message: REQUIRE_MESSAGE },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("newPassword") === value)
+                      return Promise.resolve();
+                    return Promise.reject(
+                      new Error("Mật khẩu xác nhận không khớp"),
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Input.Password
+                prefix={
+                  <Icon>
+                    <ShieldCheck size={15} />
+                  </Icon>
+                }
+                placeholder="Nhập lại mật khẩu mới"
+                size="large"
+              />
+            </Form.Item>
+          </div>
+
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Button
+              htmlType="submit"
+              loading={loading}
+              block
+              className="lp-submit-btn"
+            >
+              Cập nhật mật khẩu
+            </Button>
+          </Form.Item>
+        </Form>
+        {/* )} */}
       </div>
 
       <style>{`
-        /* Phủ toàn bộ vùng main, căn giữa */
-        .cp-page {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 32px 24px;
-          box-sizing: border-box;
-        }
-
-        /* Cột nội dung, không có card */
-        .cp-inner {
-          width: 100%;
-          max-width: 400px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 32px;
-          animation: cp-rise 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-
         @keyframes cp-rise {
           from { opacity: 0; transform: translateY(18px); }
           to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Hero */
-        .cp-hero {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 10px;
-          text-align: center;
-        }
-
         .cp-hero__img {
-          width: 80px;
-          height: 80px;
-          object-fit: contain;
-          user-select: none;
           filter: var(--cp-img-filter);
-          transition: filter 0.3s ease;
         }
 
         .dark  { --cp-img-filter: opacity(0.8); }
         .light { --cp-img-filter: opacity(0.85); }
 
-        .cp-hero__title {
-          font-size: 22px;
-          font-weight: 700;
-          font-family: 'DM Sans', sans-serif;
-          margin: 0;
-          letter-spacing: -0.2px;
-          transition: color 0.3s ease;
-        }
         .dark .cp-hero__title  { color: rgba(255,255,255,0.92); }
         .light .cp-hero__title { color: #0f2544; }
 
@@ -220,30 +215,12 @@ export default function ChangePassword() {
         }
         .dark .cp-hero__sub  { color: rgba(255,255,255,0.4); }
         .light .cp-hero__sub { color: #64748b; }
-
-        /* Form full width trong inner */
-        .cp-form {
-          width: 100%;
-        }
-
-        .cp-field-group {
-          display: flex;
-          flex-direction: column;
-          margin-bottom: 4px;
-        }
-
-        .cp-label {
-          font-size: 13px;
-          font-weight: 600;
-          font-family: 'DM Sans', sans-serif;
-          margin-bottom: 6px;
-          transition: color 0.3s ease;
-        }
+        
         .dark .cp-label  { color: rgba(255,255,255,0.55); }
         .light .cp-label { color: #475569; }
 
         /* Light mode form overrides */
-        .light .lp-form .ant-input-affix-wrapper {
+        .light .lp-form .ant-input-affix-wrapper, .light .lp-form .ant-input-suffix {
           background: rgba(255,255,255,0.7) !important;
           border-color: #e2e8f0 !important;
           color: #0f172a !important;

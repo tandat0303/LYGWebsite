@@ -48,7 +48,7 @@ export interface ChangePasswordResponse {
   message: string;
 }
 export interface ChangePasswordValues {
-  currentPassword: string;
+  password: string;
   newPassword: string;
   confirmPassword: string;
 }

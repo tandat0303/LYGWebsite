@@ -32,6 +32,11 @@ export const Sidebar = () => {
 
   const { isOpen, isCollapsed, toggleSidebar, closeSidebar } = useSidebar();
 
+  const handleAccessGetInside = () => {
+    const url = "https://www.lacty.com.vn/vac/";
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   const handleAccessERP = () => {
     const url = "http://weberp.lacty.com.vn/sampleshoe/login.php";
     window.open(url, "_blank", "noopener,noreferrer");
@@ -52,49 +57,67 @@ export const Sidebar = () => {
 
   const activeItem = getActiveLabel();
 
-  const handleItemClick = (label: string, customOnClick?: () => void) => {
+  const handleItemClick = (id: string, customOnClick?: () => void) => {
     if (customOnClick) {
       customOnClick();
       return;
     }
-    const route = ROUTE_MAP[label];
+    const route = ROUTE_MAP[id];
     if (route) {
       navigate(route);
-      closeSidebar(); // đóng sidebar trên mobile sau khi navigate
+      closeSidebar();
     }
   };
 
   const SIDEBAR_SECTIONS: SidebarSection[] = [
-    { title: "Trang chủ", items: [{ label: "Trang chủ", icon: RiHome3Line }] },
+    {
+      title: "Trang chủ",
+      items: [{ id: "home", label: "Trang chủ", icon: RiHome3Line }],
+    },
     {
       title: "Thông tin",
       items: [
-        { label: "Thông tin", icon: TfiInfoAlt },
-        { label: "Lương", icon: PiCreditCard },
-        { label: "Ngày nghỉ", icon: TbBeach },
-        { label: "Tăng ca", icon: BiSolidPieChartAlt },
+        { id: "info", label: "Thông tin", icon: TfiInfoAlt },
+        { id: "salary", label: "Lương", icon: PiCreditCard },
+        { id: "holidays", label: "Ngày nghỉ", icon: TbBeach },
+        { id: "overtime", label: "Tăng ca", icon: BiSolidPieChartAlt },
       ],
     },
     {
       title: "Truy cập nhanh",
       items: [
-        { label: "Khai báo vào công ty", icon: TbSpeakerphone },
-        { label: "ERP Website", icon: GiRunningShoe, onClick: handleAccessERP },
-        { label: "Đăng ký phòng họp", icon: SiGoogleclassroom },
-        { label: "Bản tin", icon: IoNewspaperOutline },
-        { label: "LY ChatBot", icon: RiRobot2Line },
+        {
+          id: "register",
+          label: "Khai báo vào công ty",
+          icon: TbSpeakerphone,
+          onClick: handleAccessGetInside,
+        },
+        {
+          id: "erp",
+          label: "ERP Website",
+          icon: GiRunningShoe,
+          onClick: handleAccessERP,
+        },
+        { id: "meeting", label: "Đăng ký phòng họp", icon: SiGoogleclassroom },
+        { id: "news", label: "Bản tin", icon: IoNewspaperOutline },
+        { id: "chatbot", label: "LY ChatBot", icon: RiRobot2Line },
       ],
     },
     {
       title: "Trợ giúp",
       items: [
-        { label: "Tải LYG APP cho IOS", icon: FaAppStoreIos },
-        { label: "Đổi mật khẩu", icon: GrKey },
-        { label: "Liên hệ", icon: RiContactsBook3Line },
-        { label: "Cài đặt", icon: IoSettingsOutline },
-        { label: "Sổ tay/Quy trình", icon: LuNotebookPen },
-        { label: "Hướng dẫn sử dụng", icon: FaNfcDirectional },
-        { label: "Đăng xuất", icon: AiOutlineLogout, onClick: handleLogout },
+        { id: "download", label: "Tải LYG APP cho IOS", icon: FaAppStoreIos },
+        { id: "change-pass", label: "Đổi mật khẩu", icon: GrKey },
+        { id: "contact", label: "Liên hệ", icon: RiContactsBook3Line },
+        { id: "settings", label: "Cài đặt", icon: IoSettingsOutline },
+        { id: "note", label: "Sổ tay/Quy trình", icon: LuNotebookPen },
+        { id: "guide", label: "Hướng dẫn sử dụng", icon: FaNfcDirectional },
+        {
+          id: "logout",
+          label: "Đăng xuất",
+          icon: AiOutlineLogout,
+          onClick: handleLogout,
+        },
       ],
     },
   ];
@@ -180,10 +203,10 @@ export const Sidebar = () => {
               <h2 className="sidebar-section-title">{section.title}</h2>
               <ul className="sidebar-menu">
                 {section.items.map((item) => (
-                  <li key={item.label}>
+                  <li key={item.id}>
                     <button
-                      className={`sidebar-menu-item ${activeItem === item.label ? "active" : ""}`}
-                      onClick={() => handleItemClick(item.label, item.onClick)}
+                      className={`sidebar-menu-item ${activeItem === item.id ? "active" : ""}`}
+                      onClick={() => handleItemClick(item.id, item.onClick)}
                       title={item.label}
                     >
                       {renderIcon(item.icon)}
