@@ -19,10 +19,14 @@ import { setToken } from "../../features/authSlice";
 import { AppAlert } from "../../components/ui/AppAlert";
 import { getApiErrorMessage } from "../../libs/helper";
 import Loading from "../../components/ui/Loading";
+import { fetchVehicles } from "../../features/transportSlice";
+import { useTranslation } from "../../hooks/useTranslation";
 
 type Mode = "login" | "forgot";
 
 const AuthPage = () => {
+  const { t } = useTranslation();
+
   const [loading, setLoading] = useState(false);
   const [navigating, setNavigating] = useState(false);
   const [mode, setMode] = useState<Mode>("login");
@@ -54,6 +58,7 @@ const AuthPage = () => {
 
       if (data.authenticated) {
         dispatch(setToken({ accessToken, user: user }));
+        dispatch(fetchVehicles(user.factory));
         setNavigating(true);
         setTimeout(() => navigate("/", { replace: true }), 1000);
       } else {
@@ -135,7 +140,7 @@ const AuthPage = () => {
               <img
                 src={Logo}
                 alt="Logo"
-                className="h-[44px] w-auto object-contain"
+                className="h-11 w-auto object-contain"
               />
             </div>
 
@@ -143,15 +148,15 @@ const AuthPage = () => {
               className="text-[22px] font-bold text-white text-center tracking-[-0.3px]"
               style={{ marginBottom: "6px" }}
             >
-              Welcome Back
+              {t("chaoMungQuayTroLai")}
             </h1>
 
-            <p
+            {/* <p
               className="text-[13px] text-white/55 text-center leading-[1.55]"
               style={{ marginBottom: "28px" }}
             >
               Sign in to your account to continue
-            </p>
+            </p> */}
 
             <LoginForm
               key={`mode-${mode}`}
@@ -174,7 +179,7 @@ const AuthPage = () => {
               <img
                 src={Logo}
                 alt="Logo"
-                className="h-[44px] w-auto object-contain"
+                className="h-11 w-auto object-contain"
               />
             </div>
 
@@ -182,15 +187,15 @@ const AuthPage = () => {
               className="text-[22px] font-bold text-white text-center tracking-[-0.3px]"
               style={{ marginBottom: "6px" }}
             >
-              Reset Password
+              {t("doiMatKhau")}
             </h1>
 
-            <p
+            {/* <p
               className="text-[13px] text-white/55 text-center leading-[1.55]"
               style={{ marginBottom: "28px" }}
             >
               Enter your information to reset password
-            </p>
+            </p> */}
 
             <ForgotForm
               key={`mode-${mode}`}
@@ -224,10 +229,8 @@ const AuthPage = () => {
 
           {sliderContent === "login" ? (
             <>
-              <h2 className="relative z-2 text-[clamp(26px,3.5vw,36px)] font-bold italic text-white leading-[1.2] mb-4">
-                Forgot your
-                <br />
-                Password?
+              <h2 className="relative z-2 text-[clamp(26px,3.5vw,36px)] font-bold italic text-white leading-[1.2] mb-10">
+                {t("quenMatKhau")}
               </h2>
 
               {/* lp-slider__btn */}
@@ -242,15 +245,13 @@ const AuthPage = () => {
                 onClick={switchToForgot}
                 disabled={loading}
               >
-                Reset Password <ArrowRightOutlined />
+                {t("doiMatKhau")} <ArrowRightOutlined />
               </button>
             </>
           ) : (
             <>
-              <h2 className="relative z-2 text-[clamp(26px,3.5vw,36px)] font-bold italic text-white leading-[1.2] mb-4">
-                Ready to
-                <br />
-                Access?
+              <h2 className="relative z-2 text-[clamp(26px,3.5vw,36px)] font-bold italic text-white leading-[1.2] mb-6">
+                {t("dangNhap")} ?
               </h2>
 
               <button
@@ -264,7 +265,7 @@ const AuthPage = () => {
                 onClick={switchToLogin}
                 disabled={loading}
               >
-                <ArrowLeftOutlined /> Sign In
+                <ArrowLeftOutlined /> {t("dangNhap")}
               </button>
             </>
           )}

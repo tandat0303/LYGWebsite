@@ -12,6 +12,7 @@ import { Icon } from "../../components/ui/Icon";
 import { CustomSelect } from "../../components/ui/CustomSelect";
 import { FACTORY_OPTIONS, REQUIRE_MESSAGE } from "../../libs/constance";
 import type { ForgotFormValues } from "../../types/auth";
+import { useTranslation } from "../../hooks/useTranslation";
 
 interface ForgotFormProps {
   onFinish: (values: ForgotFormValues) => void;
@@ -19,6 +20,8 @@ interface ForgotFormProps {
 }
 
 export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
+  const { t } = useTranslation();
+
   const [form] = Form.useForm<ForgotFormValues>();
 
   return (
@@ -41,7 +44,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
               <IdCardLanyard size={15} />
             </Icon>
           }
-          placeholder="Account Number"
+          placeholder={t("soThe")}
           size="large"
         />
       </Form.Item>
@@ -56,7 +59,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
               <IdCard size={15} />
             </Icon>
           }
-          placeholder="ID Number"
+          placeholder={t("chungMinhNhanDan")}
           size="large"
         />
       </Form.Item>
@@ -67,7 +70,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
       >
         <DatePicker
           format="DD/MM/YYYY"
-          placeholder="ID Card Received Day"
+          placeholder={t("ngayCap")}
           size="large"
           style={{ width: "100%" }}
           suffixIcon={
@@ -86,7 +89,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
       >
         <DatePicker
           format="DD/MM/YYYY"
-          placeholder="Birthday"
+          placeholder={t("ngaySinh")}
           size="large"
           style={{ width: "100%" }}
           suffixIcon={
@@ -104,7 +107,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
         rules={[{ required: true, message: REQUIRE_MESSAGE }]}
       >
         <CustomSelect
-          placeholder="Factory"
+          placeholder={t("ngaySinh")}
           options={FACTORY_OPTIONS}
           icon={<Building2 size={15} />}
         />
@@ -120,7 +123,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
               <KeyRound size={15} />
             </Icon>
           }
-          placeholder="New Password"
+          placeholder={t("matKhauMoi")}
           size="large"
         />
       </Form.Item>
@@ -132,7 +135,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
           block
           className="lp-submit-btn"
         >
-          Change Password
+          {t("doiMatKhau")}
         </Button>
       </Form.Item>
     </Form>

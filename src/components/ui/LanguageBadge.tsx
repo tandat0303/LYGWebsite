@@ -1,13 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import type { Lang } from "../../types/storage";
 import { LANGS } from "../../libs/constance";
+import { useAppDispatch, useAppSelector } from "../../hooks/auth";
+import { changeLanguage } from "../../features/languageSlice";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export const LanguageBadge = () => {
+  const { t } = useTranslation();
+
+  const dispatch = useAppDispatch();
+  const lang = useAppSelector((s) => s.language.current);
+
   const [open, setOpen] = useState(false);
-  const [lang, setLang] = useState<Lang>(() => {
-    const savedCode = localStorage.getItem("language");
-    return LANGS.find((lang) => lang.code === savedCode) || LANGS[0];
-  });
+
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,8 +24,7 @@ export const LanguageBadge = () => {
   }, []);
 
   const handleSelectLang = (lang: Lang) => {
-    setLang(lang);
-    localStorage.setItem("language", lang.code);
+    dispatch(changeLanguage(lang));
     setOpen(false);
   };
 
@@ -48,7 +52,7 @@ export const LanguageBadge = () => {
         </span>
 
         <span className="text-[13px] font-medium text-white/[0.92] whitespace-nowrap">
-          {lang.label}
+          {t(lang.label)}
         </span>
 
         <span
@@ -85,7 +89,7 @@ export const LanguageBadge = () => {
             className="text-[10px] font-semibold tracking-[1.8px] uppercase text-[rgba(147,197,253,0.45)]"
             style={{ padding: "6px 10px 4px" }}
           >
-            Language
+            {t("ngonNgu")}
           </div>
 
           {LANGS.map((l) => {
@@ -113,11 +117,11 @@ export const LanguageBadge = () => {
                   <span
                     className={`text-[13px] font-medium leading-none ${active ? "text-[#93c5fd]" : "text-white/[0.88]"}`}
                   >
-                    {l.label}
+                    {t(l.label)}
                   </span>
-                  <span className="text-[11px] text-white/35 leading-none whitespace-nowrap overflow-hidden text-ellipsis">
+                  {/* <span className="text-[11px] text-white/35 leading-none whitespace-nowrap overflow-hidden text-ellipsis">
                     {l.native}
-                  </span>
+                  </span> */}
                 </span>
 
                 {active && (

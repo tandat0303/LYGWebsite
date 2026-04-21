@@ -1,7 +1,7 @@
-import { useSidebar } from "../contexts/SidebarContext";
+import { useSidebar } from "../../contexts/SidebarContext";
 import { Eye, QrCode, Menu } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "../hooks/auth";
-import type { SidebarIcon, SidebarSection } from "../types/sidebar";
+import { useAppDispatch, useAppSelector } from "../../hooks/auth";
+import type { SidebarIcon, SidebarSection } from "../../types/sidebar";
 import { TfiInfoAlt } from "react-icons/tfi";
 import { TbBeach } from "react-icons/tb";
 import { BiSolidPieChartAlt } from "react-icons/bi";
@@ -12,19 +12,22 @@ import { IoNewspaperOutline } from "react-icons/io5";
 import { RiRobot2Line } from "react-icons/ri";
 import { FaAppStoreIos } from "react-icons/fa";
 import { GrKey } from "react-icons/gr";
+import { GoBook } from "react-icons/go";
 import { LuNotebookPen } from "react-icons/lu";
-import { FaNfcDirectional } from "react-icons/fa6";
 import { AiOutlineLogout } from "react-icons/ai";
 import { PiCreditCard } from "react-icons/pi";
 import { RiContactsBook3Line } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { RiHome3Line } from "react-icons/ri";
-import storage from "../libs/storage";
-import { logout } from "../features/authSlice";
+import storage from "../../libs/storage";
+import { logout } from "../../features/authSlice";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ROUTE_MAP } from "../libs/constance";
+import { ROUTE_MAP } from "../../libs/constance";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export const Sidebar = () => {
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
   const user = useAppSelector((s) => s.auth.user);
   const navigate = useNavigate();
@@ -71,50 +74,50 @@ export const Sidebar = () => {
 
   const SIDEBAR_SECTIONS: SidebarSection[] = [
     {
-      title: "Trang chủ",
-      items: [{ id: "home", label: "Trang chủ", icon: RiHome3Line }],
+      title: "trangChu",
+      items: [{ id: "home", label: "trangChu", icon: RiHome3Line }],
     },
     {
-      title: "Thông tin",
+      title: "thongTin",
       items: [
-        { id: "info", label: "Thông tin", icon: TfiInfoAlt },
-        { id: "salary", label: "Lương", icon: PiCreditCard },
-        { id: "holidays", label: "Ngày nghỉ", icon: TbBeach },
-        { id: "overtime", label: "Tăng ca", icon: BiSolidPieChartAlt },
+        { id: "info", label: "thongTin", icon: TfiInfoAlt },
+        { id: "salary", label: "luong", icon: PiCreditCard },
+        { id: "holidays", label: "ngayNghi", icon: TbBeach },
+        { id: "overtime", label: "tangCa", icon: BiSolidPieChartAlt },
       ],
     },
     {
-      title: "Truy cập nhanh",
+      title: "truyCapNhanh",
       items: [
         {
           id: "register",
-          label: "Khai báo vào công ty",
+          label: "khaiBao",
           icon: TbSpeakerphone,
           onClick: handleAccessGetInside,
         },
         {
           id: "erp",
-          label: "ERP Website",
+          label: "erpWebsite",
           icon: GiRunningShoe,
           onClick: handleAccessERP,
         },
-        { id: "meeting", label: "Đăng ký phòng họp", icon: SiGoogleclassroom },
-        { id: "news", label: "Bản tin", icon: IoNewspaperOutline },
+        { id: "meeting", label: "dangKyPhongHop", icon: SiGoogleclassroom },
+        { id: "news", label: "banTin", icon: IoNewspaperOutline },
         { id: "chatbot", label: "LY ChatBot", icon: RiRobot2Line },
       ],
     },
     {
       title: "Trợ giúp",
       items: [
-        { id: "download", label: "Tải LYG APP cho IOS", icon: FaAppStoreIos },
-        { id: "change-pass", label: "Đổi mật khẩu", icon: GrKey },
-        { id: "contact", label: "Liên hệ", icon: RiContactsBook3Line },
-        { id: "settings", label: "Cài đặt", icon: IoSettingsOutline },
-        { id: "note", label: "Sổ tay/Quy trình", icon: LuNotebookPen },
-        { id: "guide", label: "Hướng dẫn sử dụng", icon: FaNfcDirectional },
+        { id: "download", label: "taiLygChoIos", icon: FaAppStoreIos },
+        { id: "change-pass", label: "doiMatKhau", icon: GrKey },
+        { id: "contact", label: "lienHe", icon: RiContactsBook3Line },
+        { id: "settings", label: "caiDat", icon: IoSettingsOutline },
+        { id: "note", label: "soTay", icon: LuNotebookPen },
+        { id: "guide", label: "huongDanSuDung", icon: GoBook },
         {
           id: "logout",
-          label: "Đăng xuất",
+          label: "dangXuat",
           icon: AiOutlineLogout,
           onClick: handleLogout,
         },
@@ -200,7 +203,7 @@ export const Sidebar = () => {
         >
           {SIDEBAR_SECTIONS.map((section) => (
             <div key={section.title} className="sidebar-section">
-              <h2 className="sidebar-section-title">{section.title}</h2>
+              <h2 className="sidebar-section-title">{t(section.title)}</h2>
               <ul className="sidebar-menu">
                 {section.items.map((item) => (
                   <li key={item.id}>
@@ -210,7 +213,9 @@ export const Sidebar = () => {
                       title={item.label}
                     >
                       {renderIcon(item.icon)}
-                      <span className="sidebar-menu-label">{item.label}</span>
+                      <span className="sidebar-menu-label">
+                        {t(item.label)}
+                      </span>
                       <svg
                         className="sidebar-menu-arrow"
                         viewBox="0 0 24 24"

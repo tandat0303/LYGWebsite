@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { useTheme } from "../contexts/ThemeContext";
-import { useSidebar } from "../contexts/SidebarContext";
-import { useAppDispatch, useAppSelector } from "../hooks/auth";
-import storage from "../libs/storage";
-import { logout } from "../features/authSlice";
+import { useTheme } from "../../contexts/ThemeContext";
+import { useSidebar } from "../../contexts/SidebarContext";
+import { useAppDispatch, useAppSelector } from "../../hooks/auth";
+import storage from "../../libs/storage";
+import { logout } from "../../features/authSlice";
 import {
   Bell,
   Menu,
@@ -15,22 +15,24 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import { LANGS } from "../libs/constance";
-import type { Lang } from "../types/storage";
+import { LANGS } from "../../libs/constance";
+import type { Lang } from "../../types/storage";
+import { useNavigate } from "react-router-dom";
+import { changeLanguage } from "../../features/languageSlice";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export const Header = () => {
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const user = useAppSelector((s) => s.auth.user);
+  const selectedLang = useAppSelector((s) => s.language.current);
   const { theme, toggleTheme } = useTheme();
   const { toggleSidebar } = useSidebar();
 
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState<Lang>(() => {
-    const savedCode = localStorage.getItem("language");
-
-    return LANGS.find((lang) => lang.code === savedCode) || LANGS[0];
-  });
 
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const languageDropdownRef = useRef<HTMLDivElement>(null);
@@ -53,15 +55,25 @@ export const Header = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  const closeAllDropdown = () => {
+    setUserDropdownOpen(false);
+    setLanguageDropdownOpen(false);
+  };
+
+  const handleAccessInfo = () => {
+    closeAllDropdown();
+    navigate("/user-info", { replace: true });
+  };
+
   const handleLogout = () => {
+    closeAllDropdown();
     storage.remove("auth");
     dispatch(logout());
-    window.location.href = "/login";
+    navigate("/login", { replace: true });
   };
 
   const handleSelectLang = (lang: Lang) => {
-    setSelectedLang(lang);
-    localStorage.setItem("language", lang.code);
+    dispatch(changeLanguage(lang));
     setLanguageDropdownOpen(false);
   };
 
@@ -164,7 +176,7 @@ export const Header = () => {
               />
 
               <span className="overflow-hidden text-ellipsis hidden md:block">
-                {selectedLang.native}
+                {t(selectedLang.label)}
               </span>
 
               <ChevronDown
@@ -200,7 +212,7 @@ export const Header = () => {
                     />
 
                     <span className="whitespace-nowrap hidden md:block">
-                      {lang.native}
+                      {t(lang.label)}
                     </span>
 
                     {selectedLang.code === lang.code && (
@@ -281,9 +293,10 @@ export const Header = () => {
                                 duration-130 ease-[ease] dropdown-item"
                   role="menuitem"
                   style={{ padding: "9px 13px" }}
+                  onClick={handleAccessInfo}
                 >
                   <User size={14} />
-                  Thông tin cá nhân
+                  {t("thongTinCaNhan")}
                 </div>
                 <div
                   className="flex items-center gap-2.5 cursor-pointer
@@ -293,7 +306,7 @@ export const Header = () => {
                   style={{ padding: "9px 13px" }}
                 >
                   <Settings size={14} />
-                  Cài đặt
+                  {t("caiDat")}
                 </div>
                 <div className="dropdown-divider" />
                 <div
@@ -306,7 +319,7 @@ export const Header = () => {
                   onClick={handleLogout}
                 >
                   <LogOut size={14} />
-                  Đăng xuất
+                  {t("dangXuat")}
                 </div>
               </div>
             )}

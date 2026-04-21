@@ -1,11 +1,14 @@
-import { useTheme } from "../contexts/ThemeContext";
-import HeroImgDay from "../assets/images/hero_banner_day.jpg";
-import HeroImgAfternoon from "../assets/images/hero_banner_afternoon.jpg";
-import HeroImgNight from "../assets/images/hero_banner_night.jpg";
-import { useAppSelector } from "../hooks/auth";
+import { useTheme } from "../../contexts/ThemeContext";
+import HeroImgDay from "../../assets/images/hero_banner_day.jpg";
+import HeroImgAfternoon from "../../assets/images/hero_banner_afternoon.jpg";
+import HeroImgNight from "../../assets/images/hero_banner_night.jpg";
+import { useAppSelector } from "../../hooks/auth";
 import { useEffect, useState } from "react";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export const HeroSection = () => {
+  const { t } = useTranslation();
+
   const { theme } = useTheme();
   const { user } = useAppSelector((s) => s.auth);
 
@@ -17,9 +20,9 @@ export const HeroSection = () => {
   const isAfternoon = hour < 18;
 
   const getGreeting = () => {
-    if (isMorning) return "Chào buổi sáng";
-    if (isAfternoon) return "Chào buổi chiều";
-    return "Chào buổi tối";
+    if (isMorning) return t("chaoBuoiSang");
+    if (isAfternoon) return t("chaoBuoiChieu");
+    return t("chaoBuoiToi");
   };
 
   useEffect(() => {
@@ -74,13 +77,13 @@ export const HeroSection = () => {
             className="text-[32px] font-bold leading-[1.2] mb-2 tracking-[-0.5px]
                           [text-shadow:0_2px_12px_rgba(0,0,0,0.4)] hero-greeting"
           >
-            {getGreeting()} !
+            {getGreeting()}
           </h1>
           <p className="text-[18px] text-white/95 mb-1.5 font-medium [text-shadow:0_1px_6px_rgba(0,0,0,0.3)] hero-name">
             {user.fullName}
           </p>
           <p className="text-[14px] text-white/85 flex items-center gap-1.5 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)] hero-location">
-            {city} - {user.factory}
+            {user.userId} - {user.factory} {city}
           </p>
         </div>
       </div>

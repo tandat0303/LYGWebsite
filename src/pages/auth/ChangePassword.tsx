@@ -15,8 +15,11 @@ import type {
 import { useAppSelector } from "../../hooks/auth";
 import authApi from "../../api/auth";
 import { AppAlert } from "../../components/ui/AppAlert";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export default function ChangePassword() {
+  const { t } = useTranslation();
+
   const user = useAppSelector((s) => s.auth.user);
 
   const [form] = Form.useForm<ChangePasswordValues>();
@@ -39,14 +42,14 @@ export default function ChangePassword() {
 
       if (res.status) {
         // setSuccess(true);
-        AppAlert({ icon: "success", title: "Password changed successfully" });
+        AppAlert({ icon: "success", title: t(res.message) });
         form.resetFields();
       } else {
-        AppAlert({ icon: "error", title: "Invalid information" });
+        AppAlert({ icon: "error", title: t(res.message) });
       }
     } catch (error) {
       if (!error?.response?.status) {
-        AppAlert({ icon: "error", title: "Invalid information" });
+        AppAlert({ icon: "error", title: t(error?.response?.message) });
       }
     } finally {
       setLoading(false);
@@ -54,28 +57,39 @@ export default function ChangePassword() {
   };
 
   return (
-    <div
-      className="w-full h-full flex items-center justify-center box-border cp-page"
-      style={{ padding: "32px 24px" }}
-    >
-      <div className="w-full max-w-[400px] flex flex-col items-center gap-8 animate-[cp-rise_0.38s_cubic-bezier(0.22,1,0.36,1)_both]">
-        <div className="flex flex-col items-center gap-2.5 text-center">
-          <img
-            src={bannerImg}
-            alt="Đổi mật khẩu"
-            className="w-20 h-20 object-contain select-none transition-[filter] duration-300 ease-[ease] cp-hero__img"
-            draggable={false}
-          />
-          <h1 className="text-[22px] font-bold m-0 tracking-[-0.2px] transition-colors duration-300 ease-[ease] cp-hero__title">
-            Đổi mật khẩu
-          </h1>
-          {/* <p className="cp-hero__sub">
-            Cập nhật mật khẩu để bảo vệ tài khoản của bạn
-          </p> */}
+    <div className="cp-page">
+      <div className="cp-layout">
+        {/* ── LEFT decorative panel ── */}
+        <div className="cp-left">
+          <div className="cp-left__deco1" aria-hidden="true" />
+          <div className="cp-left__deco2" aria-hidden="true" />
+          <div className="cp-left__content">
+            <img
+              src={bannerImg}
+              alt="Đổi mật khẩu"
+              className="cp-left__img"
+              draggable={false}
+            />
+            <h2 className="cp-left__title">{t("doiMatKhau")}</h2>
+            {/* <p className="cp-left__desc">
+              Bảo vệ tài khoản của bạn bằng cách cập nhật mật khẩu thường xuyên
+            </p>
+            <ul className="cp-left__tips">
+              <li>Ít nhất 8 ký tự</li>
+              <li>Kết hợp chữ hoa, chữ thường và số</li>
+              <li>Không dùng thông tin cá nhân</li>
+            </ul> */}
+          </div>
         </div>
 
-        {/* ── Success ── */}
-        {/* {success && (
+        {/* ── RIGHT form panel ── */}
+        <div className="cp-right">
+          <div className="cp-form-header">
+            <h1 className="cp-form-header__title">{t("doiMatKhau")} !</h1>
+          </div>
+
+          {/* ── Success ── */}
+          {/* {success && (
           <div className="cp-success">
             <CheckCircle2
               size={48}
@@ -92,136 +106,266 @@ export default function ChangePassword() {
           </div>
         )} */}
 
-        {/* ── Form ── */}
-        {/* {!success && ( */}
-        <Form
-          form={form}
-          onFinish={handleFinish}
-          layout="vertical"
-          requiredMark={false}
-          className="lp-form w-full"
-          autoComplete="off"
-        >
-          <div className="flex flex-col mb-1">
-            <label className="text-[13px] font-semibold mb-1.5 transition-colors duration-300 ease-[ease] cp-label">
-              Mật khẩu hiện tại
-            </label>
-            <Form.Item
-              name="password"
-              rules={[{ required: true, message: REQUIRE_MESSAGE }]}
-            >
-              <Input.Password
-                prefix={
-                  <Icon>
-                    <KeyRound size={15} />
-                  </Icon>
-                }
-                placeholder="Nhập mật khẩu hiện tại"
-                size="large"
-              />
-            </Form.Item>
-          </div>
+          {/* ── Form ── */}
+          {/* {!success && ( */}
+          <Form
+            form={form}
+            onFinish={handleFinish}
+            layout="vertical"
+            requiredMark={false}
+            className="lp-form w-full"
+            autoComplete="off"
+          >
+            <div className="flex flex-col mb-1">
+              <label className="text-[13px] font-semibold mb-1.5 transition-colors duration-300 ease-[ease] cp-label">
+                {t("matKhauCu")}
+              </label>
+              <Form.Item
+                name="password"
+                rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+              >
+                <Input.Password
+                  prefix={
+                    <Icon>
+                      <KeyRound size={15} />
+                    </Icon>
+                  }
+                  placeholder={t("matKhauCu")}
+                  size="large"
+                />
+              </Form.Item>
+            </div>
 
-          <div className="flex flex-col mb-1">
-            <label className="text-[13px] font-semibold mb-1.5 transition-colors duration-300 ease-[ease] cp-label">
-              Mật khẩu mới
-            </label>
-            <Form.Item
-              name="newPassword"
-              rules={[
-                { required: true, message: REQUIRE_MESSAGE },
-                { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
-              ]}
-            >
-              <Input.Password
-                prefix={
-                  <Icon>
-                    <ShieldCheck size={15} />
-                  </Icon>
-                }
-                placeholder="Nhập mật khẩu mới"
-                size="large"
-              />
-            </Form.Item>
-          </div>
+            <div className="flex flex-col mb-1">
+              <label className="text-[13px] font-semibold mb-1.5 transition-colors duration-300 ease-[ease] cp-label">
+                {t("matKhauMoi")}
+              </label>
+              <Form.Item
+                name="newPassword"
+                rules={[
+                  { required: true, message: REQUIRE_MESSAGE },
+                  // { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
+                ]}
+              >
+                <Input.Password
+                  prefix={
+                    <Icon>
+                      <ShieldCheck size={15} />
+                    </Icon>
+                  }
+                  placeholder={t("matKhauMoi")}
+                  size="large"
+                />
+              </Form.Item>
+            </div>
 
-          <div className="flex flex-col mb-1">
-            <label className="text-[13px] font-semibold mb-1.5 transition-colors duration-300 ease-[ease] cp-label">
-              Xác nhận mật khẩu mới
-            </label>
-            <Form.Item
-              name="confirmPassword"
-              dependencies={["newPassword"]}
-              rules={[
-                { required: true, message: REQUIRE_MESSAGE },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("newPassword") === value)
-                      return Promise.resolve();
-                    return Promise.reject(
-                      new Error("Mật khẩu xác nhận không khớp"),
-                    );
-                  },
-                }),
-              ]}
-            >
-              <Input.Password
-                prefix={
-                  <Icon>
-                    <ShieldCheck size={15} />
-                  </Icon>
-                }
-                placeholder="Nhập lại mật khẩu mới"
-                size="large"
-              />
-            </Form.Item>
-          </div>
+            <div className="flex flex-col mb-1">
+              <label className="text-[13px] font-semibold mb-1.5 transition-colors duration-300 ease-[ease] cp-label">
+                {t("xacNhanMatKhau")}
+              </label>
+              <Form.Item
+                name="confirmPassword"
+                dependencies={["newPassword"]}
+                rules={[
+                  { required: true, message: REQUIRE_MESSAGE },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("newPassword") === value)
+                        return Promise.resolve();
+                      return Promise.reject(
+                        new Error(t("matKhauXacNhanKhongKhop")),
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password
+                  prefix={
+                    <Icon>
+                      <ShieldCheck size={15} />
+                    </Icon>
+                  }
+                  placeholder={t("nhapLaiMatKhauMoi")}
+                  size="large"
+                />
+              </Form.Item>
+            </div>
 
-          <Form.Item style={{ marginBottom: 0 }}>
-            <Button
-              htmlType="submit"
-              loading={loading}
-              block
-              className="lp-submit-btn"
-            >
-              Cập nhật mật khẩu
-            </Button>
-          </Form.Item>
-        </Form>
-        {/* )} */}
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button
+                htmlType="submit"
+                loading={loading}
+                block
+                className="lp-submit-btn"
+              >
+                {t("doiMatKhau")}
+              </Button>
+            </Form.Item>
+          </Form>
+          {/* )} */}
+        </div>
+        {/* /cp-right */}
       </div>
+      {/* /cp-layout */}
 
       <style>{`
         @keyframes cp-rise {
-          from { opacity: 0; transform: translateY(18px); }
+          from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
 
-        .cp-hero__img {
-          filter: var(--cp-img-filter);
+        /* ── Page ── */
+        .cp-page {
+          width: 100%;
+          height: 100%;
+          min-height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          box-sizing: border-box;
         }
 
-        .dark  { --cp-img-filter: opacity(0.8); }
-        .light { --cp-img-filter: opacity(0.85); }
+        /* ── Two-column layout ── */
+        .cp-layout {
+          width: 100%;
+          max-width: 900px;
+          min-height: 520px;
+          display: flex;
+          flex-direction: row;
+          border-radius: 24px;
+          overflow: hidden;
+          animation: cp-rise 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+          transition: box-shadow 0.3s;
+        }
+        .dark .cp-layout  { box-shadow: 0 24px 64px rgba(0,0,0,0.4); }
+        .light .cp-layout { box-shadow: 0 8px 40px rgba(15,37,68,0.12); }
 
-        .dark .cp-hero__title  { color: rgba(255,255,255,0.92); }
-        .light .cp-hero__title { color: #0f2544; }
+        /* ── Left decorative panel (1/2) ── */
+        .cp-left {
+          flex: 0 0 42%;
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 40px 36px;
+        }
+        .dark .cp-left  { background: linear-gradient(145deg, #0f2544 0%, #1a3a6e 60%, #1e429f 100%); }
+        .light .cp-left { background: linear-gradient(145deg, #1a3a6e 0%, #2563eb 60%, #3b82f6 100%); }
 
-        .cp-hero__sub {
-          font-size: 13px;
+        /* Blurry circle accents */
+        .cp-left__deco1 {
+          position: absolute;
+          top: -60px; right: -60px;
+          width: 220px; height: 220px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.08);
+          pointer-events: none;
+        }
+        .cp-left__deco2 {
+          position: absolute;
+          bottom: -80px; left: -40px;
+          width: 260px; height: 260px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.05);
+          pointer-events: none;
+        }
+
+        .cp-left__content {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .cp-left__img {
+          width: 100px; height: 100px;
+          object-fit: contain;
+          user-select: none;
+        }
+
+        .cp-left__title {
+          font-size: 24px;
+          font-weight: 700;
+          font-family: 'DM Sans', sans-serif;
+          color: #fff;
+          margin: 0;
+          letter-spacing: -0.3px;
+          line-height: 1.2;
+        }
+
+        .cp-left__desc {
+          font-size: 13.5px;
+          font-family: 'DM Sans', sans-serif;
+          color: rgba(255,255,255,0.65);
+          margin: 0;
+          line-height: 1.65;
+        }
+
+        .cp-left__tips {
+          list-style: none;
+          padding: 0; margin: 4px 0 0;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .cp-left__tips li {
+          font-size: 12.5px;
+          font-family: 'DM Sans', sans-serif;
+          color: rgba(255,255,255,0.55);
+          padding-left: 16px;
+          position: relative;
+        }
+        .cp-left__tips li::before {
+          content: '✓';
+          position: absolute;
+          left: 0;
+          color: rgba(147,197,253,0.8);
+          font-size: 11px;
+          top: 1px;
+        }
+
+        /* ── Right form panel (1/2) ── */
+        .cp-right {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 40px;
+          transition: background 0.3s;
+        }
+        .cp-right > * {
+          width: 100%;
+          max-width: 360px;
+        }
+        .dark .cp-right  { background: rgba(15,27,48,0.85); }
+        .light .cp-right { background: #fff; }
+
+        .cp-form-header {
+          margin-bottom: 28px;
+        }
+        .cp-form-header__title {
+          font-size: 20px;
+          font-weight: 700;
           font-family: 'DM Sans', sans-serif;
           margin: 0;
-          transition: color 0.3s ease;
+          text-align: center;
+          transition: color 0.3s;
         }
-        .dark .cp-hero__sub  { color: rgba(255,255,255,0.4); }
-        .light .cp-hero__sub { color: #64748b; }
-        
+        .dark .cp-form-header__title  { color: rgba(255,255,255,0.92); }
+        .light .cp-form-header__title { color: #0f2544; }
+
         .dark .cp-label  { color: rgba(255,255,255,0.55); }
         .light .cp-label { color: #475569; }
 
         /* Light mode form overrides */
-        .light .lp-form .ant-input-affix-wrapper, .light .lp-form .ant-input-suffix {
-          background: rgba(255,255,255,0.7) !important;
+        .light .lp-form .ant-input-affix-wrapper,
+        .light .lp-form .ant-input-suffix {
+          background: #f8fafc !important;
           border-color: #e2e8f0 !important;
           color: #0f172a !important;
         }
@@ -239,64 +383,23 @@ export default function ChangePassword() {
           background: linear-gradient(135deg, #2563eb 0%, #1a3a6e 100%) !important;
         }
 
-        /* Success */
-        .cp-success {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          text-align: center;
-          animation: cp-rise 0.35s ease;
-          width: 100%;
-        }
-        .cp-success__icon { transition: color 0.3s; margin-bottom: 4px; }
-        .dark .cp-success__icon  { color: #93c5fd; }
-        .light .cp-success__icon { color: #2563eb; }
-
-        .cp-success__title {
-          font-size: 17px;
-          font-weight: 700;
-          font-family: 'DM Sans', sans-serif;
-          margin: 0;
-          transition: color 0.3s;
-        }
-        .dark .cp-success__title  { color: rgba(255,255,255,0.9); }
-        .light .cp-success__title { color: #0f2544; }
-
-        .cp-success__sub {
-          font-size: 13px;
-          font-family: 'DM Sans', sans-serif;
-          margin: 0 0 8px;
-          transition: color 0.3s;
-        }
-        .dark .cp-success__sub  { color: rgba(255,255,255,0.45); }
-        .light .cp-success__sub { color: #64748b; }
-
-        .cp-retry-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          background: none;
-          border: none;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 13px;
-          font-weight: 600;
-          cursor: pointer;
-          text-decoration: underline;
-          text-underline-offset: 3px;
-          transition: color 0.15s;
-        }
-        .dark .cp-retry-btn  { color: #93c5fd; }
-        .light .cp-retry-btn { color: #2563eb; }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-          .cp-page { padding: 24px 20px; }
-          .cp-hero__img { width: 64px; height: 64px; }
-          .cp-hero__title { font-size: 19px; }
-        }
+        /* ── Responsive ── */
+        /* Tablet: stack vertically */
         @media (max-width: 768px) {
-          .cp-page { padding-bottom: 96px; }
+          .cp-page { padding: 16px 16px 96px; align-items: center; }
+          .cp-layout { flex-direction: column; min-height: unset; border-radius: 20px; }
+          .cp-left { flex: none; padding: 24px; flex-direction: row; align-items: center; }
+          .cp-left__content { flex-direction: row; flex-wrap: wrap; gap: 12px; align-items: center; }
+          .cp-left__img { width: 48px; height: 48px; }
+          .cp-left__title { font-size: 17px; flex: 1; }
+          .cp-left__desc, .cp-left__tips { display: none; }
+          .cp-right { padding: 28px 24px; }
+        }
+
+        @media (max-width: 480px) {
+          .cp-page { padding: 12px 12px 96px; }
+          .cp-right { padding: 20px 16px; }
+          .cp-left { padding: 16px 20px; }
         }
       `}</style>
     </div>

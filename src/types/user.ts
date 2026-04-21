@@ -38,6 +38,7 @@ export type FieldKey =
   | "fullName"
   | "cardNumber"
   | "department"
+  | "email"
   | "taxCode"
   | "joinDate"
   | "birthday"

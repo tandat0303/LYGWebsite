@@ -1,5 +1,5 @@
-import { HeroSection } from "../components/HeroSection";
-import { FeatureCards } from "../components/FeatureCards";
+import { HeroSection } from "../components/layout/HeroSection";
+import { FeatureCards } from "../components/layout/FeatureCards";
 
 export default function Home() {
   return (

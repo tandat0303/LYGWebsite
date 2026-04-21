@@ -1,9 +1,12 @@
-import type { SidebarIcon } from "../types/sidebar";
-import { NAV_ITEMS, ROUTE_MAP } from "../libs/constance";
+import type { SidebarIcon } from "../../types/sidebar";
+import { NAV_ITEMS, ROUTE_MAP } from "../../libs/constance";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "../../hooks/useTranslation";
 // import { useTheme } from '../contexts/ThemeContext';
 
 export const BottomNavigation = () => {
+  const { t } = useTranslation();
+
   // const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,7 +78,7 @@ export const BottomNavigation = () => {
         >
           {renderIcon(item.icon)}
           <span className="text-[11px] font-medium text-center transition-colors duration-200 ease-[ease] max-w-[60px] leading-[1.2]">
-            {item.label}
+            {t(item.label)}
           </span>
           {/* {activeItem === item.id && (
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-[3px] rounded-[2px_2px_0_0] bg-[#2563eb]" />

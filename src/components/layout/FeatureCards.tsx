@@ -1,8 +1,20 @@
 // import { useTheme } from '../contexts/ThemeContext';
-import { LARGE_FEATURES, SMALL_FEATURES } from "../libs/constance";
-import type { FeatureCardProps } from "../types/features";
+import { useTranslation } from "../../hooks/useTranslation";
+import Clock from "../../assets/icons/clock.png";
+import Vacation from "../../assets/icons/vacations.png";
+import Overtime from "../../assets/icons/overtime.png";
+import Salary from "../../assets/icons/salary.png";
+import Reward from "../../assets/icons/reward.png";
+import FireSalary from "../../assets/icons/fire-salary.png";
+import Notebook from "../../assets/icons/notebook.png";
+import UserInfo from "../../assets/icons/user-info.png";
+import Contact from "../../assets/icons/contact.png";
+import News from "../../assets/icons/news.png";
+import type { Feature, FeatureCardProps } from "../../types/features";
+import { useNavigate } from "react-router-dom";
 
 const FeatureCard = ({ feature }: FeatureCardProps) => {
+  const { t } = useTranslation();
   // const { theme } = useTheme();
   const isLarge = feature.size === "large";
 
@@ -21,14 +33,17 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
   };
 
   return (
-    <button className={`feature-card ${isLarge ? "large" : "small"}`}>
+    <button
+      className={`feature-card ${isLarge ? "large" : "small"}`}
+      onClick={feature.onclick}
+    >
       {renderIcon()}
 
-      <span className="feature-label">{feature.label}</span>
+      <span className="feature-label">{t(feature.label)}</span>
 
-      {feature.description && (
+      {/* {feature.description && (
         <span className="feature-description">{feature.description}</span>
-      )}
+      )} */}
 
       <style>{`
         .feature-card {
@@ -204,6 +219,81 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
 };
 
 export const FeatureCards = () => {
+  const navigate = useNavigate();
+
+  const LARGE_FEATURES: Feature[] = [
+    {
+      id: "swipe-card",
+      label: "chamCong",
+      icon: Clock,
+      description: "Quản lý giờ làm việc",
+      size: "large",
+      highlight: true,
+    },
+    {
+      id: "holidays",
+      label: "ngayNghi",
+      icon: Vacation,
+      description: "Xem lịch nghỉ",
+      size: "large",
+      highlight: true,
+    },
+    {
+      id: "overtime",
+      label: "tangCa",
+      icon: Overtime,
+      description: "Yêu cầu tăng ca",
+      size: "large",
+      highlight: true,
+    },
+  ];
+
+  const SMALL_FEATURES: Feature[] = [
+    {
+      id: "salary",
+      label: "luong",
+      icon: Salary,
+      size: "small",
+    },
+    {
+      id: "reward",
+      label: "luongThuong",
+      icon: Reward,
+      size: "small",
+    },
+    {
+      id: "fire-salary",
+      label: "luongThoiViec",
+      icon: FireSalary,
+      size: "small",
+    },
+    {
+      id: "note",
+      label: "soTay",
+      icon: Notebook,
+      size: "small",
+    },
+    {
+      id: "info",
+      label: "thongTinCaNhan",
+      icon: UserInfo,
+      onclick: () => navigate("/user-info", { replace: true }),
+      size: "small",
+    },
+    {
+      id: "contact",
+      label: "lienHe",
+      icon: Contact,
+      size: "small",
+    },
+    {
+      id: "news",
+      label: "banTin",
+      icon: News,
+      size: "small",
+    },
+  ];
+
   return (
     <div className="features-container">
       {/* Large Featured Cards */}
@@ -215,7 +305,7 @@ export const FeatureCards = () => {
 
       {/* Small Feature Cards */}
       <div className="features-section">
-        <h2 className="features-title">Tính năng</h2>
+        {/* <h2 className="features-title">Tính năng</h2> */}
         <div className="features-grid">
           {SMALL_FEATURES.map((feature) => (
             <FeatureCard key={feature.id} feature={feature} />

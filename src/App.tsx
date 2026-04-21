@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import MainLayout from "./layout/MainLayout";
 import ChangePassword from "./pages/auth/ChangePassword";
 import UserInfo from "./pages/UserInfo";
+import Guide from "./pages/Guide";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
 
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/user-info" element={<UserInfo />} />
+            <Route path="/guide" element={<Guide />} />
           </Route>
         </Route>
       </Route>

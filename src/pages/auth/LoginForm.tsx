@@ -4,6 +4,7 @@ import { Icon } from "../../components/ui/Icon";
 import { FACTORY_OPTIONS, REQUIRE_MESSAGE } from "../../libs/constance";
 import type { LoginFormValues } from "../../types/auth";
 import { CustomSelect } from "../../components/ui/CustomSelect";
+import { useTranslation } from "../../hooks/useTranslation";
 
 interface LoginFormProps {
   onFinish: (values: LoginFormValues) => void;
@@ -11,6 +12,8 @@ interface LoginFormProps {
 }
 
 export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
+  const { t } = useTranslation();
+
   const [form] = Form.useForm<LoginFormValues>();
 
   return (
@@ -33,7 +36,7 @@ export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
               <IdCard size={15} />
             </Icon>
           }
-          placeholder="Account Number"
+          placeholder={t("soThe")}
           size="large"
         />
       </Form.Item>
@@ -48,7 +51,7 @@ export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
               <KeyRound size={15} />
             </Icon>
           }
-          placeholder="••••••••"
+          placeholder={t("matKhau")}
           size="large"
         />
       </Form.Item>
@@ -58,7 +61,7 @@ export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
         rules={[{ required: true, message: REQUIRE_MESSAGE }]}
       >
         <CustomSelect
-          placeholder="Factory"
+          placeholder={t("nhaMay")}
           options={FACTORY_OPTIONS}
           icon={<Building2 size={15} />}
         />
@@ -71,7 +74,7 @@ export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
           block
           className="lp-submit-btn"
         >
-          Sign In
+          {t("dangNhap")}
         </Button>
       </Form.Item>
     </Form>
