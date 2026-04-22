@@ -11,6 +11,7 @@ export interface LoginPayload {
 
 export interface LoginResponse {
   authenticated: boolean;
+  message?: string;
   user: User;
   accessToken: string;
   refreshToken: string;

@@ -62,7 +62,7 @@ const AuthPage = () => {
         setNavigating(true);
         setTimeout(() => navigate("/", { replace: true }), 1000);
       } else {
-        AppAlert({ icon: "error", title: "Invalid information" });
+        AppAlert({ icon: "error", title: t(data.message) });
       }
     } catch (error: any) {
       if (error?.response?.message === "saiThongTinDangNhap") {

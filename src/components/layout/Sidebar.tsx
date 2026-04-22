@@ -113,7 +113,7 @@ export const Sidebar = () => {
         { id: "change-pass", label: "doiMatKhau", icon: GrKey },
         { id: "contact", label: "lienHe", icon: RiContactsBook3Line },
         { id: "settings", label: "caiDat", icon: IoSettingsOutline },
-        { id: "note", label: "soTay", icon: LuNotebookPen },
+        { id: "note", label: "soTay / quyTrinhChinhSach", icon: LuNotebookPen },
         { id: "guide", label: "huongDanSuDung", icon: GoBook },
         {
           id: "logout",

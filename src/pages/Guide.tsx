@@ -28,7 +28,9 @@ export default function Guide() {
         if (book) {
           setFileName(book.FileName);
         } else {
-          setFetchError(new Error(`Không tìm thấy sách ID: ${TARGET_BOOK_ID}`));
+          setFetchError(
+            new Error(`Can not find book with ID: ${TARGET_BOOK_ID}`),
+          );
         }
       } catch (err) {
         if (cancelled) return;

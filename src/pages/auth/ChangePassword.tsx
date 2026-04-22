@@ -122,7 +122,7 @@ export default function ChangePassword() {
               </label>
               <Form.Item
                 name="password"
-                rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+                rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
               >
                 <Input.Password
                   prefix={
@@ -143,7 +143,7 @@ export default function ChangePassword() {
               <Form.Item
                 name="newPassword"
                 rules={[
-                  { required: true, message: REQUIRE_MESSAGE },
+                  { required: true, message: t(REQUIRE_MESSAGE) },
                   // { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
                 ]}
               >
@@ -167,7 +167,7 @@ export default function ChangePassword() {
                 name="confirmPassword"
                 dependencies={["newPassword"]}
                 rules={[
-                  { required: true, message: REQUIRE_MESSAGE },
+                  { required: true, message: t(REQUIRE_MESSAGE) },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
                       if (!value || getFieldValue("newPassword") === value)

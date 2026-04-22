@@ -36,7 +36,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
     >
       <Form.Item
         name="userId"
-        rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+        rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <Input
           prefix={
@@ -51,7 +51,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
 
       <Form.Item
         name="idNumber"
-        rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+        rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <Input
           prefix={
@@ -66,7 +66,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
 
       <Form.Item
         name="receivedDate"
-        rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+        rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <DatePicker
           format="DD/MM/YYYY"
@@ -85,7 +85,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
 
       <Form.Item
         name="birthDate"
-        rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+        rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <DatePicker
           format="DD/MM/YYYY"
@@ -104,7 +104,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
 
       <Form.Item
         name="factory"
-        rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+        rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <CustomSelect
           placeholder={t("ngaySinh")}
@@ -115,7 +115,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
 
       <Form.Item
         name="newPassword"
-        rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+        rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <Input.Password
           prefix={

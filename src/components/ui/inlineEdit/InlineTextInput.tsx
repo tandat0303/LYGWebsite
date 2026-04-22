@@ -4,11 +4,13 @@ export default function InlineTextInput({
   initial,
   onSave,
   onCancel,
+  onChange,
   placeholder = "",
 }: {
   initial: string;
   onSave: (v: string) => void;
   onCancel: () => void;
+  onChange?: (v: string) => void;
   placeholder?: string;
 }) {
   const [value, setValue] = useState(initial);
@@ -24,7 +26,10 @@ export default function InlineTextInput({
         style={{ padding: "2px 0 4px" }}
         value={value}
         placeholder={placeholder}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {
+          setValue(e.target.value);
+          onChange?.(e.target.value);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();

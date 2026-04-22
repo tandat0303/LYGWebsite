@@ -28,7 +28,7 @@ export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
     >
       <Form.Item
         name="userId"
-        rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+        rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <Input
           prefix={
@@ -43,7 +43,7 @@ export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
 
       <Form.Item
         name="password"
-        rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+        rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <Input.Password
           prefix={
@@ -58,7 +58,7 @@ export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
 
       <Form.Item
         name="factory"
-        rules={[{ required: true, message: REQUIRE_MESSAGE }]}
+        rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <CustomSelect
           placeholder={t("nhaMay")}

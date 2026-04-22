@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
 
 export default function InlineSelect({
   initial,
@@ -11,6 +12,8 @@ export default function InlineSelect({
   onSave: (v: string) => void;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation();
+
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState(initial);
   const ref = useRef<HTMLDivElement>(null);
@@ -37,8 +40,8 @@ export default function InlineSelect({
           style={{ padding: "2px 0 4px" }}
           onClick={() => setOpen((v) => !v)}
         >
-          <span className="flex-1 text-left">
-            {current?.label || "Chọn hình thức"}
+          <span className="flex-1 text-left truncate">
+            {t(current?.label || "chonPhuongTienDiChuyen")}
           </span>
           <svg
             width="12"
@@ -59,7 +62,7 @@ export default function InlineSelect({
         </div>
         {open && (
           <div
-            className="absolute top-[calc(100%+6px)] left-0 w-full mix-w-160 z-99
+            className="absolute bottom-[calc(100%+6px)] left-0 w-full mix-w-160 z-99
                           rounded-[10px] overflow-hidden p-4 animate-[ui-drop_0.16s_cubic-bezier(0.22,1,0.36,1)]
                           ui-inline-select__dropdown"
           >

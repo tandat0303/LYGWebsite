@@ -1,9 +1,14 @@
 import { useRef, useState } from "react";
 import { formatDateRaw } from "../../../libs/helper";
 
-function useDateInput(initial: string) {
+function useDateInput(initial: string, onChange?: (v: string) => void) {
   const [value, setValue] = useState(initial);
   const ref = useRef<HTMLInputElement>(null);
+
+  const set = (v: string) => {
+    setValue(v);
+    onChange?.(v);
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // const input = ref.current!;
@@ -17,7 +22,7 @@ function useDateInput(initial: string) {
         e.preventDefault();
         const digits = value.replace(/\//g, "");
         const trimmed = digits.slice(0, -1);
-        setValue(formatDateRaw(trimmed));
+        set(formatDateRaw(trimmed));
       }
       return;
     }
@@ -30,7 +35,7 @@ function useDateInput(initial: string) {
     const digits = value.replace(/\//g, "");
     if (digits.length >= 8) return;
     const next = digits + e.key;
-    setValue(formatDateRaw(next));
+    set(formatDateRaw(next));
   };
 
   return { value, setValue, ref, handleKeyDown };
@@ -40,12 +45,14 @@ export default function InlineDateInput({
   initial,
   onSave,
   onCancel,
+  onChange,
 }: {
   initial: string;
   onSave: (v: string) => void;
   onCancel: () => void;
+  onChange: (v: string) => void;
 }) {
-  const { value, ref, handleKeyDown } = useDateInput(initial); //setValue
+  const { value, ref, handleKeyDown } = useDateInput(initial, onChange); //setValue
 
   return (
     <>

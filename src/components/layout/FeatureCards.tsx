@@ -269,8 +269,9 @@ export const FeatureCards = () => {
     },
     {
       id: "note",
-      label: "soTay",
+      label: "soTay / quyTrinhChinhSach",
       icon: Notebook,
+      onclick: () => navigate("/note", { replace: true }),
       size: "small",
     },
     {

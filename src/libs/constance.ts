@@ -14,10 +14,11 @@ export const ROUTE_MAP: Record<string, string> = {
   home: "/",
   "change-pass": "/change-password",
   info: "/user-info",
+  note: "/note",
   guide: "/guide",
 };
 
-export const REQUIRE_MESSAGE = "Please do not leave it blank";
+export const REQUIRE_MESSAGE = "vuiLongDienDayDuThongTin";
 
 export const SLIDE_DURATION = 360;
 
@@ -40,6 +41,8 @@ export const MASKED_FIELDS: FieldKey[] = [
   "idIssueDate",
   "permanentAddress",
   "transport",
+  "shuttleTrip",
+  "shuttleStop",
   "temporaryAddress",
 ];
 export const EDITABLE_FIELDS: FieldKey[] = [
@@ -48,6 +51,8 @@ export const EDITABLE_FIELDS: FieldKey[] = [
   "idCard",
   "idIssueDate",
   "transport",
+  "shuttleTrip",
+  "shuttleStop",
   "temporaryAddress",
 ];
 

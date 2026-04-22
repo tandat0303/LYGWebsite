@@ -1,9 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Eye, EyeOff, Pencil } from "lucide-react";
 import { Image } from "antd";
 import { QRCodeSVG } from "qrcode.react";
 import { getApiErrorMessage, isoToDisplay, maskOf } from "../libs/helper";
-import type { FieldKey, UserInfo, UserInfoPayload } from "../types/user";
+import type {
+  FieldKey,
+  Station,
+  Trip,
+  UserInfo,
+  UserInfoPayload,
+} from "../types/user";
 import { useAppSelector } from "../hooks/auth";
 import userApi from "../api/user";
 import { AppAlert } from "../components/ui/AppAlert";
@@ -12,6 +18,10 @@ import InlineSelect from "../components/ui/inlineEdit/InlineSelect";
 import InlineDateInput from "../components/ui/inlineEdit/InlineDateInput";
 import InlineTextInput from "../components/ui/inlineEdit/InlineTextInput";
 import { useTranslation } from "../hooks/useTranslation";
+import { useDebounce } from "../hooks/useDebounce";
+
+const SHUTTLE_FACTORIES = ["LHG", "LYM"];
+const SHUTTLE_VEHICLE = "Company shuttle bus";
 
 export default function UserInfo() {
   const { t } = useTranslation();
@@ -32,7 +42,17 @@ export default function UserInfo() {
     idIssueDate: user?.ID_Day ?? "",
     transport: user?.Vehicle ?? "",
     temporaryAddress: user?.Address_Live ?? "",
+    shuttleTrip: user?.Bus_Route ?? "",
+    shuttleStop: user?.PickupDropoffStation ?? "",
   });
+
+  const isShuttleFactory = SHUTTLE_FACTORIES.includes(
+    currentUser?.factory ?? "",
+  );
+  const isShuttleSelected = localValues.transport === SHUTTLE_VEHICLE;
+
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const stopDataRef = useRef<Station | null>(null);
 
   const vehicleOptions = vehicles.map((v) => {
     const labelMap: Record<string, string> = {
@@ -76,22 +96,172 @@ export default function UserInfo() {
       idIssueDate: isoToDisplay(user.ID_Day ?? ""),
       transport: user.Vehicle ?? "",
       temporaryAddress: user.Address_Live ?? "",
+      shuttleTrip: user.Bus_Route ?? "",
+      shuttleStop: user.PickupDropoffStation ?? ",",
     });
   }, [user]);
 
   useEffect(() => {
+    if (!isShuttleFactory) return;
+    userApi
+      .getAddressByFactory(currentUser.factory)
+      .then(setTrips)
+      .catch(() => {});
+  }, [isShuttleFactory]);
+
+  useEffect(() => {
+    if (!isShuttleSelected) {
+      setLocalValues((prev) => ({ ...prev, shuttleTrip: "", shuttleStop: "" }));
+      stopDataRef.current = null;
+    }
+  }, [isShuttleSelected]);
+
+  useEffect(() => {
     if (!revealed) setEditingField(null);
   }, [revealed]);
+
+  const [pendingApi, setPendingApi] = useState<{
+    field: FieldKey;
+    value: string;
+  } | null>(null);
+  const debouncedPending = useDebounce(pendingApi, 800);
+  const prevDebounced = useRef<typeof debouncedPending>(null);
+
+  useEffect(() => {
+    if (!debouncedPending) return;
+    if (prevDebounced.current === debouncedPending) return;
+    prevDebounced.current = debouncedPending;
+
+    const { field, value } = debouncedPending;
+    const persist = async () => {
+      try {
+        let success = false;
+        if (field === "temporaryAddress") {
+          success = await userApi.updateAddressLive(currentUser.factory, {
+            personId: currentUser.userId,
+            temporaryAddress: value,
+          });
+        }
+        // add other fields here as needed
+
+        if (!success) {
+          AppAlert({ icon: "error", title: getApiErrorMessage(null) });
+          await fetchUserInfo();
+        }
+      } catch (error) {
+        AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+        await fetchUserInfo();
+      }
+    };
+    persist();
+  }, [debouncedPending]);
 
   const startEdit = (field: FieldKey) => {
     if (!revealed || !EDITABLE_FIELDS.includes(field)) return;
     setEditingField(field);
   };
 
-  const saveField = (field: FieldKey, value: string) => {
+  const handleFieldChange = useCallback((field: FieldKey, value: string) => {
     setLocalValues((prev) => ({ ...prev, [field]: value }));
+    setPendingApi({ field, value });
+  }, []);
+
+  const saveField = (field: FieldKey, value: string) => {
     setEditingField(null);
-    // TODO: call API to persist
+
+    if (field === "transport") {
+      setLocalValues((prev) => ({ ...prev, transport: value }));
+      // Reset shuttle nếu chọn phương tiện khác
+      const persist = async () => {
+        try {
+          const success = await userApi.updateVehicle(currentUser.factory, {
+            personId: currentUser.userId,
+            Vehicle: value,
+          });
+          if (!success) {
+            // AppAlert({ icon: "error", title: getApiErrorMessage(null) });
+            setLocalValues((prev) => ({
+              ...prev,
+              transport: user?.Vehicle ?? "",
+            }));
+          }
+        } catch (error) {
+          AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+          setLocalValues((prev) => ({
+            ...prev,
+            transport: user?.Vehicle ?? "",
+          }));
+        }
+      };
+      persist();
+      return;
+    }
+
+    if (field === "shuttleTrip") {
+      setLocalValues((prev) => ({
+        ...prev,
+        shuttleTrip: value,
+        shuttleStop: "",
+      }));
+      stopDataRef.current = null;
+      const persistTrip = async () => {
+        try {
+          const success = await userApi.updateTrip(currentUser.factory, {
+            personId: currentUser.userId,
+            hanhTrinh: value,
+          });
+          if (!success) {
+            // AppAlert({ icon: "error", title: getApiErrorMessage(null) });
+            setLocalValues((prev) => ({
+              ...prev,
+              shuttleTrip: "",
+              shuttleStop: "",
+            }));
+          }
+        } catch (error) {
+          AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+          setLocalValues((prev) => ({
+            ...prev,
+            shuttleTrip: "",
+            shuttleStop: "",
+          }));
+        }
+      };
+      persistTrip();
+      return;
+    }
+
+    if (field === "shuttleStop") {
+      setLocalValues((prev) => ({ ...prev, shuttleStop: value }));
+      const stopObj =
+        trips
+          .find((t) => t.hanh_trinh === localValues.shuttleTrip)
+          ?.tram_don_tra?.find((s) => s.ten === value) ?? null;
+      stopDataRef.current = stopObj;
+      const persistStop = async () => {
+        try {
+          const success = await userApi.updateStation(currentUser.factory, {
+            personId: currentUser.userId,
+            diaDiem: stopObj?.ten ?? "",
+            lat: stopObj?.lat ?? 0,
+            long: stopObj?.long ?? 0,
+          });
+          if (!success) {
+            // AppAlert({ icon: "error", title: getApiErrorMessage(null) });
+            setLocalValues((prev) => ({ ...prev, shuttleStop: "" }));
+            stopDataRef.current = null;
+          }
+        } catch (error) {
+          AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+          setLocalValues((prev) => ({ ...prev, shuttleStop: "" }));
+          stopDataRef.current = null;
+        }
+      };
+      persistStop();
+      return;
+    }
+
+    setLocalValues((prev) => ({ ...prev, [field]: value }));
   };
 
   const cancelField = () => setEditingField(null);
@@ -103,6 +273,8 @@ export default function UserInfo() {
         ""
       );
     }
+    if (fieldKey === "shuttleTrip") return localValues.shuttleTrip ?? "";
+    if (fieldKey === "shuttleStop") return localValues.shuttleStop ?? "";
     if (EDITABLE_FIELDS.includes(fieldKey)) return localValues[fieldKey] ?? "";
     switch (fieldKey) {
       case "fullName":
@@ -129,22 +301,30 @@ export default function UserInfo() {
     fieldKey,
     placeholder = "",
     span = 1,
+    options: customOptions,
+    disabled = false,
   }: {
     label: string;
     fieldKey: FieldKey;
     placeholder?: string;
     span?: 1 | 2 | 4;
+    options?: { label: string; value: string }[];
+    disabled?: boolean;
   }) => {
     const raw = getDisplay(fieldKey);
     const isMasked = MASKED_FIELDS.includes(fieldKey) && !revealed;
     const isEditable = EDITABLE_FIELDS.includes(fieldKey);
     const isEditing = editingField === fieldKey;
     const isDate = DATE_FIELDS.includes(fieldKey);
-    const isSelect = fieldKey === "transport";
+    const isSelect = !!customOptions || fieldKey === "transport";
+    const selectOpts = customOptions ?? vehicleOptions;
     const displayText = raw || "";
 
     return (
-      <div className={`ui-cell ui-cell--span-${span}`} key={fieldKey}>
+      <div
+        className={`ui-cell ui-cell--span-${span}${disabled ? " ui-cell--disabled" : ""}`}
+        key={fieldKey}
+      >
         <span className="ui-cell__label">{t(label)}</span>
 
         <div className="ui-cell__body">
@@ -155,12 +335,13 @@ export default function UserInfo() {
                   initial={localValues[fieldKey] ?? ""}
                   onSave={(v) => saveField(fieldKey, v)}
                   onCancel={cancelField}
+                  onChange={(v) => handleFieldChange(fieldKey, v)}
                 />
               )}
               {isSelect && (
                 <InlineSelect
-                  initial={localValues[fieldKey] ?? ""}
-                  options={vehicleOptions}
+                  initial={raw}
+                  options={selectOpts}
                   onSave={(v) => saveField(fieldKey, v)}
                   onCancel={cancelField}
                 />
@@ -171,21 +352,28 @@ export default function UserInfo() {
                   placeholder={t(placeholder)}
                   onSave={(v) => saveField(fieldKey, v)}
                   onCancel={cancelField}
+                  onChange={(v) => handleFieldChange(fieldKey, v)}
                 />
               )}
             </>
           ) : (
             <div
-              className={`ui-cell__value-row ${isEditable && revealed ? "ui-cell__value-row--editable" : ""}`}
-              onClick={() => isEditable && revealed && startEdit(fieldKey)}
-              title={isEditable && revealed ? "Nhấn để chỉnh sửa" : undefined}
+              className={`ui-cell__value-row ${isEditable && revealed && !disabled ? "ui-cell__value-row--editable" : ""}`}
+              onClick={() =>
+                !disabled && isEditable && revealed && startEdit(fieldKey)
+              }
+              title={
+                isEditable && revealed && !disabled
+                  ? "Nhấn để chỉnh sửa"
+                  : undefined
+              }
             >
               <span
-                className={`ui-cell__value ${isMasked ? "ui-cell__value--masked" : ""}`}
+                className={`ui-cell__value truncate ${isMasked ? "ui-cell__value--masked" : ""}`}
               >
                 {isMasked ? maskOf(displayText) : displayText}
               </span>
-              {isEditable && (
+              {isEditable && !disabled && (
                 <Pencil
                   size={12}
                   className={`ui-pencil-icon ${!revealed ? "ui-pencil-icon--hidden" : ""}`}
@@ -319,11 +507,10 @@ export default function UserInfo() {
                 span: 2,
               })}
 
-              {renderCell({ label: "maSoThue", fieldKey: "taxCode" })}
-              {renderCell({ label: "ngayVaoCongTy", fieldKey: "joinDate" })}
+              {renderCell({ label: "maSoThue", fieldKey: "taxCode", span: 2 })}
               {renderCell({
-                label: "hinhThucDiChuyen",
-                fieldKey: "transport",
+                label: "ngayVaoCongTy",
+                fieldKey: "joinDate",
                 span: 2,
               })}
 
@@ -338,6 +525,39 @@ export default function UserInfo() {
                 placeholder: "nhapDiaChiTamTru",
                 span: 4,
               })}
+
+              {renderCell({
+                label: "hinhThucDiChuyen",
+                fieldKey: "transport",
+              })}
+
+              {isShuttleFactory && isShuttleSelected && (
+                <>
+                  {renderCell({
+                    label: "tuyenXe",
+                    fieldKey: "shuttleTrip",
+                    span: 2,
+                    options: trips.map((trip) => ({
+                      value: trip.hanh_trinh,
+                      label: trip.hanh_trinh,
+                    })),
+                  })}
+
+                  {renderCell({
+                    label: "tramDonTra",
+                    fieldKey: "shuttleStop",
+                    disabled: !localValues.shuttleTrip,
+                    options: (
+                      trips.find(
+                        (t) => t.hanh_trinh === localValues.shuttleTrip,
+                      )?.tram_don_tra ?? []
+                    ).map((stop) => ({
+                      value: stop.ten,
+                      label: stop.ten,
+                    })),
+                  })}
+                </>
+              )}
             </div>
           </div>
           {/* /ui-right-card */}
@@ -351,9 +571,9 @@ export default function UserInfo() {
           width: 100%;
           min-height: 100%;
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           justify-content: center;
-          padding: 24px 24px 72px;
+          padding: 24px 24px;
           box-sizing: border-box;
           overflow-x: hidden;
         }
@@ -547,6 +767,10 @@ export default function UserInfo() {
           gap: 5px;
           min-width: 0;
         }
+        .ui-cell--disabled {
+          opacity: 0.38;
+          pointer-events: none;
+        }
         .ui-cell--span-1 { grid-column: span 1; }
         .ui-cell--span-2 { grid-column: span 2; }
         .ui-cell--span-4 { grid-column: span 4; }
@@ -653,9 +877,9 @@ export default function UserInfo() {
         @media (max-width: 900px) {
           .ui-inner { flex-direction: column; align-items: stretch; min-height: unset; gap: 16px; }
           .ui-left { flex: none; width: 100%; }
-          .ui-left-card { padding: 24px; flex-direction: row; gap: 24px; justify-content: flex-start; }
+          .ui-left-card { padding: 24px; flex-direction: row; gap: 24px; justify-content: center; }
           .ui-left-card__deco { display: none; }
-          .ui-qr-section { flex-direction: row; align-items: center; width: auto; gap: 20px; }
+          .ui-qr-section { flex-direction: row; align-items: center; width: auto; gap: 10px; }
           .ui-qr-section::after { display: none; }
           .ui-qr-identity { text-align: left; }
           .ui-qr-section svg { max-width: 100px; }
