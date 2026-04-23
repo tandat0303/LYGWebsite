@@ -15,15 +15,7 @@ const Loading: React.FC<LoadingProps> = ({
 }) => {
   return (
     <div
-      style={{
-        position: fullScreen || overlay ? "fixed" : "relative",
-        inset: 0,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: overlay ? "rgba(255,255,255,0.6)" : "#f0ede8",
-        zIndex: 9999,
-      }}
+      className={`${fullScreen || overlay ? "fixed" : "relative"} inset-0 flex justify-center items-center z-9999 bg-[${overlay ? "rgba(255,255,255,0.6)" : "#f0ede8"}]`}
     >
       <Player
         autoplay

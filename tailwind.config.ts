@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
-  darkMode: ["selector", '[data-theme="dark"]'],
+  darkMode: "class",
   theme: {
     screens: {
       "3xl": { max: "1700px" },
@@ -21,7 +21,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"DM Sans"', "sans-serif"],
+        sans: ['"Inter"', "sans-serif"],
       },
       colors: {
         primary: "var(--primary)",

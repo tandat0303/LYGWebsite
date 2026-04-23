@@ -170,7 +170,7 @@ const AuthPage = () => {
                        bg-white/7 backdrop-blur-[28px] border border-white/10
                        transition-opacity duration-500 ease-in-out
                        sm:flex-[0_0_50%] sm:border-l sm:border-l-white/8"
-            style={{ padding: "44px 48px" }}
+            style={{ padding: "48px 44px" }}
           >
             <div
               className="flex justify-center w-full"
@@ -229,7 +229,10 @@ const AuthPage = () => {
 
           {sliderContent === "login" ? (
             <>
-              <h2 className="relative z-2 text-[clamp(26px,3.5vw,36px)] font-bold italic text-white leading-[1.2] mb-10">
+              <h2
+                className="relative z-2 text-[clamp(26px,3.5vw,36px)] font-bold italic text-white leading-[1.2] mb-6"
+                style={{ marginBottom: "24px" }}
+              >
                 {t("quenMatKhau")}
               </h2>
 

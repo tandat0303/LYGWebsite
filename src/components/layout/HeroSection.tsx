@@ -8,14 +8,11 @@ import { useTranslation } from "../../hooks/useTranslation";
 
 export const HeroSection = () => {
   const { t } = useTranslation();
-
   const { theme } = useTheme();
   const { user } = useAppSelector((s) => s.auth);
-
   const [city, setCity] = useState("");
 
   const hour = new Date().getHours();
-
   const isMorning = hour < 12;
   const isAfternoon = hour < 18;
 
@@ -29,13 +26,10 @@ export const HeroSection = () => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
-
       const res = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
       );
-
       const data = await res.json();
-
       setCity(
         data.address.city ||
           data.address.town ||
@@ -47,10 +41,15 @@ export const HeroSection = () => {
 
   return (
     <section
-      className="relative w-full h-[240px] overflow-hidden rounded-2xl
-                        flex flex-col justify-end shadow-[0_12px_40px_rgba(0,0,0,0.15)]
-                        hero-section"
+      className="
+        relative w-full overflow-hidden rounded-2xl flex flex-col justify-end
+        shadow-[0_12px_40px_rgba(0,0,0,0.15)]
+        h-60
+        max-[768px]:h-[200px] max-[768px]:rounded-[14px]
+        max-[480px]:h-40 max-[480px]:rounded-xl
+      "
     >
+      {/* Background image */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
         <img
           src={
@@ -60,105 +59,57 @@ export const HeroSection = () => {
                 ? HeroImgAfternoon
                 : HeroImgNight
           }
-          className={`w-full h-full object-cover object-center block scale-[1.02]
-                    ${theme === "dark" ? "brightness-[0.78]" : "brightness-100"} hero-image`}
+          className={`
+            w-full h-full object-cover object-center block scale-[1.02]
+            ${theme === "dark" ? "brightness-[0.78]" : "brightness-100"}
+            max-[768px]:object-[58%_center]
+            max-[480px]:object-[62%_center]
+          `}
         />
       </div>
 
       {/* Content Overlay */}
       <div
-        className="absolute inset-0 flex flex-col justify-end z-10
-                    bg-[linear-gradient(to_top,rgba(0,0,0,0.45)_0%,rgba(0,0,0,0.25)_40%,transparent_100%)]
-                    hero-content"
+        className="
+          absolute inset-0 flex flex-col justify-end z-10
+          bg-[linear-gradient(to_top,rgba(0,0,0,0.45)_0%,rgba(0,0,0,0.25)_40%,transparent_100%)]
+        "
         style={{ padding: "32px" }}
       >
-        <div className="text-white">
+        <div className="text-white max-[480px]:max-w-[90%]">
           <h1
-            className="text-[32px] font-bold leading-[1.2] mb-2 tracking-[-0.5px]
-                          [text-shadow:0_2px_12px_rgba(0,0,0,0.4)] hero-greeting"
+            className="
+              font-bold leading-[1.2] mb-2 tracking-[-0.5px]
+              [text-shadow:0_2px_12px_rgba(0,0,0,0.4)]
+              text-[32px]
+              max-[768px]:text-[26px] max-[768px]:mb-1.5
+              max-[480px]:text-[22px] max-[480px]:mb-1
+            "
           >
             {getGreeting()}
           </h1>
-          <p className="text-[18px] text-white/95 mb-1.5 font-medium [text-shadow:0_1px_6px_rgba(0,0,0,0.3)] hero-name">
+          <p
+            className="
+              text-white/95 font-medium [text-shadow:0_1px_6px_rgba(0,0,0,0.3)] mb-1.5
+              text-[18px]
+              max-[768px]:text-[16px] max-[768px]:mb-1
+              max-[480px]:text-[14px] max-[480px]:mb-0.5
+            "
+          >
             {user.fullName}
           </p>
-          <p className="text-[14px] text-white/85 flex items-center gap-1.5 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)] hero-location">
+          <p
+            className="
+              text-white/85 flex items-center gap-1.5 [text-shadow:0_1px_4px_rgba(0,0,0,0.3)]
+              text-[14px]
+              max-[768px]:text-[13px]
+              max-[480px]:text-[12px]
+            "
+          >
             {user.userId} - {user.factory} {city}
           </p>
         </div>
       </div>
-
-      <style>{`
-        .hero-location svg {
-          width: 16px;
-          height: 16px;
-        }
-
-        @media (max-width: 1024px) {
-          .hero-image {
-            object-position: center;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .hero-section {
-            height: 200px;
-            border-radius: 14px;
-          }
-
-          .hero-image {
-            object-position: 58% center;
-          }
-
-          .hero-content {
-            padding: 24px;
-          }
-
-          .hero-greeting {
-            font-size: 26px;
-            margin-bottom: 6px;
-          }
-
-          .hero-name {
-            font-size: 16px;
-            margin-bottom: 4px;
-          }
-
-          .hero-location {
-            font-size: 13px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .hero-section {
-            height: 160px;
-            border-radius: 12px;
-          }
-
-          .hero-image {
-            object-position: 62% center;
-          }
-
-          .hero-content {
-            padding: 20px;
-          }
-
-          .hero-greeting {
-            font-size: 22px;
-            margin-bottom: 4px;
-          }
-
-          .hero-name {
-            font-size: 14px;
-            margin-bottom: 2px;
-          }
-
-          .hero-location {
-            font-size: 12px;
-            max-width: 90%;
-          }
-        }
-      `}</style>
     </section>
   );
 };

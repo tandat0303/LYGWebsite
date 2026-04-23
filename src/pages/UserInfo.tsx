@@ -19,6 +19,7 @@ import InlineDateInput from "../components/ui/inlineEdit/InlineDateInput";
 import InlineTextInput from "../components/ui/inlineEdit/InlineTextInput";
 import { useTranslation } from "../hooks/useTranslation";
 import { useDebounce } from "../hooks/useDebounce";
+import { useTheme } from "../contexts/ThemeContext";
 
 const SHUTTLE_FACTORIES = ["LHG", "LYM"];
 const SHUTTLE_VEHICLE = "Company shuttle bus";
@@ -26,18 +27,19 @@ const SHUTTLE_VEHICLE = "Company shuttle bus";
 export default function UserInfo() {
   const { t } = useTranslation();
 
+  const { theme } = useTheme();
+
   const currentUser = useAppSelector((s) => s.auth.user);
   const vehicles = useAppSelector((s) => s.transport.vehicles);
   const currentLang = useAppSelector((s) => s.language.current);
 
   const [user, setUser] = useState<UserInfo>(null);
-
   const [revealed, setRevealed] = useState(false);
   const [editingField, setEditingField] = useState<FieldKey | null>(null);
   const [qrVisible, setQrVisible] = useState(false);
   const [localValues, setLocalValues] = useState<Record<string, string>>({
     birthday: user?.Birthday ?? "",
-    phone: user?.Mobilephone_Number ?? "",
+    phone: user?.mobilePhoneNumber ?? "",
     idCard: user?.ID ?? "",
     idIssueDate: user?.ID_Day ?? "",
     transport: user?.Vehicle ?? "",
@@ -45,6 +47,11 @@ export default function UserInfo() {
     shuttleTrip: user?.Bus_Route ?? "",
     shuttleStop: user?.PickupDropoffStation ?? "",
   });
+  // Ref để luôn đọc được localValues mới nhất trong async/debounce (tránh stale closure)
+  const localValuesRef = useRef(localValues);
+  useEffect(() => {
+    localValuesRef.current = localValues;
+  }, [localValues]);
 
   const isShuttleFactory = SHUTTLE_FACTORIES.includes(
     currentUser?.factory ?? "",
@@ -61,7 +68,6 @@ export default function UserInfo() {
       mm: v.Name_Vehicle_MM,
       tw: v.Name_Vehicle_CN,
     };
-
     return {
       value: v.Name_Vehicle,
       label: labelMap[currentLang.code] ?? v.Name_Vehicle,
@@ -74,9 +80,7 @@ export default function UserInfo() {
         factory: currentUser.factory,
         userId: currentUser.userId,
       };
-
       const res = await userApi.getUserInfo(payload);
-
       setUser(res);
     } catch (error) {
       AppAlert({ icon: "error", title: getApiErrorMessage(error) });
@@ -91,7 +95,7 @@ export default function UserInfo() {
     if (!user) return;
     setLocalValues({
       birthday: isoToDisplay(user.Birthday ?? ""),
-      phone: user.Mobilephone_Number ?? "",
+      phone: user.mobilePhoneNumber ?? "",
       idCard: user.ID ?? "",
       idIssueDate: isoToDisplay(user.ID_Day ?? ""),
       transport: user.Vehicle ?? "",
@@ -131,18 +135,43 @@ export default function UserInfo() {
     if (!debouncedPending) return;
     if (prevDebounced.current === debouncedPending) return;
     prevDebounced.current = debouncedPending;
-
     const { field, value } = debouncedPending;
+
+    const toIso = (display: string) => {
+      if (!display) return "";
+      const [d, m, y] = display.split("/");
+      if (!d || !m || !y) return display;
+      return `${d}/${m}/${y}`;
+    };
+
     const persist = async () => {
       try {
         let success = false;
+
         if (field === "temporaryAddress") {
           success = await userApi.updateAddressLive(currentUser.factory, {
             personId: currentUser.userId,
             temporaryAddress: value,
           });
         }
-        // add other fields here as needed
+
+        const USER_INFO_FIELDS: FieldKey[] = [
+          "birthday",
+          "phone",
+          "idCard",
+          "idIssueDate",
+        ];
+        if (USER_INFO_FIELDS.includes(field)) {
+          // Đọc từ ref để luôn có giá trị mới nhất (tránh stale closure)
+          const latest = { ...localValuesRef.current, [field]: value };
+          success = await userApi.updateUserInfo(currentUser.factory, {
+            userId: currentUser.userId,
+            birthday: toIso(latest.birthday),
+            idCard: latest.idCard,
+            phone: latest.phone,
+            idDate: toIso(latest.idIssueDate),
+          });
+        }
 
         if (!success) {
           AppAlert({ icon: "error", title: getApiErrorMessage(null) });
@@ -171,20 +200,17 @@ export default function UserInfo() {
 
     if (field === "transport") {
       setLocalValues((prev) => ({ ...prev, transport: value }));
-      // Reset shuttle nếu chọn phương tiện khác
       const persist = async () => {
         try {
           const success = await userApi.updateVehicle(currentUser.factory, {
             personId: currentUser.userId,
             Vehicle: value,
           });
-          if (!success) {
-            // AppAlert({ icon: "error", title: getApiErrorMessage(null) });
+          if (!success)
             setLocalValues((prev) => ({
               ...prev,
               transport: user?.Vehicle ?? "",
             }));
-          }
         } catch (error) {
           AppAlert({ icon: "error", title: getApiErrorMessage(error) });
           setLocalValues((prev) => ({
@@ -210,14 +236,12 @@ export default function UserInfo() {
             personId: currentUser.userId,
             hanhTrinh: value,
           });
-          if (!success) {
-            // AppAlert({ icon: "error", title: getApiErrorMessage(null) });
+          if (!success)
             setLocalValues((prev) => ({
               ...prev,
               shuttleTrip: "",
               shuttleStop: "",
             }));
-          }
         } catch (error) {
           AppAlert({ icon: "error", title: getApiErrorMessage(error) });
           setLocalValues((prev) => ({
@@ -247,7 +271,6 @@ export default function UserInfo() {
             long: stopObj?.long ?? 0,
           });
           if (!success) {
-            // AppAlert({ icon: "error", title: getApiErrorMessage(null) });
             setLocalValues((prev) => ({ ...prev, shuttleStop: "" }));
             stopDataRef.current = null;
           }
@@ -262,17 +285,17 @@ export default function UserInfo() {
     }
 
     setLocalValues((prev) => ({ ...prev, [field]: value }));
+    // API call xử lý qua debounce (handleFieldChange → setPendingApi → debouncedPending)
   };
 
   const cancelField = () => setEditingField(null);
 
   const getDisplay = (fieldKey: FieldKey): string => {
-    if (fieldKey === "transport") {
+    if (fieldKey === "transport")
       return (
         vehicleOptions.find((o) => o.value === localValues.transport)?.label ??
         ""
       );
-    }
     if (fieldKey === "shuttleTrip") return localValues.shuttleTrip ?? "";
     if (fieldKey === "shuttleStop") return localValues.shuttleStop ?? "";
     if (EDITABLE_FIELDS.includes(fieldKey)) return localValues[fieldKey] ?? "";
@@ -320,14 +343,27 @@ export default function UserInfo() {
     const selectOpts = customOptions ?? vehicleOptions;
     const displayText = raw || "";
 
+    const spanClass =
+      span === 4
+        ? "col-span-4 max-[1200px]:col-span-3 max-[900px]:col-span-2 max-[480px]:col-span-1"
+        : span === 2
+          ? "col-span-2 max-[480px]:col-span-1"
+          : "col-span-1";
+
     return (
       <div
-        className={`ui-cell ui-cell--span-${span}${disabled ? " ui-cell--disabled" : ""}`}
         key={fieldKey}
+        className={`flex flex-col gap-[5px] min-w-0 ${spanClass} ${
+          disabled ? "opacity-[0.38] pointer-events-none" : ""
+        } [&::after]:content-[''] [&::after]:block [&::after]:h-px [&::after]:mt-1 [&::after]:bg-slate-100 dark:[&::after]:bg-white/6`}
       >
-        <span className="ui-cell__label">{t(label)}</span>
+        {/* Label */}
+        <span className="text-[11px] font-bold uppercase tracking-[0.6px] whitespace-nowrap overflow-hidden text-ellipsis text-blue-600/70 dark:text-blue-300/55">
+          {t(label)}
+        </span>
 
-        <div className="ui-cell__body">
+        {/* Body */}
+        <div className="relative min-h-[26px] flex items-center">
           {isEditing ? (
             <>
               {isDate && (
@@ -358,25 +394,33 @@ export default function UserInfo() {
             </>
           ) : (
             <div
-              className={`ui-cell__value-row ${isEditable && revealed && !disabled ? "ui-cell__value-row--editable" : ""}`}
+              className={`flex items-center gap-1.5 w-full rounded-md transition-colors duration-150 ${
+                isEditable && revealed && !disabled
+                  ? "cursor-text hover:bg-blue-50 dark:hover:bg-blue-300/[0.07]"
+                  : "cursor-default"
+              }`}
+              style={{ padding: "2px 4px", margin: "-2px -4px" }}
               onClick={() =>
                 !disabled && isEditable && revealed && startEdit(fieldKey)
               }
               title={
                 isEditable && revealed && !disabled
-                  ? "Nhấn để chỉnh sửa"
+                  ? "Click to edit"
                   : undefined
               }
             >
               <span
-                className={`ui-cell__value truncate ${isMasked ? "ui-cell__value--masked" : ""}`}
+                className={`flex-1 text-sm font-medium wrap-break-words transition-colors duration-300 leading-normal
+                  text-slate-700 dark:text-white/88 truncate
+                  ${isMasked ? "tracking-[3px] text-xs text-slate-300 dark:text-white/16" : ""}`}
               >
                 {isMasked ? maskOf(displayText) : displayText}
               </span>
               {isEditable && !disabled && (
                 <Pencil
                   size={12}
-                  className={`ui-pencil-icon ${!revealed ? "ui-pencil-icon--hidden" : ""}`}
+                  className={`shrink-0 transition-opacity duration-150 text-blue-500 dark:text-blue-300/40
+                    ${!revealed ? "hidden" : "opacity-50 group-hover:opacity-60"}`}
                 />
               )}
             </div>
@@ -387,23 +431,60 @@ export default function UserInfo() {
   };
 
   return (
-    <div className="ui-page">
-      <div className="ui-inner">
+    /* Page */
+    <div
+      className="w-full min-h-full flex items-center justify-center box-border overflow-x-hidden"
+      style={{ padding: "24px" }}
+    >
+      {/* Inner */}
+      <div
+        className="w-full flex flex-row items-stretch gap-5 min-h-[calc(100vh-140px)]
+          animate-[cp-rise_0.38s_cubic-bezier(0.22,1,0.36,1)_both]
+          max-[900px]:flex-col max-[900px]:min-h-[unset] max-[900px]:gap-4
+          max-[480px]:gap-3"
+      >
         {/* ── LEFT: QR card ── */}
-        <div className="ui-left">
-          <div className="ui-left-card">
-            {/* decorative dots */}
-            <div className="ui-left-card__deco" aria-hidden="true" />
+        <div className="flex-[0_0_calc(33.333%-10px)] flex flex-col max-[900px]:flex-none max-[900px]:w-full">
+          <div
+            className="flex-1 rounded-[20px] flex flex-col items-center justify-center relative overflow-hidden
+              transition-[background,border-color,box-shadow] duration-300
+              bg-white/55 border border-slate-200 shadow-[0_4px_20px_rgba(15,37,68,0.10)]
+              dark:bg-[rgba(15,27,48,0.7)] dark:border-white/[0.07] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]
+              max-[900px]:flex-row max-[900px]:gap-6 max-[900px]:justify-center
+              max-[600px]:flex-col max-[600px]:items-center"
+            style={{ padding: "32px 24px" }}
+          >
+            {/* Decorative dot */}
+            {theme === "dark" && (
+              <div
+                className="absolute -top-10 -right-10 w-[180px] h-[180px] rounded-full pointer-events-none
+                bg-[radial-gradient(circle,rgba(37,99,235,0.18)_0%,transparent_70%)]
+                max-[900px]:hidden"
+                aria-hidden="true"
+              />
+            )}
 
-            <div className="ui-qr-section">
-              <div className="ui-qr-wrap" title="Phóng to QR">
+            {/* QR section */}
+            <div
+              className="flex flex-col items-center gap-4 w-full relative z-1
+                max-[900px]:flex-row max-[900px]:items-center max-[900px]:w-auto max-[900px]:gap-2.5
+                max-[600px]:flex-col max-[600px]:items-center"
+            >
+              {/* QR wrap */}
+              <div
+                className="rounded-2xl flex items-center justify-center
+                  transition-transform duration-180ms ease-out hover:scale-[1.03]
+                  bg-gray-100 border border-slate-200 dark:bg-white/6 dark:border-transparent dark:shadow-[0_0_0_1px_rgba(255,255,255,0.08)]"
+                style={{ padding: "16px" }}
+                title="Phóng to QR"
+              >
                 <Image
                   style={{ display: "none" }}
                   preview={{
                     open: qrVisible,
                     onOpenChange: (v) => setQrVisible(v),
                     imageRender: () => (
-                      <div className="ui-qr-preview-box">
+                      <div className="flex flex-col items-center gap-4">
                         <QRCodeSVG
                           value={user?.Person_ID || "N/A"}
                           size={280}
@@ -416,7 +497,7 @@ export default function UserInfo() {
                           }}
                         />
                         {user?.Person_Name && (
-                          <p className="ui-qr-preview-name">
+                          <p className="text-white text-[15px] font-semibold m-0 tracking-[0.3px]">
                             {user.Person_Name}
                           </p>
                         )}
@@ -424,7 +505,6 @@ export default function UserInfo() {
                     ),
                     actionsRender: () => null,
                   }}
-                  // src=""
                 />
                 <div
                   role="button"
@@ -438,44 +518,63 @@ export default function UserInfo() {
                     size={148}
                     bgColor="transparent"
                     fgColor="currentColor"
-                    className="ui-qr-code"
+                    className="block transition-colors duration-300 text-slate-700 dark:text-white/90
+                      w-full max-w-40 h-auto max-[900px]:max-w-[100px] max-[600px]:max-w-[130px]"
                   />
                 </div>
               </div>
 
-              {/* Name + serial below QR */}
-              <div className="ui-qr-identity">
-                <p className="ui-qr-identity__name">
+              {/* Identity */}
+              <div
+                className="text-center flex flex-col gap-[3px] w-full
+                  max-[900px]:text-left max-[600px]:text-center"
+              >
+                <p className="text-[15px] font-bold m-0 leading-[1.3] transition-colors duration-300 text-slate-800 dark:text-white/92">
                   {user?.Person_Name || "—"}
                 </p>
-                <p className="ui-qr-identity__serial">
+                <p className="text-[11.5px] font-semibold m-0 tracking-[0.5px] transition-colors duration-300 text-blue-600/70 dark:text-blue-300/60">
                   {user?.Person_ID || ""}
                 </p>
-                <p className="ui-qr-identity__dept">
+                <p className="text-[11.5px] m-0 transition-colors duration-300 text-slate-500 dark:text-white/40">
                   {user?.Department_Name || ""}
                 </p>
               </div>
 
+              {/* Divider */}
+              <div className="w-10 h-px bg-slate-300 dark:bg-white/8 max-[900px]:hidden" />
+
+              {/* Eye button */}
               <button
-                className="ui-eye-btn"
+                className="inline-flex items-center gap-[7px] bg-transparent border border-blue-400/40 dark:border-blue-300/[0.28]
+                  rounded-full text-[13px] font-semibold cursor-pointer
+                  transition-all duration-180 ease-in-out
+                  text-blue-600/80 dark:text-blue-300/82 hover:bg-blue-400/8 dark:hover:bg-blue-300/7"
+                style={{ padding: "7px 18px" }}
                 onClick={() => setRevealed((v) => !v)}
-                title={revealed ? "Ẩn thông tin" : "Hiện thông tin"}
+                // title={revealed ? "Ẩn thông tin" : "Hiện thông tin"}
               >
                 {revealed ? <EyeOff size={16} /> : <Eye size={16} />}
-                {/* <span className="ui-eye-btn__label">
-                  {revealed ? t("anThongTin") : t("hienThongTin")}
-                </span> */}
               </button>
             </div>
           </div>
         </div>
-        {/* /ui-left */}
+        {/* /left */}
 
         {/* ── RIGHT: form card ── */}
-        <div className="ui-right">
-          <div className="ui-right-card">
-            {/* ── Grid ── */}
-            <div className="ui-grid">
+        <div className="flex-1 min-w-0 flex flex-col max-[900px]:w-full">
+          <div
+            className="flex-1 rounded-[20px] transition-[background,border-color,box-shadow] duration-300
+              bg-white border border-slate-200 shadow-[0_4px_20px_rgba(15,37,68,0.08)]
+              dark:bg-[rgba(15,27,48,0.7)] dark:border-white/[0.07] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+            style={{ padding: "28px 28px 24px" }}
+          >
+            {/* Grid */}
+            <div
+              className="w-full grid grid-cols-4 gap-x-6 gap-y-5
+                max-[1200px]:grid-cols-3
+                max-[900px]:grid-cols-2 max-[900px]:gap-x-5 max-[900px]:gap-y-4
+                max-[480px]:grid-cols-1 max-[480px]:gap-y-3.5"
+            >
               {renderCell({ label: "hoVaTen", fieldKey: "fullName", span: 2 })}
               {renderCell({ label: "soThe", fieldKey: "cardNumber", span: 2 })}
               {renderCell({ label: "donVi", fieldKey: "department", span: 2 })}
@@ -526,10 +625,7 @@ export default function UserInfo() {
                 span: 4,
               })}
 
-              {renderCell({
-                label: "hinhThucDiChuyen",
-                fieldKey: "transport",
-              })}
+              {renderCell({ label: "hinhThucDiChuyen", fieldKey: "transport" })}
 
               {isShuttleFactory && isShuttleSelected && (
                 <>
@@ -542,7 +638,6 @@ export default function UserInfo() {
                       label: trip.hanh_trinh,
                     })),
                   })}
-
                   {renderCell({
                     label: "tramDonTra",
                     fieldKey: "shuttleStop",
@@ -551,374 +646,20 @@ export default function UserInfo() {
                       trips.find(
                         (t) => t.hanh_trinh === localValues.shuttleTrip,
                       )?.tram_don_tra ?? []
-                    ).map((stop) => ({
-                      value: stop.ten,
-                      label: stop.ten,
-                    })),
+                    ).map((stop) => ({ value: stop.ten, label: stop.ten })),
                   })}
                 </>
               )}
             </div>
           </div>
-          {/* /ui-right-card */}
         </div>
-        {/* /ui-right */}
+        {/* /right */}
       </div>
 
       <style>{`
-        /* ── Page ── */
-        .ui-page {
-          width: 100%;
-          min-height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 24px 24px;
-          box-sizing: border-box;
-          overflow-x: hidden;
-        }
-        .ui-inner {
-          width: 100%;
-          min-height: calc(100vh - 140px);
-          display: flex;
-          flex-direction: row;
-          align-items: stretch;
-          gap: 20px;
-          animation: ui-rise 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-        @keyframes ui-rise {
-          from { opacity: 0; transform: translateY(14px); }
+        @keyframes cp-rise {
+          from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── Left panel (1/3) ── */
-        .ui-left {
-          flex: 0 0 calc(33.333% - 10px);
-          display: flex;
-          flex-direction: column;
-        }
-
-        /* Left card */
-        .ui-left-card {
-          flex: 1;
-          border-radius: 20px;
-          padding: 32px 24px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-          overflow: hidden;
-          transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
-        }
-        .dark .ui-left-card {
-          background: rgba(15,27,48,0.7);
-          border: 1px solid rgba(255,255,255,0.07);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-        .light .ui-left-card {
-          background: #fff;
-          border: 1px solid rgba(0,0,0,0.07);
-          box-shadow: 0 4px 24px rgba(15,37,68,0.08);
-        }
-
-        /* Decorative dot pattern */
-        .ui-left-card__deco {
-          position: absolute;
-          top: -40px; right: -40px;
-          width: 180px; height: 180px;
-          border-radius: 50%;
-          pointer-events: none;
-          transition: background 0.3s;
-        }
-        .dark .ui-left-card__deco  { background: radial-gradient(circle, rgba(37,99,235,0.18) 0%, transparent 70%); }
-        .light .ui-left-card__deco { background: radial-gradient(circle, rgba(37,99,235,0.1) 0%, transparent 70%); }
-
-        /* ── Right panel (2/3) ── */
-        .ui-right {
-          flex: 1;
-          min-width: 0;
-          display: flex;
-          flex-direction: column;
-        }
-        .ui-right-card {
-          flex: 1;
-          border-radius: 20px;
-          padding: 28px 28px 24px;
-          transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
-        }
-        .dark .ui-right-card {
-          background: rgba(15,27,48,0.7);
-          border: 1px solid rgba(255,255,255,0.07);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-        .light .ui-right-card {
-          background: #fff;
-          border: 1px solid rgba(0,0,0,0.07);
-          box-shadow: 0 4px 24px rgba(15,37,68,0.08);
-        }
-
-        /* QR scales to fit card */
-        .ui-qr-section svg {
-          width: 100%;
-          max-width: 160px;
-          height: auto;
-        }
-
-        /* ── QR section ── */
-        .ui-qr-section {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 16px;
-          width: 100%;
-          position: relative;
-          z-index: 1;
-        }
-        .ui-qr-wrap {
-          padding: 16px;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: transform 0.18s ease, background 0.3s ease;
-        }
-        .ui-qr-wrap:hover { transform: scale(1.03); }
-        .dark .ui-qr-wrap  { background: rgba(255,255,255,0.06); box-shadow: 0 0 0 1px rgba(255,255,255,0.08); }
-        .light .ui-qr-wrap { background: rgba(37,99,235,0.05); box-shadow: 0 0 0 1px rgba(37,99,235,0.1); }
-        .ui-qr-code { display: block; transition: color 0.3s; }
-        .dark .ui-qr-code  { color: rgba(255,255,255,0.9); }
-        .light .ui-qr-code { color: #0f2544; }
-
-        /* Identity below QR */
-        .ui-qr-identity {
-          text-align: center;
-          display: flex;
-          flex-direction: column;
-          gap: 3px;
-          width: 100%;
-        }
-        .ui-qr-identity__name {
-          font-size: 15px;
-          font-weight: 700;
-          margin: 0;
-          line-height: 1.3;
-          transition: color 0.3s;
-        }
-        .dark .ui-qr-identity__name  { color: rgba(255,255,255,0.92); }
-        .light .ui-qr-identity__name { color: #0f2544; }
-
-        .ui-qr-identity__serial {
-          font-size: 11.5px;
-          font-weight: 600;
-          margin: 0;
-          letter-spacing: 0.5px;
-          transition: color 0.3s;
-        }
-        .dark .ui-qr-identity__serial  { color: rgba(147,197,253,0.6); }
-        .light .ui-qr-identity__serial { color: rgba(37,99,235,0.65); }
-
-        .ui-qr-identity__dept {
-          font-size: 11.5px;
-          margin: 0;
-          transition: color 0.3s;
-        }
-        .dark .ui-qr-identity__dept  { color: rgba(255,255,255,0.4); }
-        .light .ui-qr-identity__dept { color: #64748b; }
-
-        /* Divider inside left card */
-        .ui-qr-section::after {
-          content: '';
-          display: block;
-          width: 40px;
-          height: 1px;
-          margin: 0 auto;
-          transition: background 0.3s;
-        }
-        .dark .ui-qr-section::after  { background: rgba(255,255,255,0.08); }
-        .light .ui-qr-section::after { background: rgba(0,0,0,0.07); }
-
-        /* Eye btn */
-        .ui-eye-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          background: none;
-          border: 1px solid var(--ui-eye-border);
-          border-radius: 999px;
-          padding: 7px 18px;
-          font-size: 13px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.18s ease;
-          color: var(--ui-eye-color);
-        }
-        .ui-eye-btn__label { font-family: 'DM Sans', sans-serif; }
-        .dark  { --ui-eye-border: rgba(147,197,253,0.28); --ui-eye-color: rgba(147,197,253,0.82); }
-        .light { --ui-eye-border: rgba(37,99,235,0.22);   --ui-eye-color: #2563eb; }
-        .ui-eye-btn:hover { background: var(--ui-eye-hover); }
-        .dark  { --ui-eye-hover: rgba(147,197,253,0.07); }
-        .light { --ui-eye-hover: rgba(37,99,235,0.05); }
-
-        /* ── Cell ── */
-        .ui-cell {
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-          min-width: 0;
-        }
-        .ui-cell--disabled {
-          opacity: 0.38;
-          pointer-events: none;
-        }
-        .ui-cell--span-1 { grid-column: span 1; }
-        .ui-cell--span-2 { grid-column: span 2; }
-        .ui-cell--span-4 { grid-column: span 4; }
-
-        .ui-cell::after {
-          content: '';
-          display: block;
-          height: 1px;
-          margin-top: 4px;
-          transition: background 0.3s;
-        }
-        .dark .ui-cell::after  { background: rgba(255,255,255,0.06); }
-        .light .ui-cell::after { background: rgba(0,0,0,0.06); }
-
-        .ui-cell__label {
-          font-size: 11px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.6px;
-          transition: color 0.3s;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .dark .ui-cell__label  { color: rgba(147,197,253,0.55); }
-        .light .ui-cell__label { color: rgba(37,99,235,0.75); }
-
-        .ui-cell__body {
-          position: relative;
-          min-height: 26px;
-          display: flex;
-          align-items: center;
-        }
-
-        /* Value row — clickable when editable + revealed */
-        .ui-cell__value-row {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          width: 100%;
-          border-radius: 6px;
-          padding: 2px 4px;
-          margin: -2px -4px;
-          transition: background 0.15s;
-          cursor: default;
-        }
-        .ui-cell__value-row--editable {
-          cursor: text;
-        }
-        .ui-cell__value-row--editable:hover {
-          background: var(--ui-hover-bg);
-        }
-        .dark  { --ui-hover-bg: rgba(147,197,253,0.07); }
-        .light { --ui-hover-bg: rgba(37,99,235,0.05); }
-
-        .ui-cell__value {
-          flex: 1;
-          font-size: 14px;
-          font-weight: 500;
-          word-break: break-word;
-          transition: color 0.3s;
-          line-height: 1.5;
-        }
-        .dark .ui-cell__value  { color: rgba(255,255,255,0.88); }
-        .light .ui-cell__value { color: #0f172a; }
-
-        .ui-cell__value--masked {
-          letter-spacing: 3px;
-          font-size: 12px;
-        }
-        .dark .ui-cell__value--masked  { color: rgba(255,255,255,0.16); }
-        .light .ui-cell__value--masked { color: rgba(0,0,0,0.13); }
-
-        /* Pencil icon */
-        .ui-pencil-icon {
-          flex-shrink: 0;
-          opacity: 0;
-          transition: opacity 0.15s;
-          color: var(--ui-pencil-color);
-        }
-        .dark  { --ui-pencil-color: rgba(147,197,253,0.7); }
-        .light { --ui-pencil-color: #2563eb; }
-        .ui-pencil-icon--hidden { display: none; }
-        .ui-cell__value-row--editable:hover .ui-pencil-icon { opacity: 0.6; }
-
-        /* ── Responsive ── */
-
-        /* Desktop: 4 cols in right panel */
-        .ui-grid {
-          width: 100%;
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 20px 24px;
-        }
-
-        /* Medium: 1/3 + 2/3 still holds, grid goes 3 col */
-        @media (max-width: 1200px) {
-          .ui-grid { grid-template-columns: repeat(3, 1fr); }
-          .ui-cell--span-4 { grid-column: span 3; }
-          .ui-cell--span-2 { grid-column: span 2; }
-        }
-
-        /* Tablet: stack vertically, QR on top */
-        @media (max-width: 900px) {
-          .ui-inner { flex-direction: column; align-items: stretch; min-height: unset; gap: 16px; }
-          .ui-left { flex: none; width: 100%; }
-          .ui-left-card { padding: 24px; flex-direction: row; gap: 24px; justify-content: center; }
-          .ui-left-card__deco { display: none; }
-          .ui-qr-section { flex-direction: row; align-items: center; width: auto; gap: 10px; }
-          .ui-qr-section::after { display: none; }
-          .ui-qr-identity { text-align: left; }
-          .ui-qr-section svg { max-width: 100px; }
-          .ui-right { width: 100%; }
-          .ui-page { padding: 16px 16px 96px; align-items: flex-start; }
-          .ui-grid { grid-template-columns: repeat(2, 1fr); gap: 16px 20px; }
-          .ui-cell--span-4 { grid-column: span 2; }
-          .ui-cell--span-2 { grid-column: span 2; }
-        }
-
-        @media (max-width: 600px) {
-          .ui-left-card { flex-direction: column; align-items: center; }
-          .ui-qr-section { flex-direction: column; }
-          .ui-qr-identity { text-align: center; }
-          .ui-qr-section svg { max-width: 130px; }
-        }
-
-        @media (max-width: 480px) {
-          .ui-page { padding: 12px 12px 96px; }
-          .ui-inner { gap: 12px; }
-          .ui-grid { grid-template-columns: 1fr; gap: 14px; }
-          .ui-right-card { padding: 20px 16px; }
-          .ui-cell--span-1,
-          .ui-cell--span-2,
-          .ui-cell--span-4 { grid-column: span 1; }
-        }
-        /* QR preview overlay */
-        .ui-qr-preview-box {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 16px;
-        }
-        .ui-qr-preview-name {
-          color: #fff;
-          font-size: 15px;
-          font-weight: 600;
-          margin: 0;
-          letter-spacing: 0.3px;
         }
       `}</style>
     </div>

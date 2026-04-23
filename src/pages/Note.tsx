@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import { useFileViewer } from "../hooks/useFileViewer";
 import FileViewer from "../components/FileViewer";
 import { useTranslation } from "../hooks/useTranslation";
-
 import { useAppSelector } from "../hooks/auth";
 import { useClickOutside } from "../hooks/useClickOutside";
 import type { Book } from "../types/guide";
@@ -22,7 +21,6 @@ export default function Note() {
 
   useEffect(() => {
     let cancelled = false;
-
     const fetch = async () => {
       try {
         const data = await guideApi.getAllFiles(user.factory);
@@ -33,7 +31,6 @@ export default function Note() {
         setFetchError(err instanceof Error ? err : new Error(String(err)));
       }
     };
-
     fetch();
     return () => {
       cancelled = true;
@@ -50,14 +47,9 @@ export default function Note() {
     loading,
     error: viewerError,
     reload,
-  } = useFileViewer({
-    url: null,
-    directUrl: fileUrl,
-    forceType: "pdf",
-  });
+  } = useFileViewer({ url: null, directUrl: fileUrl, forceType: "pdf" });
 
   const objectUrl = selectedBook ? rawObjectUrl : null;
-
   const error = fetchError || viewerError;
 
   const handleDownload = () => {
@@ -78,37 +70,106 @@ export default function Note() {
     setSelectOpen(false);
   };
 
+  // Shared class strings (mirrors Header.tsx conventions)
+  const actionBtnCls = `
+    inline-flex items-center gap-1.5 rounded-lg border cursor-pointer
+    text-[13px] font-semibold font-['DM_Sans',sans-serif] transition-all duration-150 whitespace-nowrap
+    border-black/10 text-slate-500/90 bg-transparent
+    dark:border-white/10 dark:text-white/65
+    hover:bg-blue-600/[0.06] hover:text-[#2563eb] hover:border-blue-600/20
+    dark:hover:bg-blue-300/[0.08] dark:hover:text-[#93c5fd] dark:hover:border-blue-300/25
+  `;
+
+  const dropdownCls = `
+    absolute top-[calc(100%+6px)] left-0 right-0 z-50 rounded-[10px] overflow-hidden overflow-y-auto
+    border backdrop-blur-xl max-h-[220px]
+    animate-[slideDown_0.15s_cubic-bezier(0.16,1,0.3,1)]
+    bg-white/[0.97] border-black/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.12)]
+    dark:bg-[rgba(18,32,56,0.95)] dark:border-white/[0.09] dark:shadow-[0_8px_32px_rgba(0,0,0,0.45)]
+  `;
+
+  const dropdownItemBaseCls = `
+    w-full block text-left text-[13px] font-medium font-['DM_Sans',sans-serif] border-none bg-transparent
+    cursor-pointer transition-all duration-[120ms] overflow-hidden text-ellipsis whitespace-nowrap
+    text-slate-600/90 dark:text-white/70
+    hover:bg-blue-600/[0.06] hover:text-[#2563eb]
+    dark:hover:bg-blue-300/[0.08] dark:hover:text-[#93c5fd]
+  `;
+
+  const dropdownItemActiveCls = `!bg-blue-600/[0.08] !text-[#2563eb] !font-semibold dark:!bg-blue-300/[0.10] dark:!text-[#93c5fd]`;
+
   return (
-    <div className="nt-page">
-      {/* ── Fixed header ── */}
-      <div className="nt-header">
-        <div className="nt-header__left">
-          <div className="nt-header__icon">
+    <div className="w-full h-full flex flex-col overflow-hidden box-border">
+      {/* ── Header ── */}
+      <div
+        className="
+          shrink-0 flex items-center justify-between gap-3 z-10
+          border-b transition-colors duration-300
+          bg-white/80 border-black/[0.07] backdrop-blur-sm
+          dark:bg-[rgba(15,27,48,0.6)] dark:border-white/[0.07]
+        "
+        style={{ padding: "14px 24px" }}
+      >
+        {/* Left */}
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          {/* Icon */}
+          <div
+            className="
+              w-[34px] h-[34px] rounded-[9px] flex items-center justify-center shrink-0
+              transition-colors duration-300
+              bg-blue-600/8 text-[#2563eb]
+              dark:bg-blue-300/10 dark:text-[#93c5fd]
+            "
+          >
             <FileText size={18} />
           </div>
-          <h1 className="nt-header__title">{t("soTay / quyTrinhChinhSach")}</h1>
 
-          {/* ── File selector ── */}
-          <div className="nt-select-wrap" ref={selectRef}>
+          {/* Title */}
+          <h1
+            className="
+              text-[15px] font-bold font-['DM_Sans',sans-serif] m-0 whitespace-nowrap shrink-0
+              transition-colors duration-300
+              text-[#0f2544] dark:text-white/90
+              max-[480px]:hidden
+            "
+          >
+            {t("soTay / quyTrinhChinhSach")}
+          </h1>
+
+          {/* File selector */}
+          <div
+            className="relative flex-1 min-w-0 max-w-[320px] max-[768px]:max-w-[180px] max-[480px]:max-w-40"
+            ref={selectRef}
+          >
             <button
-              className={`nt-select-trigger${!selectedBook ? " nt-select-trigger--placeholder" : ""}`}
+              className={`
+                w-full inline-flex items-center justify-between gap-1.5 rounded-lg border
+                text-[13px] font-medium font-['DM_Sans',sans-serif] cursor-pointer transition-all duration-150 min-w-0
+                border-black/10 bg-black/2 text-slate-600/90
+                dark:border-white/10 dark:bg-white/4 dark:text-white/75
+                hover:border-blue-600/25 hover:bg-blue-600/4
+                dark:hover:border-blue-300/30 dark:hover:bg-blue-300/6
+                disabled:opacity-40 disabled:cursor-not-allowed
+                ${!selectedBook ? "text-slate-400 dark:text-white/35" : ""}
+              `}
+              style={{ padding: "6px 10px 6px 12px" }}
               onClick={() => setSelectOpen((o) => !o)}
               disabled={books.length === 0}
             >
-              <span className="nt-select-trigger__label">
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1 text-left">
                 {selectedBook ? selectedBook.Title : t("chonSoTayQuyTrinh")}
               </span>
-
               <ChevronDown
                 size={14}
-                className={`nt-select-trigger__chevron${selectOpen ? " nt-select-trigger__chevron--open" : ""}`}
+                className={`shrink-0 opacity-60 transition-transform duration-200 ${selectOpen ? "rotate-180 opacity-80" : ""}`}
               />
             </button>
 
             {selectOpen && books.length > 0 && (
-              <div className="nt-dropdown">
+              <div className={dropdownCls}>
                 <button
-                  className={`nt-dropdown__item${!selectedBook ? " nt-dropdown__item--active" : ""}`}
+                  className={`${dropdownItemBaseCls} ${!selectedBook ? dropdownItemActiveCls : ""}`}
+                  style={{ padding: "9px 14px" }}
                   onClick={() => {
                     setSelectedBook(null);
                     setSelectOpen(false);
@@ -119,7 +180,8 @@ export default function Note() {
                 {books.map((book) => (
                   <button
                     key={book.ID}
-                    className={`nt-dropdown__item${selectedBook?.ID === book.ID ? " nt-dropdown__item--active" : ""}`}
+                    className={`${dropdownItemBaseCls} ${selectedBook?.ID === book.ID ? dropdownItemActiveCls : ""}`}
+                    style={{ padding: "9px 14px" }}
                     onClick={() => handleSelect(book)}
                   >
                     {book.Title}
@@ -130,333 +192,59 @@ export default function Note() {
           </div>
         </div>
 
-        <div className="nt-header__actions">
+        {/* Actions */}
+        <div className="flex items-center gap-2 shrink-0">
           {objectUrl && (
-            <button className="nt-action-btn" onClick={handleDownload}>
+            <button
+              className={actionBtnCls}
+              style={{ padding: "6px 12px" }}
+              onClick={handleDownload}
+            >
               <Download size={15} />
-              <span className="nt-action-btn__label">Download</span>
+              <span className="max-[768px]:hidden">Download</span>
             </button>
           )}
           {objectUrl && (
-            <button className="nt-action-btn" onClick={handleOpenExternal}>
+            <button
+              className={actionBtnCls}
+              style={{ padding: "6px 12px" }}
+              onClick={handleOpenExternal}
+            >
               <ExternalLink size={15} />
-              <span className="nt-action-btn__label">Expand</span>
+              <span className="max-[768px]:hidden">Expand</span>
             </button>
           )}
         </div>
       </div>
 
-      <div className="nt-content">
-        <FileViewer
-          objectUrl={objectUrl}
-          fileType={detectedType}
-          loading={loading}
-          error={error}
-          onReload={reload}
-          height="100%"
-          className="nt-viewer"
-        />
+      {/* ── Content ── */}
+      <div
+        className="flex-1 min-h-0 overflow-hidden flex flex-col box-border"
+        style={{ padding: "16px 20px 20px" }}
+      >
+        <div
+          className="
+            flex-1 min-h-0 overflow-hidden rounded-xl
+            border transition-colors duration-300
+            border-black/6 dark:border-white/6
+          "
+        >
+          <FileViewer
+            objectUrl={objectUrl}
+            fileType={detectedType}
+            loading={loading}
+            error={error}
+            onReload={reload}
+            height="100%"
+            // className="[&_.fv-root]:rounded-none [&_.fv-iframe]:rounded-none"
+          />
+        </div>
       </div>
 
       <style>{`
-        .nt-page {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          box-sizing: border-box;
-        }
-
-        /* ── Header ── */
-        .nt-header {
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-          padding: 14px 24px;
-          border-bottom: 1px solid var(--nt-border);
-          transition: background 0.3s, border-color 0.3s;
-          z-index: 10;
-        }
-        .dark .nt-header {
-          background: rgba(15,27,48,0.6);
-          --nt-border: rgba(255,255,255,0.07);
-        }
-        .light .nt-header {
-          background: rgba(255,255,255,0.8);
-          --nt-border: rgba(0,0,0,0.07);
-          backdrop-filter: blur(8px);
-        }
-
-        .nt-header__left {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          min-width: 0;
-          flex: 1;
-        }
-
-        .nt-header__icon {
-          width: 34px; height: 34px;
-          border-radius: 9px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          transition: background 0.3s, color 0.3s;
-        }
-        .dark .nt-header__icon  { background: rgba(147,197,253,0.1); color: #93c5fd; }
-        .light .nt-header__icon { background: rgba(37,99,235,0.08); color: #2563eb; }
-
-        .nt-header__title {
-          font-size: 15px;
-          font-weight: 700;
-          font-family: 'DM Sans', sans-serif;
-          margin: 0;
-          white-space: nowrap;
-          flex-shrink: 0;
-          transition: color 0.3s;
-        }
-        .dark .nt-header__title  { color: rgba(255,255,255,0.9); }
-        .light .nt-header__title { color: #0f2544; }
-
-        /* ── Select ── */
-        .nt-select-wrap {
-          position: relative;
-          flex: 1;
-          max-width: 320px;
-          min-width: 0;
-        }
-
-        .nt-select-trigger {
-          width: 100%;
-          display: inline-flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 6px;
-          padding: 6px 10px 6px 12px;
-          border-radius: 8px;
-          border: 1px solid var(--nt-sel-border);
-          background: var(--nt-sel-bg);
-          font-size: 13px;
-          font-weight: 500;
-          font-family: 'DM Sans', sans-serif;
-          cursor: pointer;
-          transition: all 0.15s;
-          color: var(--nt-sel-color);
-          min-width: 0;
-        }
-        .dark {
-          --nt-sel-border: rgba(255,255,255,0.1);
-          --nt-sel-bg: rgba(255,255,255,0.04);
-          --nt-sel-color: rgba(255,255,255,0.75);
-        }
-        .light {
-          --nt-sel-border: rgba(0,0,0,0.1);
-          --nt-sel-bg: rgba(0,0,0,0.02);
-          --nt-sel-color: #334155;
-        }
-        .nt-select-trigger:hover:not(:disabled) {
-          border-color: var(--nt-sel-hover-border);
-          background: var(--nt-sel-hover-bg);
-        }
-        .dark {
-          --nt-sel-hover-border: rgba(147,197,253,0.3);
-          --nt-sel-hover-bg: rgba(147,197,253,0.06);
-        }
-        .light {
-          --nt-sel-hover-border: rgba(37,99,235,0.25);
-          --nt-sel-hover-bg: rgba(37,99,235,0.04);
-        }
-        .nt-select-trigger:disabled {
-          opacity: 0.4;
-          cursor: not-allowed;
-        }
-        .dark .nt-select-trigger--placeholder  { color: rgba(255,255,255,0.35); }
-        .light .nt-select-trigger--placeholder { color: #94a3b8; }
-
-        .nt-select-trigger__label {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          flex: 1;
-          text-align: left;
-        }
-
-        .nt-select-trigger__chevron {
-          flex-shrink: 0;
-          transition: transform 0.2s;
-          opacity: 0.6;
-        }
-        .nt-select-trigger__chevron--open {
-          transform: rotate(180deg);
-        }
-
-        /* ── Dropdown ── */
-        .nt-dropdown {
-          position: absolute;
-          top: calc(100% + 6px);
-          left: 0;
-          right: 0;
-          border-radius: 10px;
-          border: 1px solid var(--nt-dd-border);
-          background: var(--nt-dd-bg);
-          backdrop-filter: blur(12px);
-          box-shadow: var(--nt-dd-shadow);
-          overflow: hidden;
-          overflow-y: auto;
-          max-height: 220px;
-          z-index: 50;
-          animation: nt-dropdown-in 0.15s ease;
-        }
-        .dark {
-          --nt-dd-border: rgba(255,255,255,0.09);
-          --nt-dd-bg: rgba(18,32,56,0.95);
-          --nt-dd-shadow: 0 8px 32px rgba(0,0,0,0.45);
-        }
-        .light {
-          --nt-dd-border: rgba(0,0,0,0.08);
-          --nt-dd-bg: rgba(255,255,255,0.97);
-          --nt-dd-shadow: 0 8px 32px rgba(0,0,0,0.12);
-        }
-
-        @keyframes nt-dropdown-in {
+        @keyframes slideDown {
           from { opacity: 0; transform: translateY(-4px); }
           to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .nt-dropdown__item {
-          width: 100%;
-          display: block;
-          padding: 9px 14px;
-          text-align: left;
-          font-size: 13px;
-          font-family: 'DM Sans', sans-serif;
-          font-weight: 500;
-          border: none;
-          background: transparent;
-          cursor: pointer;
-          transition: background 0.12s, color 0.12s;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          color: var(--nt-dd-item-color);
-        }
-        .dark  { --nt-dd-item-color: rgba(255,255,255,0.7); }
-        .light { --nt-dd-item-color: #334155; }
-
-        .nt-dropdown__item:hover {
-          background: var(--nt-dd-item-hover);
-          color: var(--nt-dd-item-hover-color);
-        }
-        .dark  {
-          --nt-dd-item-hover: rgba(147,197,253,0.08);
-          --nt-dd-item-hover-color: #93c5fd;
-        }
-        .light {
-          --nt-dd-item-hover: rgba(37,99,235,0.06);
-          --nt-dd-item-hover-color: #2563eb;
-        }
-
-        .nt-dropdown__item--active {
-          color: var(--nt-dd-active-color) !important;
-          background: var(--nt-dd-active-bg) !important;
-          font-weight: 600;
-        }
-        .dark  {
-          --nt-dd-active-color: #93c5fd;
-          --nt-dd-active-bg: rgba(147,197,253,0.1);
-        }
-        .light {
-          --nt-dd-active-color: #2563eb;
-          --nt-dd-active-bg: rgba(37,99,235,0.08);
-        }
-
-        /* ── Header actions ── */
-        .nt-header__actions {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          flex-shrink: 0;
-        }
-
-        .nt-action-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 12px;
-          border-radius: 8px;
-          border: 1px solid var(--nt-btn-border);
-          background: transparent;
-          font-size: 13px;
-          font-weight: 600;
-          font-family: 'DM Sans', sans-serif;
-          cursor: pointer;
-          transition: all 0.15s;
-          color: var(--nt-btn-color);
-          white-space: nowrap;
-        }
-        .dark  { --nt-btn-border: rgba(255,255,255,0.1); --nt-btn-color: rgba(255,255,255,0.65); }
-        .light { --nt-btn-border: rgba(0,0,0,0.1); --nt-btn-color: #475569; }
-
-        .nt-action-btn:hover {
-          background: var(--nt-btn-hover);
-          color: var(--nt-btn-hover-color);
-          border-color: var(--nt-btn-hover-border);
-        }
-        .dark {
-          --nt-btn-hover: rgba(147,197,253,0.08);
-          --nt-btn-hover-color: #93c5fd;
-          --nt-btn-hover-border: rgba(147,197,253,0.25);
-        }
-        .light {
-          --nt-btn-hover: rgba(37,99,235,0.06);
-          --nt-btn-hover-color: #2563eb;
-          --nt-btn-hover-border: rgba(37,99,235,0.2);
-        }
-
-        /* ── Content ── */
-        .nt-content {
-          flex: 1;
-          min-height: 0;
-          overflow: hidden;
-          padding: 16px 20px 20px;
-          box-sizing: border-box;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .nt-viewer {
-          flex: 1;
-          min-height: 0;
-          border-radius: 12px;
-          overflow: hidden;
-          border: 1px solid var(--nt-viewer-border);
-          transition: border-color 0.3s;
-        }
-        .dark  { --nt-viewer-border: rgba(255,255,255,0.06); }
-        .light { --nt-viewer-border: rgba(0,0,0,0.06); }
-
-        .nt-viewer .fv-root,
-        .nt-viewer .fv-iframe {
-          border-radius: 0;
-        }
-
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-          .nt-header { padding: 12px 16px; }
-          .nt-content { padding: 12px 12px 96px; }
-          .nt-action-btn__label { display: none; }
-          .nt-action-btn { padding: 7px 8px; }
-          .nt-select-wrap { max-width: 180px; }
-        }
-
-        @media (max-width: 480px) {
-          .nt-header__title { display: none; }
-          .nt-content { padding: 8px 8px 96px; }
-          .nt-select-wrap { max-width: 160px; }
         }
       `}</style>
     </div>

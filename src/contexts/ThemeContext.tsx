@@ -17,19 +17,15 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
-    const root = document.documentElement;
     if (theme === "dark") {
-      root.classList.add("dark");
-      root.classList.remove("light");
+      document.documentElement.classList.add("dark");
     } else {
-      root.classList.add("light");
-      root.classList.remove("dark");
+      document.documentElement.classList.remove("dark");
     }
   }, [theme]);
 
-  const toggleTheme = () => {
+  const toggleTheme = () =>
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
-  };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

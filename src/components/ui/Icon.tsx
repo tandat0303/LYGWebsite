@@ -1,12 +1,5 @@
 export const Icon = ({ children }: { children: React.ReactNode }) => (
-  <span
-    style={{
-      display: "flex",
-      alignItems: "center",
-      color: "rgba(147,197,253,0.8)",
-      marginRight: 2,
-    }}
-  >
+  <span className="flex items-center text-[rgba(147,197,253,0.8)] mr-0.5">
     {children}
   </span>
 );

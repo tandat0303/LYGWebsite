@@ -17,7 +17,7 @@ import { LuNotebookPen } from "react-icons/lu";
 import { AiOutlineLogout } from "react-icons/ai";
 import { PiCreditCard } from "react-icons/pi";
 import { RiContactsBook3Line } from "react-icons/ri";
-import { IoSettingsOutline } from "react-icons/io5";
+// import { IoSettingsOutline } from "react-icons/io5";
 import { RiHome3Line } from "react-icons/ri";
 import storage from "../../libs/storage";
 import { logout } from "../../features/authSlice";
@@ -27,23 +27,32 @@ import { useTranslation } from "../../hooks/useTranslation";
 
 export const Sidebar = () => {
   const { t } = useTranslation();
-
   const dispatch = useAppDispatch();
   const user = useAppSelector((s) => s.auth.user);
   const navigate = useNavigate();
   const location = useLocation();
-
   const { isOpen, isCollapsed, toggleSidebar, closeSidebar } = useSidebar();
 
-  const handleAccessGetInside = () => {
-    const url = "https://www.lacty.com.vn/vac/";
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
+  const handleAccessGetInside = () =>
+    window.open(
+      "https://www.lacty.com.vn/vac/",
+      "_blank",
+      "noopener,noreferrer",
+    );
 
-  const handleAccessERP = () => {
-    const url = "http://weberp.lacty.com.vn/sampleshoe/login.php";
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
+  const handleAccessERP = () =>
+    window.open(
+      "http://weberp.lacty.com.vn/sampleshoe/login.php",
+      "_blank",
+      "noopener,noreferrer",
+    );
+
+  const handleAccessBooking = () =>
+    window.open(
+      "http://erp.lacty.com.vn:8000/bmr/#/",
+      "_blank",
+      "noopener,noreferrer",
+    );
 
   const handleLogout = () => {
     storage.remove("auth");
@@ -101,7 +110,12 @@ export const Sidebar = () => {
           icon: GiRunningShoe,
           onClick: handleAccessERP,
         },
-        { id: "meeting", label: "dangKyPhongHop", icon: SiGoogleclassroom },
+        {
+          id: "meeting",
+          label: "dangKyPhongHop",
+          icon: SiGoogleclassroom,
+          onClick: handleAccessBooking,
+        },
         { id: "news", label: "banTin", icon: IoNewspaperOutline },
         { id: "chatbot", label: "LY ChatBot", icon: RiRobot2Line },
       ],
@@ -112,7 +126,7 @@ export const Sidebar = () => {
         { id: "download", label: "taiLygChoIos", icon: FaAppStoreIos },
         { id: "change-pass", label: "doiMatKhau", icon: GrKey },
         { id: "contact", label: "lienHe", icon: RiContactsBook3Line },
-        { id: "settings", label: "caiDat", icon: IoSettingsOutline },
+        // { id: "settings", label: "caiDat", icon: IoSettingsOutline },
         { id: "note", label: "soTay / quyTrinhChinhSach", icon: LuNotebookPen },
         { id: "guide", label: "huongDanSuDung", icon: GoBook },
         {
@@ -126,59 +140,47 @@ export const Sidebar = () => {
   ];
 
   const renderIcon = (icon: SidebarIcon) => {
-    if (typeof icon === "string") {
-      return (
-        <img
-          src={icon}
-          className="w-5 h-5 min-w-5 flex items-center justify-center object-contain
-                    opacity-85 transition-all duration-180 ease-[ease] shrink-0  
-                    sidebar-menu-icon"
-          alt=""
-        />
-      );
-    }
+    const cls =
+      "w-5 h-5 min-w-[20px] flex items-center justify-center shrink-0 " +
+      "opacity-85 transition-all duration-[180ms] group-hover:opacity-100 group-hover:scale-105";
+    if (typeof icon === "string")
+      return <img src={icon} className={`${cls} object-contain`} alt="" />;
     if (typeof icon === "function") {
       const Icon = icon;
       return (
-        <span
-          className="w-5 h-5 min-w-5 flex items-center justify-center object-contain
-                    opacity-85 transition-all duration-180 ease-[ease] shrink-0  
-                    sidebar-menu-icon"
-        >
+        <span className={cls}>
           <Icon size={18} />
         </span>
       );
     }
-    return (
-      <span
-        className="w-5 h-5 min-w-5 flex items-center justify-center object-contain
-                    opacity-85 transition-all duration-180 ease-[ease] shrink-0  
-                    sidebar-menu-icon"
-      >
-        {icon}
-      </span>
-    );
+    return <span className={cls}>{icon}</span>;
   };
 
   return (
     <>
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-29 animate-[fadeIn_0.2s_ease]"
-          onClick={closeSidebar}
-          aria-hidden="true"
-        />
-      )}
+      <div
+        className={`
+          fixed inset-0 bg-black/50 z-29 lg:hidden
+          transition-[opacity,visibility] duration-300
+          ${isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}
+        `}
+        onClick={closeSidebar}
+        aria-hidden="true"
+      />
 
       <aside
-        className={`w-[280px] h-full shrink-0 flex flex-col overflow-hidden
-                    [transition:width_0.28s_cubic-bezier(0.4,0,0.2,1),background_0.3s_ease,border-color_0.3s_ease]
-                    sidebar 
-                    ${isOpen ? "mobile-open" : ""} ${isCollapsed ? "collapsed" : ""}`}
+        className={`sidebar ${isCollapsed ? "is-collapsed" : ""} ${isOpen ? "is-open" : ""}`}
       >
-        <div className="sidebar-header">
+        {/* ── Header ── */}
+        <div className="sb-header">
           <button
-            className="sidebar-toggle-btn"
+            className="
+              sb-toggle flex items-center justify-center w-9 h-9 rounded-[9px]
+              border border-transparent bg-transparent cursor-pointer shrink-0
+              text-slate-800/90 dark:text-blue-300/75
+              hover:bg-blue-600/8 hover:border-blue-600/15 hover:text-[#2563eb]
+              dark:hover:bg-blue-300/12 dark:hover:border-blue-300/20 dark:hover:text-[#93c5fd]
+            "
             onClick={toggleSidebar}
             aria-label="Toggle sidebar"
             title={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
@@ -186,48 +188,87 @@ export const Sidebar = () => {
             <Menu size={20} />
           </button>
 
-          <div className="sidebar-logo">
-            <div className="w-16 h-16 rounded-full flex flex-col items-center justify-center gap-0.5 shrink-0 sidebar-logo-circle">
+          <div className="sb-logo">
+            <div
+              className="
+                w-16 h-16 rounded-full flex flex-col items-center justify-center gap-0.5 shrink-0
+                border-2 transition-colors duration-300
+                bg-blue-600/8 border-blue-600/20 text-[#2563eb]
+                dark:bg-blue-300/10 dark:border-blue-300/30 dark:text-[#93c5fd]
+              "
+            >
               <QrCode size={32} />
               <Eye size={14} className="cursor-pointer" />
             </div>
-            <h1 className="text-[15px] font-bold tracking-[0.5px] m-0 whitespace-nowrap overflow-hidden text-ellipsis max-w-full sidebar-title">
+            <h1
+              className="
+                text-[15px] font-bold tracking-[0.5px] m-0
+                whitespace-nowrap overflow-hidden text-ellipsis max-w-full
+                text-[#0f2544] dark:text-white/90 transition-colors duration-300
+              "
+            >
               {user.fullName}
             </h1>
           </div>
         </div>
 
+        {/* ── Scrollable content ── */}
         <div
-          className="flex-1 overflow-y-auto overflow-x-hidden sidebar-content"
+          className="flex-1 overflow-y-auto overflow-x-hidden"
           style={{ padding: "12px 0" }}
         >
           {SIDEBAR_SECTIONS.map((section) => (
-            <div key={section.title} className="sidebar-section">
-              <h2 className="sidebar-section-title">{t(section.title)}</h2>
-              <ul className="sidebar-menu">
-                {section.items.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      className={`sidebar-menu-item ${activeItem === item.id ? "active" : ""}`}
-                      onClick={() => handleItemClick(item.id, item.onClick)}
-                      title={item.label}
-                    >
-                      {renderIcon(item.icon)}
-                      <span className="sidebar-menu-label">
-                        {t(item.label)}
-                      </span>
-                      <svg
-                        className="sidebar-menu-arrow"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
+            <div key={section.title} className="mb-1">
+              <h2 className="sb-section-title text-[11px] font-bold uppercase tracking-[1px] m-0 whitespace-nowrap overflow-hidden text-blue-700/70 dark:text-blue-300/60 transition-colors duration-300">
+                {t(section.title)}
+              </h2>
+
+              <ul className="sb-menu list-none m-0 flex flex-col gap-0.5">
+                {section.items.map((item) => {
+                  const isActive = activeItem === item.id;
+                  return (
+                    <li key={item.id} className="flex">
+                      <button
+                        className={`
+                          group sb-item flex items-center w-full border-none rounded-lg cursor-pointer
+                          text-[14px] font-medium font-['DM_Sans',sans-serif]
+                          transition-[background,color] duration-180
+                          text-left whitespace-nowrap overflow-hidden
+                          ${
+                            isActive
+                              ? "bg-blue-600/12 text-[#2563eb] dark:bg-blue-300/15 dark:text-[#93c5fd]"
+                              : "bg-transparent text-slate-800/90 dark:text-white/65 hover:bg-blue-600/7 hover:text-slate-900 dark:hover:bg-blue-300/10 dark:hover:text-white/90"
+                          }
+                        `}
+                        onClick={() => handleItemClick(item.id, item.onClick)}
+                        title={item.label}
                       >
-                        <polyline points="9 18 15 12 9 6" />
-                      </svg>
-                    </button>
-                  </li>
-                ))}
+                        {renderIcon(item.icon)}
+                        <span className="sb-label flex-1 whitespace-nowrap overflow-hidden text-ellipsis">
+                          {t(item.label)}
+                        </span>
+                        {/* <svg
+                          className={`
+                            sb-arrow shrink-0 w-[14px] h-[14px]
+                            transition-[opacity,transform,max-width] duration-[180ms]
+                            group-hover:translate-x-0.5
+                            ${
+                              isActive
+                                ? "opacity-80 text-[#2563eb] dark:text-[#93c5fd]"
+                                : "opacity-40 text-blue-700/60 dark:text-blue-300/60 group-hover:opacity-80"
+                            }
+                          `}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg> */}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -235,97 +276,60 @@ export const Sidebar = () => {
       </aside>
 
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* ───── Sidebar base ───── */
+        /* ─── Base ─── */
         .sidebar {
-          background: var(--sidebar-bg);
-          border-right: 1px solid var(--sidebar-border);
+          width: 280px;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          flex-shrink: 0;
+          overflow: hidden;
+          background: rgba(255,255,255,0.97);
+          border-right: 1px solid rgba(0,0,0,0.08);
           scrollbar-width: thin;
-          scrollbar-color: var(--sidebar-scrollbar) transparent;
+          scrollbar-color: rgba(37,99,235,0.2) transparent;
+          transition:
+            width        0.32s cubic-bezier(0.4,0,0.2,1),
+            background   0.3s  ease,
+            border-color 0.3s  ease;
         }
-
         .dark .sidebar {
-          --sidebar-bg: rgba(15, 27, 48, 0.95);
-          --sidebar-border: rgba(255, 255, 255, 0.08);
-          --sidebar-scrollbar: rgba(147, 197, 253, 0.3);
+          background: rgba(15,27,48,0.95);
+          border-color: rgba(255,255,255,0.08);
+          scrollbar-color: rgba(147,197,253,0.3) transparent;
         }
 
-        .light .sidebar {
-          --sidebar-bg: rgba(255, 255, 255, 0.97);
-          --sidebar-border: rgba(0, 0, 0, 0.08);
-          --sidebar-scrollbar: rgba(37, 99, 235, 0.2);
-        }
-
-        /* ───── Collapsed (desktop) ───── */
-        .sidebar.collapsed {
-          width: 64px;
-        }
-
-        /* ───── Sidebar Header ───── */
-        .sidebar-header {
+        /* ─── Header ─── */
+        .sb-header {
           flex-shrink: 0;
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding: 12px 12px 16px;
-          border-bottom: 1px solid var(--sidebar-border);
-          gap: 12px;
+          border-bottom: 1px solid rgba(0,0,0,0.08);
           overflow: hidden;
-          transition: padding 0.28s ease;
+          padding: 12px 12px 16px;
+          gap: 12px;
+          transition:
+            padding      0.32s cubic-bezier(0.4,0,0.2,1),
+            gap          0.32s cubic-bezier(0.4,0,0.2,1),
+            border-color 0.3s  ease;
         }
+        .dark .sb-header { border-color: rgba(255,255,255,0.08); }
 
-        .sidebar.collapsed .sidebar-header {
-          padding: 9.5px 0;
-          gap: 0;
-        }
-
-        .sidebar-toggle-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 36px;
-          height: 36px;
-          border-radius: 9px;
-          border: 1px solid transparent;
-          background: transparent;
-          cursor: pointer;
-          color: var(--toggle-color);
-          transition: all 0.18s ease;
-          flex-shrink: 0;
+        /* Toggle button — self-alignment transitions too */
+        .sb-toggle {
           align-self: flex-start;
+          transition:
+            align-self   0.32s cubic-bezier(0.4,0,0.2,1),
+            background   0.18s ease,
+            border-color 0.18s ease,
+            color        0.18s ease;
         }
 
-        .sidebar.collapsed .sidebar-toggle-btn {
-          align-self: center;
-        }
-
-        .dark .sidebar-toggle-btn  { --toggle-color: rgba(147,197,253,0.75); }
-        .light .sidebar-toggle-btn { --toggle-color: var(--primary, #0f172a); }
-
-        .sidebar-toggle-btn:hover {
-          background: var(--toggle-hover-bg);
-          color: var(--toggle-hover-color);
-          border-color: var(--toggle-hover-border);
-        }
-
-        .dark .sidebar-toggle-btn:hover {
-          --toggle-hover-bg: rgba(147,197,253,0.12);
-          --toggle-hover-color: #93c5fd;
-          --toggle-hover-border: rgba(147,197,253,0.2);
-        }
-
-        .light .sidebar-toggle-btn:hover {
-          --toggle-hover-bg: rgba(37,99,235,0.08);
-          --toggle-hover-color: var(--accent, #2563eb);
-          --toggle-hover-border: rgba(37,99,235,0.15);
-        }
-
-        /* ───── Logo ───── */
-        .sidebar-logo {
+        /* Logo block */
+        .sb-logo {
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -333,221 +337,112 @@ export const Sidebar = () => {
           width: 100%;
           overflow: hidden;
           opacity: 1;
-          max-height: 120px;
-          transition: opacity 0.15s ease, max-height 0.25s ease;
+          max-height: 160px;
+          transition:
+            opacity    0.22s ease,
+            max-height 0.32s cubic-bezier(0.4,0,0.2,1);
         }
 
-        .sidebar.collapsed .sidebar-logo {
-          opacity: 0;
-          max-height: 0;
-        }
-
-        .sidebar-logo-circle {
-          background: var(--logo-circle-bg);
-          border: 2px solid var(--logo-circle-border);
-          color: var(--logo-circle-color);
-          transition: all 0.3s ease;
-        }
-
-        .dark .sidebar-logo-circle {
-          --logo-circle-bg: rgba(147,197,253,0.1);
-          --logo-circle-border: rgba(147,197,253,0.3);
-          --logo-circle-color: #93c5fd;
-        }
-
-        .light .sidebar-logo-circle {
-          --logo-circle-bg: rgba(37,99,235,0.08);
-          --logo-circle-border: rgba(37,99,235,0.2);
-          --logo-circle-color: #2563eb;
-        }
-
-        .sidebar-title {
-          color: var(--sidebar-title-color);
-          transition: color 0.3s ease;
-        }
-
-        .dark .sidebar-title  { --sidebar-title-color: rgba(255,255,255,0.9); }
-        .light .sidebar-title { --sidebar-title-color: #0f2544; }
-
-        /* ───── Section ───── */
-        .sidebar-section {
-          margin-bottom: 4px;
-        }
-
-        .sidebar-section-title {
-          font-size: 11px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: var(--sidebar-section-title);
+        /* Section title */
+        .sb-section-title {
           padding: 8px 16px 6px;
-          margin: 0;
-          white-space: nowrap;
-          overflow: hidden;
           opacity: 1;
           max-height: 40px;
-          transition: opacity 0.15s ease, max-height 0.2s ease;
+          transition:
+            opacity    0.18s ease,
+            max-height 0.28s cubic-bezier(0.4,0,0.2,1),
+            padding    0.28s cubic-bezier(0.4,0,0.2,1);
         }
 
-        .sidebar.collapsed .sidebar-section-title {
-          opacity: 0;
-          max-height: 0;
-          padding-top: 0;
-          padding-bottom: 0;
-        }
-
-        .dark .sidebar-section-title  { --sidebar-section-title: rgba(147,197,253,0.6); }
-        .light .sidebar-section-title { --sidebar-section-title: rgba(37,99,235,0.7); }
-
-        /* ───── Menu Items ───── */
-        .sidebar-menu {
-          list-style: none;
-          margin: 0;
+        /* Menu list */
+        .sb-menu {
           padding: 0 8px;
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
+          transition: padding 0.32s cubic-bezier(0.4,0,0.2,1);
         }
 
-        .sidebar.collapsed .sidebar-menu { padding: 0 6px; }
-
-        .sidebar-menu-item {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        /* Menu item */
+        .sb-item {
           gap: 10px;
           padding: 10px 12px;
-          width: 100%;
-          border: none;
-          background: transparent;
-          border-radius: 8px;
-          cursor: pointer;
-          color: var(--sidebar-item-color);
-          font-size: 14px;
-          font-weight: 500;
-          font-family: 'DM Sans', sans-serif;
-          transition: all 0.18s ease;
-          text-align: left;
-          white-space: nowrap;
-          overflow: hidden;
+          transition:
+            gap        0.32s cubic-bezier(0.4,0,0.2,1),
+            padding    0.32s cubic-bezier(0.4,0,0.2,1),
+            background 0.18s ease,
+            color      0.18s ease;
         }
 
-        .sidebar.collapsed .sidebar-menu-item {
-          justify-content: center;
-          padding: 10px 0;
-          gap: 0;
-        }
-
-        .dark .sidebar-menu-item  { --sidebar-item-color: rgba(255,255,255,0.65); }
-        .light .sidebar-menu-item { --sidebar-item-color: var(--primary, #0f172a); }
-
-        .sidebar-menu-item:hover {
-          background: var(--sidebar-item-hover-bg);
-          color: var(--sidebar-item-hover-color);
-        }
-
-        .dark .sidebar-menu-item:hover {
-          --sidebar-item-hover-bg: rgba(147,197,253,0.1);
-          --sidebar-item-hover-color: rgba(255,255,255,0.9);
-        }
-        .light .sidebar-menu-item:hover {
-          --sidebar-item-hover-bg: rgba(37,99,235,0.09);
-          --sidebar-item-hover-color: var(--primary, #0f172a);
-        }
-
-        .sidebar-menu-item.active {
-          background: var(--sidebar-item-active-bg);
-          color: var(--sidebar-item-active-color);
-        }
-
-        .dark .sidebar-menu-item.active {
-          --sidebar-item-active-bg: rgba(147,197,253,0.15);
-          --sidebar-item-active-color: #93c5fd;
-        }
-        .light .sidebar-menu-item.active {
-          --sidebar-item-active-bg: rgba(37,99,235,0.12);
-          --sidebar-item-active-color: var(--accent, #2563eb);
-        }
-
-        .sidebar-menu-icon svg { width: 20px; height: 20px; }
-
-        .sidebar-menu-item:hover .sidebar-menu-icon { opacity: 1; transform: scale(1.05); }
-
-        .sidebar.collapsed .sidebar-menu-icon { margin: 0 auto; min-width: 20px; }
-
-        .sidebar.collapsed .sidebar-menu li {
-          width: 100%;
-          display: flex;
-          justify-content: center;
-        }
-
-        .sidebar-menu-label {
-          flex: 1;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+        /* Label */
+        .sb-label {
           opacity: 1;
-          transition: opacity 0.15s ease;
+          max-width: 200px;
+          transition:
+            opacity   0.18s ease,
+            max-width 0.32s cubic-bezier(0.4,0,0.2,1);
         }
 
-        .sidebar.collapsed .sidebar-menu-label { opacity: 0; width: 0; flex: 0; }
-
-        .sidebar-menu-arrow {
-          flex-shrink: 0;
-          width: 14px;
-          height: 14px;
-          opacity: 0.5;
-          transition: all 0.18s ease;
-          color: var(--sidebar-arrow-color);
+        /* Arrow */
+        .sb-arrow {
+          max-width: 14px;
+          overflow: hidden;
+          transition:
+            opacity   0.18s ease,
+            max-width 0.28s cubic-bezier(0.4,0,0.2,1),
+            transform 0.18s ease;
         }
 
-        .sidebar.collapsed .sidebar-menu-arrow { opacity: 0; width: 0; }
+        /* ════════════════════════
+           COLLAPSED  (desktop only)
+        ════════════════════════ */
+        .sidebar.is-collapsed                    { width: 64px; }
+        .sidebar.is-collapsed .sb-header        { padding: 10px 0; gap: 0; }
+        .sidebar.is-collapsed .sb-toggle        { align-self: center; }
+        .sidebar.is-collapsed .sb-logo          { opacity: 0; max-height: 0; }
+        .sidebar.is-collapsed .sb-section-title { opacity: 0; max-height: 0; padding: 0 16px; }
+        .sidebar.is-collapsed .sb-menu          { padding: 0 6px; }
+        .sidebar.is-collapsed .sb-item          { gap: 0; padding: 10px 0; justify-content: center; }
+        .sidebar.is-collapsed .sb-label         { opacity: 0; max-width: 0; }
+        .sidebar.is-collapsed .sb-arrow         { opacity: 0; max-width: 0; }
 
-        .dark .sidebar-menu-arrow  { --sidebar-arrow-color: rgba(147,197,253,0.6); }
-        .light .sidebar-menu-arrow { --sidebar-arrow-color: var(--accent, #2563eb); }
-
-        .sidebar-menu-item:hover .sidebar-menu-arrow { opacity: 1; transform: translateX(2px); }
-        .sidebar-menu-item.active .sidebar-menu-arrow { opacity: 0.8; }
-
-        /* ───── Mobile ───── */
+        /* ════════════════════════
+           MOBILE  (≤ 1024px)
+        ════════════════════════ */
         @media (max-width: 1024px) {
           .sidebar {
             position: fixed;
             top: 0; left: 0;
             height: 100vh;
             width: 280px;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
             z-index: 35;
+            /* slide instead of width collapse on mobile */
+            transform: translateX(-100%);
+            transition:
+              transform    0.3s cubic-bezier(0.4,0,0.2,1),
+              background   0.3s ease,
+              border-color 0.3s ease;
           }
-          .sidebar.mobile-open { transform: translateX(0); }
-          .sidebar.collapsed { width: 280px; transform: translateX(-100%); }
-          .sidebar.collapsed.mobile-open { transform: translateX(0); }
+          .sidebar.is-open { transform: translateX(0); }
 
-          .sidebar.collapsed .sidebar-logo,
-          .sidebar.collapsed .sidebar-menu-label,
-          .sidebar.collapsed .sidebar-menu-arrow,
-          .sidebar.collapsed .sidebar-section-title {
-            opacity: 1; max-height: unset; width: unset; flex: unset;
-          }
+          /* collapsed on mobile = still full-width, just off-screen */
+          .sidebar.is-collapsed { width: 280px; transform: translateX(-100%); }
+          .sidebar.is-collapsed.is-open { transform: translateX(0); }
 
-          .sidebar.collapsed .sidebar-menu-item {
-            justify-content: flex-start;
-            align-items: center;
-            padding: 10px 12px;
-            gap: 10px;
-          }
-
-          .sidebar.collapsed .sidebar-menu { padding: 0 8px; }
-          .sidebar.collapsed .sidebar-menu li { justify-content: flex-start; }
-          .sidebar.collapsed .sidebar-menu-icon { margin: 0; }
-          .sidebar.collapsed .sidebar-header { padding: 12px 12px 16px; gap: 12px; }
-          .sidebar.collapsed .sidebar-toggle-btn { align-self: flex-start; }
-          .sidebar.collapsed .sidebar-section-title { padding: 8px 16px 6px; }
+          /* restore all collapsed overrides so the mobile drawer looks normal */
+          .sidebar.is-collapsed .sb-header        { padding: 12px 12px 16px; gap: 12px; }
+          .sidebar.is-collapsed .sb-toggle        { align-self: flex-start; }
+          .sidebar.is-collapsed .sb-logo          { opacity: 1; max-height: 160px; }
+          .sidebar.is-collapsed .sb-section-title { opacity: 1; max-height: 40px; padding: 8px 16px 6px; }
+          .sidebar.is-collapsed .sb-menu          { padding: 0 8px; }
+          .sidebar.is-collapsed .sb-item          { gap: 10px; padding: 10px 12px; justify-content: flex-start; }
+          .sidebar.is-collapsed .sb-label         { opacity: 1; max-width: 200px; }
+          .sidebar.is-collapsed .sb-arrow         { opacity: 0.4; max-width: 14px; }
         }
 
-        @media (max-width: 768px) { .sidebar { width: 260px; } }
-        @media (max-width: 480px) { .sidebar { width: 100%; } }
+        @media (max-width: 768px) {
+          .sidebar, .sidebar.is-collapsed { width: 260px; }
+        }
+        @media (max-width: 480px) {
+          .sidebar, .sidebar.is-collapsed { width: 100%; }
+        }
       `}</style>
     </>
   );

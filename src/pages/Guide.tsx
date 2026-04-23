@@ -18,12 +18,10 @@ export default function Guide() {
 
   useEffect(() => {
     let cancelled = false;
-
     const fetch = async () => {
       try {
         const books = await guideApi.getAllFiles(user.factory);
         if (cancelled) return;
-
         const book = books.find((b: Book) => b.ID === TARGET_BOOK_ID);
         if (book) {
           setFileName(book.FileName);
@@ -37,7 +35,6 @@ export default function Guide() {
         setFetchError(err instanceof Error ? err : new Error(String(err)));
       }
     };
-
     fetch();
     return () => {
       cancelled = true;
@@ -54,11 +51,7 @@ export default function Guide() {
     loading,
     error: viewerError,
     reload,
-  } = useFileViewer({
-    url: null,
-    directUrl: fileUrl,
-    forceType: "pdf",
-  });
+  } = useFileViewer({ url: null, directUrl: fileUrl, forceType: "pdf" });
 
   const error = fetchError || viewerError;
 
@@ -75,188 +68,99 @@ export default function Guide() {
     window.open(objectUrl, "_blank", "noopener,noreferrer");
   };
 
+  const actionBtnCls = `
+    inline-flex items-center gap-1.5 rounded-lg border cursor-pointer
+    text-[13px] font-semibold font-['DM_Sans',sans-serif] transition-all duration-150 whitespace-nowrap
+    border-black/10 text-slate-500/90 bg-transparent
+    dark:border-white/10 dark:text-white/65
+    hover:bg-blue-600/[0.06] hover:text-[#2563eb] hover:border-blue-600/20
+    dark:hover:bg-blue-300/[0.08] dark:hover:text-[#93c5fd] dark:hover:border-blue-300/25
+  `;
+
   return (
-    <div className="gd-page">
-      {/* ── Fixed header ── */}
-      <div className="gd-header">
-        <div className="gd-header__left">
-          <div className="gd-header__icon">
+    <div className="w-full h-full flex flex-col overflow-hidden box-border">
+      {/* ── Header ── */}
+      <div
+        className="
+          shrink-0 flex items-center justify-between gap-3 z-1
+          border-b transition-colors duration-300
+          bg-white/80 border-black/[0.07] backdrop-blur-sm
+          dark:bg-[rgba(15,27,48,0.6)] dark:border-white/[0.07]
+        "
+        style={{ padding: "14px 24px" }}
+      >
+        {/* Left */}
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div
+            className="
+              w-[34px] h-[34px] rounded-[9px] flex items-center justify-center not-only:shrink-0
+              transition-colors duration-300
+              bg-blue-600/8 text-[#2563eb]
+              dark:bg-blue-300/10 dark:text-[#93c5fd]
+            "
+          >
             <BookOpen size={18} />
           </div>
-          <h1 className="gd-header__title">{t("huongDanSuDung")}</h1>
+          <h1
+            className="
+              font-bold font-['DM_Sans',sans-serif] m-0 whitespace-nowrap overflow-hidden text-ellipsis
+              transition-colors duration-300
+              text-[#0f2544] dark:text-white/90
+              text-[15px] max-[480px]:text-[14px]
+            "
+          >
+            {t("huongDanSuDung")}
+          </h1>
         </div>
 
-        <div className="gd-header__actions">
+        {/* Actions */}
+        <div className="flex items-center gap-2 shrink-0">
           {objectUrl && (
-            <button className="gd-action-btn" onClick={handleDownload}>
+            <button
+              className={actionBtnCls}
+              style={{ padding: "6px 12px" }}
+              onClick={handleDownload}
+            >
               <Download size={15} />
-              <span className="gd-action-btn__label">Download</span>
+              <span className="max-[768px]:hidden">Download</span>
             </button>
           )}
           {objectUrl && (
-            <button className="gd-action-btn" onClick={handleOpenExternal}>
+            <button
+              className={actionBtnCls}
+              style={{ padding: "6px 12px" }}
+              onClick={handleOpenExternal}
+            >
               <ExternalLink size={15} />
-              <span className="gd-action-btn__label">Expand</span>
+              <span className="max-[768px]:hidden">Expand</span>
             </button>
           )}
         </div>
       </div>
 
-      <div className="gd-content">
-        <FileViewer
-          objectUrl={objectUrl}
-          fileType={detectedType}
-          loading={loading}
-          error={error}
-          onReload={reload}
-          height="100%"
-          className="gd-viewer"
-        />
+      {/* ── Content ── */}
+      <div
+        className="flex-1 min-h-0 overflow-hidden flex flex-col box-border"
+        style={{ padding: "16px 20px 20px" }}
+      >
+        <div
+          className="
+            flex-1 min-h-0 overflow-hidden rounded-xl
+            border transition-colors duration-300
+            border-black/6 dark:border-white/6
+          "
+        >
+          <FileViewer
+            objectUrl={objectUrl}
+            fileType={detectedType}
+            loading={loading}
+            error={error}
+            onReload={reload}
+            height="100%"
+            // className="[&_.fv-root]:rounded-none [&_.fv-iframe]:rounded-none"
+          />
+        </div>
       </div>
-
-      <style>{`
-        .gd-page {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          box-sizing: border-box;
-        }
-
-        .gd-header {
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-          padding: 14px 24px;
-          border-bottom: 1px solid var(--gd-border);
-          transition: background 0.3s, border-color 0.3s;
-          z-index: 1;
-        }
-        .dark .gd-header {
-          background: rgba(15,27,48,0.6);
-          --gd-border: rgba(255,255,255,0.07);
-        }
-        .light .gd-header {
-          background: rgba(255,255,255,0.8);
-          --gd-border: rgba(0,0,0,0.07);
-          backdrop-filter: blur(8px);
-        }
-
-        .gd-header__left {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          min-width: 0;
-        }
-
-        .gd-header__icon {
-          width: 34px; height: 34px;
-          border-radius: 9px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          transition: background 0.3s, color 0.3s;
-        }
-        .dark .gd-header__icon  { background: rgba(147,197,253,0.1); color: #93c5fd; }
-        .light .gd-header__icon { background: rgba(37,99,235,0.08); color: #2563eb; }
-
-        .gd-header__title {
-          font-size: 15px;
-          font-weight: 700;
-          font-family: 'DM Sans', sans-serif;
-          margin: 0;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          transition: color 0.3s;
-        }
-        .dark .gd-header__title  { color: rgba(255,255,255,0.9); }
-        .light .gd-header__title { color: #0f2544; }
-
-        .gd-header__actions {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          flex-shrink: 0;
-        }
-
-        .gd-action-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 12px;
-          border-radius: 8px;
-          border: 1px solid var(--gd-btn-border);
-          background: transparent;
-          font-size: 13px;
-          font-weight: 600;
-          font-family: 'DM Sans', sans-serif;
-          cursor: pointer;
-          transition: all 0.15s;
-          color: var(--gd-btn-color);
-          white-space: nowrap;
-        }
-        .dark  { --gd-btn-border: rgba(255,255,255,0.1); --gd-btn-color: rgba(255,255,255,0.65); }
-        .light { --gd-btn-border: rgba(0,0,0,0.1); --gd-btn-color: #475569; }
-
-        .gd-action-btn:hover {
-          background: var(--gd-btn-hover);
-          color: var(--gd-btn-hover-color);
-          border-color: var(--gd-btn-hover-border);
-        }
-        .dark {
-          --gd-btn-hover: rgba(147,197,253,0.08);
-          --gd-btn-hover-color: #93c5fd;
-          --gd-btn-hover-border: rgba(147,197,253,0.25);
-        }
-        .light {
-          --gd-btn-hover: rgba(37,99,235,0.06);
-          --gd-btn-hover-color: #2563eb;
-          --gd-btn-hover-border: rgba(37,99,235,0.2);
-        }
-
-        .gd-content {
-          flex: 1;
-          min-height: 0;
-          overflow: hidden;
-          padding: 16px 20px 20px;
-          box-sizing: border-box;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .gd-viewer {
-          flex: 1;
-          min-height: 0;
-          border-radius: 12px;
-          overflow: hidden;
-          border: 1px solid var(--gd-viewer-border);
-          transition: border-color 0.3s;
-        }
-        .dark  { --gd-viewer-border: rgba(255,255,255,0.06); }
-        .light { --gd-viewer-border: rgba(0,0,0,0.06); }
-
-        .gd-viewer .fv-root,
-        .gd-viewer .fv-iframe {
-          border-radius: 0;
-        }
-
-        @media (max-width: 768px) {
-          .gd-header { padding: 12px 16px; }
-          .gd-content { padding: 12px 12px 96px; }
-          .gd-action-btn__label { display: none; }
-          .gd-action-btn { padding: 7px 8px; }
-        }
-
-        @media (max-width: 480px) {
-          .gd-header__title { font-size: 14px; }
-          .gd-content { padding: 8px 8px 96px; }
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,16 +1,3 @@
-// components/ui/FileViewer.tsx
-// Reusable file renderer — renders the correct viewer based on fileType.
-// Designed to be used with useFileViewer hook.
-//
-// Usage:
-//   <FileViewer
-//     objectUrl={objectUrl}
-//     fileType={fileType}
-//     loading={loading}
-//     error={error}
-//     onReload={reload}
-//   />
-
 import { AlertCircle, RefreshCw, FileX } from "lucide-react";
 import type { SupportedFileType } from "../hooks/useFileViewer";
 
@@ -25,6 +12,24 @@ export interface FileViewerProps {
   loadingText?: string;
 }
 
+const stateWrapCls =
+  "flex flex-col items-center justify-center gap-3 rounded-xl " +
+  "bg-black/[0.03] dark:bg-white/[0.03]";
+
+const stateTextCls =
+  "text-[13.5px] font-['DM_Sans',sans-serif] m-0 text-center " +
+  "text-slate-500 dark:text-white/45";
+
+const stateIconCls =
+  "transition-colors duration-300 text-black/[0.18] dark:text-white/20";
+
+const reloadBtnCls =
+  "inline-flex items-center gap-1.5 rounded-lg border cursor-pointer no-underline " +
+  "text-[13px] font-semibold font-['DM_Sans',sans-serif] transition-all duration-150 " +
+  "border-blue-600/25 text-[#2563eb] bg-transparent " +
+  "dark:border-blue-300/30 dark:text-blue-300/85 " +
+  "hover:bg-blue-600/[0.06] dark:hover:bg-blue-300/[0.08]";
+
 export default function FileViewer({
   objectUrl,
   fileType,
@@ -35,15 +40,19 @@ export default function FileViewer({
   className = "",
   loadingText = "Loading file...",
 }: FileViewerProps) {
+  // ── Loading ──
   if (loading) {
     return (
-      <div
-        className={`fv-state fv-state--loading ${className}`}
-        style={{ height }}
-      >
-        <span className="fv-spinner" />
-        <p className="fv-state__text">{loadingText}</p>
-        <style>{stateStyles}</style>
+      <div className={`${stateWrapCls} ${className}`} style={{ height }}>
+        {/* Spinner */}
+        <span
+          className="
+            w-9 h-9 rounded-full border-[3px] border-transparent
+            border-t-[#2563eb] dark:border-t-blue-300/70
+            animate-spin
+          "
+        />
+        <p className={stateTextCls}>{loadingText}</p>
       </div>
     );
   }
@@ -51,22 +60,22 @@ export default function FileViewer({
   // ── Error ──
   if (error) {
     return (
-      <div
-        className={`fv-state fv-state--error ${className}`}
-        style={{ height }}
-      >
+      <div className={`${stateWrapCls} ${className}`} style={{ height }}>
         <AlertCircle
           size={36}
-          className="fv-state__icon fv-state__icon--error"
+          className="transition-colors duration-300 text-[#ef4444] dark:text-[#f87171]"
         />
-        <p className="fv-state__text">{error.message}</p>
+        <p className={stateTextCls}>{error.message}</p>
         {onReload && (
-          <button className="fv-reload-btn" onClick={onReload}>
+          <button
+            className={reloadBtnCls}
+            style={{ padding: "7px 16px" }}
+            onClick={onReload}
+          >
             <RefreshCw size={14} />
             Retry
           </button>
         )}
-        <style>{stateStyles}</style>
       </div>
     );
   }
@@ -74,208 +83,75 @@ export default function FileViewer({
   // ── No file ──
   if (!objectUrl) {
     return (
-      <div
-        className={`fv-state fv-state--empty ${className}`}
-        style={{ height }}
-      >
-        <FileX size={36} className="fv-state__icon" />
-        <p className="fv-state__text">No file</p>
-        <style>{stateStyles}</style>
+      <div className={`${stateWrapCls} ${className}`} style={{ height }}>
+        <FileX size={36} className={stateIconCls} />
+        <p className={stateTextCls}>
+          No file chosen. Please choose file to view
+        </p>
       </div>
     );
   }
 
   // ── Render by type ──
   return (
-    <div className={`fv-root ${className}`} style={{ height }}>
-      {fileType === "pdf" && (
+    <div
+      className={`w-full overflow-hidden rounded-xl relative ${className}`}
+      style={{ height }}
+    >
+      {/* PDF / HTML / Text */}
+      {(fileType === "pdf" || fileType === "text" || fileType === "html") && (
         <iframe
           src={objectUrl}
-          className="fv-iframe"
-          title="PDF Viewer"
-          // Hide default PDF toolbar on supported browsers
-          // Add #toolbar=0&navpanes=0 for Chrome
-          // Firefox ignores it — content still shows
+          className="w-full h-full border-none block rounded-xl"
+          title={fileType === "pdf" ? "PDF Viewer" : "Text / HTML Viewer"}
+          sandbox={fileType !== "pdf" ? "allow-same-origin" : undefined}
         />
       )}
 
+      {/* Image */}
       {fileType === "image" && (
-        <div className="fv-image-wrap">
-          <img src={objectUrl} alt="File preview" className="fv-image" />
+        <div className="w-full h-full flex items-start justify-center overflow-y-auto box-border p-4">
+          <img
+            src={objectUrl}
+            alt="File preview"
+            className="max-w-full h-auto rounded-lg block object-contain"
+          />
         </div>
       )}
 
+      {/* Video */}
       {fileType === "video" && (
-        <div className="fv-video-wrap">
-          <video src={objectUrl} controls className="fv-video" />
+        <div className="w-full h-full flex items-center justify-center box-border p-4">
+          <video
+            src={objectUrl}
+            controls
+            className="max-w-full max-h-full rounded-lg"
+          />
         </div>
       )}
 
+      {/* Audio */}
       {fileType === "audio" && (
-        <div className="fv-audio-wrap">
-          <audio src={objectUrl} controls className="fv-audio" />
+        <div className="w-full h-full flex items-center justify-center p-6">
+          <audio src={objectUrl} controls className="w-full max-w-[480px]" />
         </div>
       )}
 
-      {(fileType === "text" || fileType === "html") && (
-        <iframe
-          src={objectUrl}
-          className="fv-iframe"
-          title="Text / HTML Viewer"
-          sandbox="allow-same-origin"
-        />
-      )}
-
+      {/* Unknown */}
       {fileType === "unknown" && (
-        <div className="fv-state fv-state--empty" style={{ height: "100%" }}>
-          <FileX size={36} className="fv-state__icon" />
-          <p className="fv-state__text">File format not supported</p>
-          <a href={objectUrl} download className="fv-reload-btn">
+        <div className={`${stateWrapCls} w-full`} style={{ height: "100%" }}>
+          <FileX size={36} className={stateIconCls} />
+          <p className={stateTextCls}>File format not supported</p>
+          <a
+            href={objectUrl}
+            download
+            className={reloadBtnCls}
+            style={{ padding: "7px 16px" }}
+          >
             Download
           </a>
         </div>
       )}
-
-      <style>{viewerStyles}</style>
-      <style>{stateStyles}</style>
     </div>
   );
 }
-
-const stateStyles = `
-  .fv-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    border-radius: 12px;
-    transition: background 0.3s;
-  }
-  .dark .fv-state  { background: rgba(255,255,255,0.03); }
-  .light .fv-state { background: rgba(0,0,0,0.03); }
-
-  .fv-state__text {
-    font-size: 13.5px;
-    font-family: 'DM Sans', sans-serif;
-    margin: 0;
-    text-align: center;
-    transition: color 0.3s;
-  }
-  .dark .fv-state__text  { color: rgba(255,255,255,0.45); }
-  .light .fv-state__text { color: #64748b; }
-
-  .fv-state__icon { transition: color 0.3s; }
-  .dark .fv-state__icon  { color: rgba(255,255,255,0.2); }
-  .light .fv-state__icon { color: rgba(0,0,0,0.18); }
-  .fv-state__icon--error { }
-  .dark .fv-state__icon--error  { color: #f87171; }
-  .light .fv-state__icon--error { color: #ef4444; }
-
-  /* Spinner */
-  .fv-spinner {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    border: 3px solid transparent;
-    border-top-color: var(--fv-spinner-color);
-    animation: fv-spin 0.75s linear infinite;
-    transition: border-top-color 0.3s;
-  }
-  .dark  { --fv-spinner-color: rgba(147,197,253,0.7); }
-  .light { --fv-spinner-color: #2563eb; }
-
-  @keyframes fv-spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* Reload / download button */
-  .fv-reload-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--fv-btn-border);
-    background: transparent;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.15s;
-    color: var(--fv-btn-color);
-  }
-  .dark  { --fv-btn-border: rgba(147,197,253,0.3); --fv-btn-color: rgba(147,197,253,0.85); }
-  .light { --fv-btn-border: rgba(37,99,235,0.25);  --fv-btn-color: #2563eb; }
-  .fv-reload-btn:hover {
-    background: var(--fv-btn-hover);
-  }
-  .dark  { --fv-btn-hover: rgba(147,197,253,0.08); }
-  .light { --fv-btn-hover: rgba(37,99,235,0.06); }
-`;
-
-const viewerStyles = `
-  .fv-root {
-    width: 100%;
-    overflow: hidden;
-    border-radius: 12px;
-    transition: background 0.3s;
-    position: relative;
-  }
-
-  /* PDF / HTML / Text iframe */
-  .fv-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-    border-radius: 12px;
-    transition: filter 0.3s;
-  }
-
-  /* Image */
-  .fv-image-wrap {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    overflow-y: auto;
-    padding: 16px;
-    box-sizing: border-box;
-  }
-  .fv-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    display: block;
-    object-fit: contain;
-  }
-
-  /* Video */
-  .fv-video-wrap {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    box-sizing: border-box;
-  }
-  .fv-video {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 8px;
-  }
-
-  /* Audio */
-  .fv-audio-wrap {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .fv-audio { width: 100%; max-width: 480px; }
-`;

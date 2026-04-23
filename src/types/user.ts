@@ -36,6 +36,14 @@ export interface UserInfo {
   PickupDropoffStation?: string;
 }
 
+export interface UpdateUserInfoPayload {
+  userId: string;
+  birthday: string;
+  idCard: string;
+  phone: string;
+  idDate: string;
+}
+
 export type FieldKey =
   | "fullName"
   | "cardNumber"

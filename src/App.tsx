@@ -8,6 +8,7 @@ import ChangePassword from "./pages/auth/ChangePassword";
 import UserInfo from "./pages/UserInfo";
 import Guide from "./pages/Guide";
 import Note from "./pages/Note";
+import Attendance from "./pages/attendance/Attendance";
 
 export default function App() {
   return (
@@ -18,6 +19,8 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
+
+            <Route path="/attendance" element={<Attendance />} />
 
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/user-info" element={<UserInfo />} />

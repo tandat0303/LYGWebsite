@@ -30,8 +30,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
       onFinish={onFinish}
       layout="vertical"
       requiredMark={false}
-      className="lp-form lp-form--scroll"
-      style={{ width: "100%" }}
+      className="lp-form lp-form--scroll w-full"
       autoComplete="off"
     >
       <Form.Item
@@ -72,13 +71,12 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
           format="DD/MM/YYYY"
           placeholder={t("ngayCap")}
           size="large"
-          style={{ width: "100%" }}
           suffixIcon={
             <Icon>
               <CalendarDays size={15} />
             </Icon>
           }
-          className="lp-datepicker"
+          className="lp-datepicker w-full"
           disabledDate={(d) => d && d.isAfter(dayjs())}
         />
       </Form.Item>
@@ -91,13 +89,12 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
           format="DD/MM/YYYY"
           placeholder={t("ngaySinh")}
           size="large"
-          style={{ width: "100%" }}
           suffixIcon={
             <Icon>
               <Fingerprint size={15} />
             </Icon>
           }
-          className="lp-datepicker"
+          className="lp-datepicker w-full"
           disabledDate={(d) => d && d.isAfter(dayjs())}
         />
       </Form.Item>
@@ -128,7 +125,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
         />
       </Form.Item>
 
-      <Form.Item style={{ marginBottom: 0 }}>
+      <Form.Item className="mb-0">
         <Button
           htmlType="submit"
           loading={loading}

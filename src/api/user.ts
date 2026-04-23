@@ -3,6 +3,7 @@ import type {
   UpdateAddressLivePayload,
   UpdatePickupDropoffStationPayload,
   UpdateTripPayload,
+  UpdateUserInfoPayload,
   UpdateVehiclePayload,
   UserInfo,
   UserInfoPayload,
@@ -16,6 +17,13 @@ const userApi = {
       `/${payload.factory}/user/getUserInfo/${payload.userId}`,
     );
     return res.data.userInfo;
+  },
+
+  updateUserInfo: async (factory: string, data: UpdateUserInfoPayload) => {
+    const res = await apiClient.put(`/${factory}/user/updateUserInfo`, {
+      user: data,
+    });
+    return res.data;
   },
 
   getNameVehicle: async (factory: string): Promise<Vehicle[]> => {

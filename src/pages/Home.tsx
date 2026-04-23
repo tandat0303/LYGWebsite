@@ -4,7 +4,7 @@ import { FeatureCards } from "../components/layout/FeatureCards";
 export default function Home() {
   return (
     <div
-      className="w-full flex flex-col gap-8"
+      className="w-full lg:h-full flex flex-col gap-8"
       style={{ padding: "32px 40px" }}
     >
       <HeroSection />

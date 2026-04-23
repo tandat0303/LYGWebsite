@@ -67,7 +67,7 @@ export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
         />
       </Form.Item>
 
-      <Form.Item style={{ marginBottom: 0 }}>
+      <Form.Item className="mb-0">
         <Button
           htmlType="submit"
           loading={loading}
