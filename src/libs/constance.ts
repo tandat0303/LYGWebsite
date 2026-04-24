@@ -9,12 +9,17 @@ import { RiContactsBook3Line } from "react-icons/ri";
 // import { IoSettingsOutline } from "react-icons/io5";
 import { RiHome3Line } from "react-icons/ri";
 import type { FieldKey } from "../types/user";
-import type { AttendanceStatus } from "../types/attendance";
 
 export const ROUTE_MAP: Record<string, string> = {
   home: "/",
-  "change-pass": "/change-password",
+
   info: "/user-info",
+
+  news: "/news",
+
+  download: "/app-download",
+  "change-pass": "/change-password",
+  contact: "/contact",
   note: "/note",
   guide: "/guide",
 };
@@ -94,73 +99,80 @@ export const NAV_ITEMS: NavItem[] = [
   // },
 ];
 
-export const STATUS_CONFIG: Record<
-  AttendanceStatus,
-  {
-    label: string;
-    shortLabel: string;
-    dotClass: string;
-    bgClass: string;
-    textClass: string;
-    borderClass: string;
-  }
-> = {
-  present: {
-    label: "Đúng giờ",
-    shortLabel: "Đ",
-    dotClass: "bg-emerald-500 dark:bg-emerald-400",
-    bgClass: "bg-emerald-50 dark:bg-emerald-900/30",
-    textClass: "text-emerald-700 dark:text-emerald-300",
-    borderClass: "border-emerald-200 dark:border-emerald-700/50",
+export const STATUS_META = {
+  green: {
+    label: "Đủ công",
+    color: "#10b981",
+    bgColor: "#ecfdf5",
+    borderColor: "#6ee7b7",
   },
-  late: {
-    label: "Đi trễ",
-    shortLabel: "T",
-    dotClass: "bg-amber-500 dark:bg-amber-400",
-    bgClass: "bg-amber-50 dark:bg-amber-900/30",
-    textClass: "text-amber-700 dark:text-amber-300",
-    borderClass: "border-amber-200 dark:border-amber-700/50",
-  },
-  absent: {
+  red: {
     label: "Vắng mặt",
-    shortLabel: "V",
-    dotClass: "bg-red-500 dark:bg-red-400",
-    bgClass: "bg-red-50 dark:bg-red-900/30",
-    textClass: "text-red-700 dark:text-red-300",
-    borderClass: "border-red-200 dark:border-red-700/50",
+    color: "#ef4444",
+    bgColor: "#fef2f2",
+    borderColor: "#fca5a5",
   },
-  holiday: {
-    label: "Nghỉ lễ",
-    shortLabel: "L",
-    dotClass: "bg-purple-500 dark:bg-purple-400",
-    bgClass: "bg-purple-50 dark:bg-purple-900/30",
-    textClass: "text-purple-700 dark:text-purple-300",
-    borderClass: "border-purple-200 dark:border-purple-700/50",
+  yellow: {
+    label: "Khác",
+    color: "#f59e0b",
+    bgColor: "#fffbeb",
+    borderColor: "#fcd34d",
   },
-  leave: {
-    label: "Nghỉ phép",
-    shortLabel: "P",
-    dotClass: "bg-sky-500 dark:bg-sky-400",
-    bgClass: "bg-sky-50 dark:bg-sky-900/30",
-    textClass: "text-sky-700 dark:text-sky-300",
-    borderClass: "border-sky-200 dark:border-sky-700/50",
-  },
-  overtime: {
-    label: "Tăng ca",
-    shortLabel: "TC",
-    dotClass: "bg-blue-600 dark:bg-blue-400",
-    bgClass: "bg-blue-50 dark:bg-blue-900/30",
-    textClass: "text-blue-700 dark:text-blue-300",
-    borderClass: "border-blue-200 dark:border-blue-700/50",
+  empty: {
+    label: "Không có dữ liệu",
+    color: "#94a3b8",
+    bgColor: "#f8fafc",
+    borderColor: "#e2e8f0",
   },
   weekend: {
     label: "Cuối tuần",
-    shortLabel: "",
-    dotClass: "bg-slate-300 dark:bg-slate-600",
-    bgClass: "bg-transparent",
-    textClass: "text-slate-400 dark:text-slate-600",
-    borderClass: "border-transparent",
+    color: "#94a3b8",
+    bgColor: "#f8fafc",
+    borderColor: "#e2e8f0",
   },
-};
+} as const;
+
+export const STATUS_STYLES = {
+  green: {
+    bg: "bg-emerald-100 dark:bg-emerald-900/20",
+    border: "border-emerald-300 dark:border-emerald-600/40",
+    text: "text-emerald-700 dark:text-emerald-400",
+  },
+  red: {
+    bg: "bg-red-100 dark:bg-red-900/20",
+    border: "border-red-300 dark:border-red-600/40",
+    text: "text-red-700 dark:text-red-400",
+  },
+  yellow: {
+    bg: "bg-amber-100 dark:bg-amber-900/20",
+    border: "border-amber-300 dark:border-amber-600/40",
+    text: "text-amber-700 dark:text-amber-400",
+  },
+  empty: {
+    bg: "bg-slate-100 dark:bg-white/[0.03]",
+    border: "border-slate-200 dark:border-white/5",
+    text: "text-slate-500 dark:text-slate-600",
+  },
+  weekend: {
+    bg: "bg-transparent",
+    border: "border-transparent",
+    text: "text-slate-300 dark:text-slate-700",
+  },
+} as const;
 
 export const DOW_LABELS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+
+export const monthNames = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
+  "12",
+];

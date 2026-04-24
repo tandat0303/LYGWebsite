@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const getApiErrorMessage = (error: any): string => {
   if (error?.response?.data?.message) {
     return error.response.data.message;
@@ -37,4 +39,24 @@ export function formatDateRaw(digits: string): string {
   if (d.length <= 2) return d;
   if (d.length <= 4) return d.slice(0, 2) + "/" + d.slice(2);
   return d.slice(0, 2) + "/" + d.slice(2, 4) + "/" + d.slice(4);
+}
+
+export function formatTime(iso: string) {
+  const d = dayjs(iso).format("DD/MM/YYYY HH:mm");
+  return d;
+}
+
+export function formatDateTime(iso: string) {
+  const d = dayjs(iso).format("DD/MM/YYYY HH:mm:ss");
+  return d;
+}
+
+export function dateToTimestamp(
+  date: number,
+  month: number,
+  year: number,
+): number {
+  return dayjs(
+    `${year}-${String(month).padStart(2, "0")}-${String(date).padStart(2, "0")}`,
+  ).valueOf();
 }

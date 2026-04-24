@@ -134,13 +134,24 @@ export const FeatureCards = () => {
       onclick: () => navigate("/user-info", { replace: true }),
       size: "small",
     },
-    { id: "contact", label: "lienHe", icon: Contact, size: "small" },
-    { id: "news", label: "banTin", icon: News, size: "small" },
+    {
+      id: "contact",
+      label: "lienHe",
+      icon: Contact,
+      onclick: () => navigate("/contact", { replace: true }),
+      size: "small",
+    },
+    {
+      id: "news",
+      label: "banTin",
+      icon: News,
+      onclick: () => navigate("/news", { replace: true }),
+      size: "small",
+    },
   ];
 
   return (
     <div className="mb-20">
-      {/* Large Featured Cards */}
       <div
         className="
           grid gap-4 mb-8
@@ -155,7 +166,6 @@ export const FeatureCards = () => {
         ))}
       </div>
 
-      {/* Small Feature Cards */}
       <div className="max-[768px]:mb-6 max-[480px]:mb-5 mb-8">
         <div
           className="

@@ -49,8 +49,8 @@ const AuthPage = () => {
         userId: values.userId,
         password: values.password,
         factory: values.factory,
-        exponentPushToken: "NO_ACCESS_TO_NOTIFY",
-        DeviceInfo: "web_meeting_room",
+        exponentPushToken: "NULL",
+        DeviceInfo: "NULL",
       };
       const data = await authApi.login(payload);
       const accessToken = data?.accessToken;

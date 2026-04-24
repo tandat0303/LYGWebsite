@@ -9,6 +9,9 @@ import UserInfo from "./pages/UserInfo";
 import Guide from "./pages/Guide";
 import Note from "./pages/Note";
 import Attendance from "./pages/attendance/Attendance";
+import NewsPage from "./pages/news/NewsPage";
+import ContactPage from "./pages/contact/ContactPage";
+import AppDownload from "./pages/AppDownload";
 
 export default function App() {
   return (
@@ -22,6 +25,11 @@ export default function App() {
 
             <Route path="/attendance" element={<Attendance />} />
 
+            <Route path="/news" element={<NewsPage />} />
+
+            <Route path="/contact" element={<ContactPage />} />
+
+            <Route path="/app-download" element={<AppDownload />} />
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/user-info" element={<UserInfo />} />
             <Route path="note" element={<Note />} />

@@ -38,7 +38,7 @@ export default function UserInfo() {
   const [editingField, setEditingField] = useState<FieldKey | null>(null);
   const [qrVisible, setQrVisible] = useState(false);
   const [localValues, setLocalValues] = useState<Record<string, string>>({
-    birthday: user?.Birthday ?? "",
+    birthday: user?.birthday ?? "",
     phone: user?.mobilePhoneNumber ?? "",
     idCard: user?.ID ?? "",
     idIssueDate: user?.ID_Day ?? "",
@@ -47,11 +47,12 @@ export default function UserInfo() {
     shuttleTrip: user?.Bus_Route ?? "",
     shuttleStop: user?.PickupDropoffStation ?? "",
   });
-  // Ref để luôn đọc được localValues mới nhất trong async/debounce (tránh stale closure)
   const localValuesRef = useRef(localValues);
   useEffect(() => {
     localValuesRef.current = localValues;
   }, [localValues]);
+
+  const serverValuesRef = useRef<Record<string, string>>({});
 
   const isShuttleFactory = SHUTTLE_FACTORIES.includes(
     currentUser?.factory ?? "",
@@ -93,16 +94,18 @@ export default function UserInfo() {
 
   useEffect(() => {
     if (!user) return;
-    setLocalValues({
-      birthday: isoToDisplay(user.Birthday ?? ""),
+    const values = {
+      birthday: isoToDisplay(user.birthday ?? ""),
       phone: user.mobilePhoneNumber ?? "",
       idCard: user.ID ?? "",
       idIssueDate: isoToDisplay(user.ID_Day ?? ""),
       transport: user.Vehicle ?? "",
       temporaryAddress: user.Address_Live ?? "",
       shuttleTrip: user.Bus_Route ?? "",
-      shuttleStop: user.PickupDropoffStation ?? ",",
-    });
+      shuttleStop: user.PickupDropoffStation ?? "",
+    };
+    setLocalValues(values);
+    serverValuesRef.current = values;
   }, [user]);
 
   useEffect(() => {
@@ -149,10 +152,12 @@ export default function UserInfo() {
         let success = false;
 
         if (field === "temporaryAddress") {
+          if (value === serverValuesRef.current.temporaryAddress) return;
           success = await userApi.updateAddressLive(currentUser.factory, {
             personId: currentUser.userId,
             temporaryAddress: value,
           });
+          if (success) serverValuesRef.current.temporaryAddress = value;
         }
 
         const USER_INFO_FIELDS: FieldKey[] = [
@@ -162,8 +167,15 @@ export default function UserInfo() {
           "idIssueDate",
         ];
         if (USER_INFO_FIELDS.includes(field)) {
-          // Đọc từ ref để luôn có giá trị mới nhất (tránh stale closure)
           const latest = { ...localValuesRef.current, [field]: value };
+          const sv = serverValuesRef.current;
+          const unchanged =
+            latest.birthday === sv.birthday &&
+            latest.phone === sv.phone &&
+            latest.idCard === sv.idCard &&
+            latest.idIssueDate === sv.idIssueDate;
+          if (unchanged) return;
+
           success = await userApi.updateUserInfo(currentUser.factory, {
             userId: currentUser.userId,
             birthday: toIso(latest.birthday),
@@ -171,6 +183,15 @@ export default function UserInfo() {
             phone: latest.phone,
             idDate: toIso(latest.idIssueDate),
           });
+          if (success) {
+            serverValuesRef.current = {
+              ...serverValuesRef.current,
+              birthday: latest.birthday,
+              phone: latest.phone,
+              idCard: latest.idCard,
+              idIssueDate: latest.idIssueDate,
+            };
+          }
         }
 
         if (!success) {
@@ -178,7 +199,7 @@ export default function UserInfo() {
           await fetchUserInfo();
         }
       } catch (error) {
-        AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+        AppAlert({ icon: "error", title: t(getApiErrorMessage(error)) });
         await fetchUserInfo();
       }
     };
@@ -200,19 +221,23 @@ export default function UserInfo() {
 
     if (field === "transport") {
       setLocalValues((prev) => ({ ...prev, transport: value }));
+      if (value === serverValuesRef.current.transport) return;
       const persist = async () => {
         try {
           const success = await userApi.updateVehicle(currentUser.factory, {
             personId: currentUser.userId,
             Vehicle: value,
           });
-          if (!success)
+          if (success) {
+            serverValuesRef.current.transport = value;
+          } else {
             setLocalValues((prev) => ({
               ...prev,
               transport: user?.Vehicle ?? "",
             }));
+          }
         } catch (error) {
-          AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+          AppAlert({ icon: "error", title: t(getApiErrorMessage(error)) });
           setLocalValues((prev) => ({
             ...prev,
             transport: user?.Vehicle ?? "",
@@ -230,20 +255,25 @@ export default function UserInfo() {
         shuttleStop: "",
       }));
       stopDataRef.current = null;
+      if (value === serverValuesRef.current.shuttleTrip) return;
       const persistTrip = async () => {
         try {
           const success = await userApi.updateTrip(currentUser.factory, {
             personId: currentUser.userId,
             hanhTrinh: value,
           });
-          if (!success)
+          if (success) {
+            serverValuesRef.current.shuttleTrip = value;
+            serverValuesRef.current.shuttleStop = "";
+          } else {
             setLocalValues((prev) => ({
               ...prev,
               shuttleTrip: "",
               shuttleStop: "",
             }));
+          }
         } catch (error) {
-          AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+          AppAlert({ icon: "error", title: t(getApiErrorMessage(error)) });
           setLocalValues((prev) => ({
             ...prev,
             shuttleTrip: "",
@@ -262,6 +292,7 @@ export default function UserInfo() {
           .find((t) => t.hanh_trinh === localValues.shuttleTrip)
           ?.tram_don_tra?.find((s) => s.ten === value) ?? null;
       stopDataRef.current = stopObj;
+      if (value === serverValuesRef.current.shuttleStop) return;
       const persistStop = async () => {
         try {
           const success = await userApi.updateStation(currentUser.factory, {
@@ -270,12 +301,14 @@ export default function UserInfo() {
             lat: stopObj?.lat ?? 0,
             long: stopObj?.long ?? 0,
           });
-          if (!success) {
+          if (success) {
+            serverValuesRef.current.shuttleStop = value;
+          } else {
             setLocalValues((prev) => ({ ...prev, shuttleStop: "" }));
             stopDataRef.current = null;
           }
         } catch (error) {
-          AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+          AppAlert({ icon: "error", title: t(getApiErrorMessage(error)) });
           setLocalValues((prev) => ({ ...prev, shuttleStop: "" }));
           stopDataRef.current = null;
         }
@@ -285,7 +318,6 @@ export default function UserInfo() {
     }
 
     setLocalValues((prev) => ({ ...prev, [field]: value }));
-    // API call xử lý qua debounce (handleFieldChange → setPendingApi → debouncedPending)
   };
 
   const cancelField = () => setEditingField(null);
@@ -449,7 +481,7 @@ export default function UserInfo() {
             className="flex-1 rounded-[20px] flex flex-col items-center justify-center relative overflow-hidden
               transition-[background,border-color,box-shadow] duration-300
               bg-white/55 border border-slate-200 shadow-[0_4px_20px_rgba(15,37,68,0.10)]
-              dark:bg-[rgba(15,27,48,0.7)] dark:border-white/[0.07] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]
+              dark:bg-[rgba(15,27,48,0.7)] dark:border-white/7 dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]
               max-[900px]:flex-row max-[900px]:gap-6 max-[900px]:justify-center
               max-[600px]:flex-col max-[600px]:items-center"
             style={{ padding: "32px 24px" }}

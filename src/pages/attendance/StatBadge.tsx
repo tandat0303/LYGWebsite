@@ -18,33 +18,42 @@ export function StatBadge({
   const accentCls =
     accent === "blue"
       ? {
-          bg: "from-blue-600 to-[#1a3a6e] dark:from-blue-700 dark:to-[#0f2544]",
-          iconBg: "bg-white/15",
-          subText: "text-blue-200/80",
+          wrap: "border-blue-100 dark:border-blue-500/15",
+          iconWrap:
+            "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400",
+          value: "text-blue-700 dark:text-blue-300",
         }
       : {
-          bg: "from-emerald-500 to-emerald-700 dark:from-emerald-600 dark:to-emerald-900",
-          iconBg: "bg-white/15",
-          subText: "text-emerald-100/80",
+          wrap: "border-emerald-100 dark:border-emerald-500/15",
+          iconWrap:
+            "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+          value: "text-emerald-700 dark:text-emerald-300",
         };
 
   return (
     <div
-      className={`relative flex items-center gap-4 rounded-2xl bg-linear-to-br ${accentCls.bg}
-        p-5 overflow-hidden shadow-lg shadow-black/10 dark:shadow-black/30 min-w-0`}
+      className={`
+        flex items-center gap-3.5 rounded-2xl border
+        bg-white dark:bg-[rgba(15,27,48,0.7)]
+        ${accentCls.wrap}
+        shadow-[0_2px_8px_rgba(15,37,68,0.05)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.2)]
+        p-4 min-w-0 transition-colors duration-300
+      `}
     >
       <div
-        className={`shrink-0 w-11 h-11 rounded-xl ${accentCls.iconBg} flex items-center justify-center`}
+        className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${accentCls.iconWrap}`}
       >
-        <Icon size={20} className="text-white" />
+        <Icon size={18} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold tracking-wide text-white/60 uppercase mb-0.5 truncate">
+        <p className="text-[10px] font-semibold tracking-wide uppercase mb-1 truncate text-slate-400 dark:text-slate-500">
           {t(label)}
         </p>
-        <p className="text-[28px] font-bold text-white leading-none">{value}</p>
+        <p className={`text-[24px] font-bold leading-none ${accentCls.value}`}>
+          {value}
+        </p>
         {sub && (
-          <p className={`text-[12px] mt-1 ${accentCls.subText} truncate`}>
+          <p className="text-[11px] mt-1 text-slate-400 dark:text-slate-500 truncate">
             {sub}
           </p>
         )}

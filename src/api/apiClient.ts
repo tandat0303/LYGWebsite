@@ -18,7 +18,8 @@ apiClient.interceptors.request.use((config) => {
   const token = state.auth.accessToken || storage.get("auth")?.accessToken;
 
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    // config.headers.Authorization = `Bearer ${token}`;
+    config.headers["x-access-token"] = token;
   }
 
   return config;
