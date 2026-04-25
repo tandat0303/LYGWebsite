@@ -12,6 +12,8 @@ import Attendance from "./pages/attendance/Attendance";
 import NewsPage from "./pages/news/NewsPage";
 import ContactPage from "./pages/contact/ContactPage";
 import AppDownload from "./pages/AppDownload";
+import LeavePage from "./pages/leave/LeavePage";
+import OvertimePage from "./pages/overtime/OvertimePage";
 
 export default function App() {
   return (
@@ -23,6 +25,10 @@ export default function App() {
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
 
+            <Route path="/user-info" element={<UserInfo />} />
+            <Route path="/holidays" element={<LeavePage />} />
+            <Route path="/overtime" element={<OvertimePage />} />
+
             <Route path="/attendance" element={<Attendance />} />
 
             <Route path="/news" element={<NewsPage />} />
@@ -31,7 +37,6 @@ export default function App() {
 
             <Route path="/app-download" element={<AppDownload />} />
             <Route path="/change-password" element={<ChangePassword />} />
-            <Route path="/user-info" element={<UserInfo />} />
             <Route path="note" element={<Note />} />
             <Route path="/guide" element={<Guide />} />
           </Route>

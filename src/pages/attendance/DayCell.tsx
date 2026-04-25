@@ -2,24 +2,18 @@ import { useCallback } from "react";
 import { Check } from "lucide-react";
 import { STATUS_STYLES } from "../../libs/constance";
 import type { CalendarDay } from "../../types/timeKeeping";
+import { BiSolidPieChartAlt } from "react-icons/bi";
 
 interface Props {
   day: CalendarDay | null;
   isToday: boolean;
   isActive: boolean;
-  // isOvertime: boolean;
   factory: string;
   personId: string;
   onClickMobile: (day: CalendarDay) => void;
 }
 
-export function DayCell({
-  day,
-  isToday,
-  // isOvertime,
-  isActive,
-  onClickMobile,
-}: Props) {
+export function DayCell({ day, isToday, isActive, onClickMobile }: Props) {
   const handleClick = useCallback(() => {
     if (!day || day.status === "weekend") return;
     onClickMobile(day);
@@ -30,6 +24,7 @@ export function DayCell({
   const styles = STATUS_STYLES[day.status];
   const isSunday = day.status === "weekend";
   const isGreen = day.status === "green";
+  const isOvertime = !isSunday && Number(day.rawValue) > 8;
 
   return (
     <button
@@ -46,13 +41,20 @@ export function DayCell({
             : `${styles.bg} ${styles.border} hover:scale-[1.05] hover:shadow-md hover:z-10 cursor-pointer`,
       ].join(" ")}
     >
-      {/* Today dot — top left */}
-      {isToday && (
+      {isOvertime && (
+        <BiSolidPieChartAlt
+          className="absolute top-1 left-1 text-red-500 dark:text-red-400"
+          size={15}
+          strokeWidth={2.5}
+        />
+      )}
+
+      {isToday && !isOvertime && (
         <span className="absolute top-1 left-1 w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-blue-400" />
       )}
 
-      {/* {isOvertime && (
-        <span className="absolute top-1 left-1 w-1.5 h-1.5 rounded-full bg-red-500 dark:bg-red-400" />
+      {/* {isToday && isOvertime && (
+        <span className="absolute top-1 left-[14px] w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-blue-400" />
       )} */}
 
       {/* Date number — top right */}

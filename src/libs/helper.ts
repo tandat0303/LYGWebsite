@@ -60,3 +60,7 @@ export function dateToTimestamp(
     `${year}-${String(month).padStart(2, "0")}-${String(date).padStart(2, "0")}`,
   ).valueOf();
 }
+
+export function parseDate(iso: string): Date {
+  return new Date(iso);
+}

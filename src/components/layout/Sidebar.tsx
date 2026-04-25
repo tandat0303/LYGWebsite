@@ -394,7 +394,7 @@ export const Sidebar = () => {
            COLLAPSED  (desktop only)
         ════════════════════════ */
         .sidebar.is-collapsed                    { width: 64px; }
-        .sidebar.is-collapsed .sb-header        { padding: 10px 0; gap: 0; }
+        .sidebar.is-collapsed .sb-header        { padding: 10px 0 9px; gap: 0; }
         .sidebar.is-collapsed .sb-toggle        { align-self: center; }
         .sidebar.is-collapsed .sb-logo          { opacity: 0; max-height: 0; }
         .sidebar.is-collapsed .sb-section-title { opacity: 0; max-height: 0; padding: 0 16px; }

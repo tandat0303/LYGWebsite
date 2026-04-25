@@ -7,7 +7,12 @@ import {
   AlertCircle,
   ClipboardList,
 } from "lucide-react";
-import type { TimeKeeping, TimeKeepingPayload } from "../../types/timeKeeping";
+import type {
+  CalendarDay,
+  DayCellStatus,
+  TimeKeeping,
+  TimeKeepingPayload,
+} from "../../types/timeKeeping";
 import { StatBadge } from "./StatBadge";
 import { InfoLabel } from "./InfoLabel";
 import { DOW_LABELS, monthNames } from "../../libs/constance";
@@ -17,18 +22,8 @@ import timeKeepingApi from "../../api/timeKeeping";
 import { useAppSelector } from "../../hooks/auth";
 import { DayDetail } from "./DayDetail";
 import { DayCell } from "./DayCell";
-
-// ── Types ──────────────────────────────────────────────────────────────────
-export type DayCellStatus = "green" | "red" | "yellow" | "empty" | "weekend";
-
-export interface CalendarDay {
-  date: number;
-  month: number;
-  year: number;
-  rawValue: string;
-  status: DayCellStatus;
-  isSatOrSun: boolean;
-}
+import { AppAlert } from "../../components/ui/AppAlert";
+import { getApiErrorMessage } from "../../libs/helper";
 
 function getDayCellStatus(
   value: string | undefined,
@@ -75,7 +70,8 @@ export default function Attendance() {
       };
       const data = await timeKeepingApi.getTimeKeeping(payload);
       setTimeKeeping(data ?? null);
-    } catch {
+    } catch (error) {
+      AppAlert({ icon: "error", title: getApiErrorMessage(error) });
       setTimeKeeping(null);
     } finally {
       setLoading(false);
@@ -178,7 +174,7 @@ export default function Attendance() {
                   <div className="flex items-center gap-1">
                     <button
                       onClick={prevMonth}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/8 transition-colors"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/8 transition-colors cursor-pointer"
                     >
                       <ChevronLeft size={16} />
                     </button>
@@ -186,7 +182,7 @@ export default function Attendance() {
                     <div className="relative" ref={selectRef}>
                       <button
                         onClick={() => setShowYearPicker((v) => !v)}
-                        className="flex items-center gap-1.5 px-2 sm:px-3 h-9 rounded-xl font-bold text-[14px] sm:text-[15px] text-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-white/8 transition-colors"
+                        className="flex items-center gap-1.5 px-2 sm:px-3 h-9 rounded-xl font-bold text-[14px] sm:text-[15px] text-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-white/8 transition-colors cursor-pointer"
                       >
                         {t("thang")} {monthNames[viewMonth - 1]}
                         <span className="text-blue-600 dark:text-blue-400">
@@ -216,7 +212,7 @@ export default function Attendance() {
                                   setShowYearPicker(false);
                                   setModalDay(null);
                                 }}
-                                className={`rounded-lg text-[12px] font-semibold py-1.5 transition-colors ${viewMonth === i + 1 ? "bg-blue-600 text-white" : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10"}`}
+                                className={`rounded-lg text-[12px] font-semibold py-1.5 transition-colors ${viewMonth === i + 1 ? "bg-blue-600 text-white" : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer"}`}
                               >
                                 T.{i + 1}
                               </button>
@@ -231,7 +227,7 @@ export default function Attendance() {
                                   setShowYearPicker(false);
                                   setModalDay(null);
                                 }}
-                                className={`rounded-lg text-[12px] font-semibold py-1.5 transition-colors ${viewYear === y ? "bg-blue-600 text-white" : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10"}`}
+                                className={`rounded-lg text-[12px] font-semibold py-1.5 transition-colors ${viewYear === y ? "bg-blue-600 text-white" : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer"}`}
                               >
                                 {y}
                               </button>
@@ -243,7 +239,7 @@ export default function Attendance() {
 
                     <button
                       onClick={nextMonth}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/8 transition-colors"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/8 transition-colors cursor-pointer"
                     >
                       <ChevronRight size={16} />
                     </button>
@@ -259,7 +255,7 @@ export default function Attendance() {
                       key={d}
                       className={`text-center text-[9px] sm:text-[11px] font-bold uppercase tracking-wider py-0.5 sm:py-1 ${i === 0 || i === 6 ? "text-slate-300 dark:text-slate-700" : "text-slate-400 dark:text-slate-600"}`}
                     >
-                      {d}
+                      {t(d)}
                     </div>
                   ))}
                 </div>
@@ -286,9 +282,6 @@ export default function Attendance() {
                           day.month === today.getMonth() + 1 &&
                           day.year === today.getFullYear()
                         }
-                        // isOvertime {
-                        //   day.
-                        // }
                         isActive={
                           modalDay !== null &&
                           day !== null &&
