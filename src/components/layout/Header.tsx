@@ -12,8 +12,8 @@ import {
   Moon,
   ChevronDown,
   User,
-  Settings,
   LogOut,
+  RotateCcwKey,
 } from "lucide-react";
 import { LANGS } from "../../libs/constance";
 import type { Lang } from "../../types/storage";
@@ -63,6 +63,11 @@ export const Header = () => {
   const handleAccessInfo = () => {
     closeAllDropdown();
     navigate("/user-info", { replace: true });
+  };
+
+  const handleAccessChangePass = () => {
+    closeAllDropdown();
+    navigate("/change-password", { replace: true });
   };
 
   const handleLogout = () => {
@@ -342,7 +347,7 @@ export const Header = () => {
                   role="menuitem"
                   onClick={handleAccessInfo}
                 >
-                  <User size={14} />
+                  <User size={16} />
                   {t("thongTinCaNhan")}
                 </div>
 
@@ -351,9 +356,10 @@ export const Header = () => {
                   className={dropdownItemCls}
                   style={{ padding: "9px 13px" }}
                   role="menuitem"
+                  onClick={handleAccessChangePass}
                 >
-                  <Settings size={14} />
-                  {t("caiDat")}
+                  <RotateCcwKey size={16} />
+                  {t("doiMatKhau")}
                 </div>
 
                 <div className={dropdownDividerCls} />

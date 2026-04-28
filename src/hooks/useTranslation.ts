@@ -13,23 +13,39 @@ import { useAppSelector } from "./auth";
  *   tJoin(["soTay", "quyTrinh"], " | ")// → "Sổ tay | Quy trình"
  */
 export const useTranslation = () => {
-  const current = useAppSelector((s) => s.translation.current);
+  const langCode = useAppSelector((s) => s.language.current.code);
+  const all = useAppSelector((s) => s.translation.all);
 
-  const _translate = (key: string): string => {
-    return current[key.trim()] ?? key.trim();
+  const getMap = (active = false) => {
+    const namespace = active ? (langCode === "tw" ? "tw" : "en") : langCode;
+
+    return all[namespace] ?? all.en ?? {};
   };
 
-  const t = (key: string, separatorOrFallback?: string): string => {
+  const _translate = (key: string, active = false): string => {
+    const map = getMap(active);
+    return map[key.trim()] ?? key.trim();
+  };
+
+  const t = (
+    key: string,
+    separatorOrFallback?: string,
+    active = false,
+  ): string => {
+    const map = getMap(active);
+
     if (key.includes(" / ")) {
       const keys = key.split(" / ");
       const separator = separatorOrFallback ?? " / ";
-      return keys.map(_translate).join(separator);
+
+      return keys.map((k) => _translate(k, active)).join(separator);
     }
-    return current[key] ?? separatorOrFallback ?? key;
+
+    return map[key] ?? separatorOrFallback ?? key;
   };
 
-  const tJoin = (keys: string[], separator = " / "): string => {
-    return keys.map(_translate).join(separator);
+  const tJoin = (keys: string[], separator = " / ", active = false): string => {
+    return keys.map((k) => _translate(k, active)).join(separator);
   };
 
   return { t, tJoin };

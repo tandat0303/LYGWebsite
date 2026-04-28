@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import LeaveSummaryCard from "./Default/LeaveSummaryCard";
 import LeaveList from "./Default/LeaveList";
-import SupervisorLeaveTW from "./SupervisorLeaveTW";
-import SupervisorLeaveNTW from "./SupervisorLeaveNTW";
+import SupervisorLeaveTW from "./Supervisor/Taiwan/SupervisorLeaveTW";
+import SupervisorLeaveNTW from "./Supervisor/NonTaiwan/SupervisorLeaveNTW";
 import { useAppSelector } from "../../hooks/auth";
 import type { LeaveData, LeaveSummary } from "../../types/leave";
 import leaveApi from "../../api/leave";
@@ -12,7 +12,9 @@ import { getApiErrorMessage } from "../../libs/helper";
 import { useTranslation } from "../../hooks/useTranslation";
 import { TbBeach } from "react-icons/tb";
 
-type ViewType = "tw" | "ntw" | "default" | null; // null = loading
+type ViewType = "tw" | "ntw" | "default" | null;
+
+type Status = 1 | 2 | 3;
 
 export default function LeavePage() {
   const { t } = useTranslation();
@@ -21,6 +23,8 @@ export default function LeavePage() {
   const currentYear = String(new Date().getFullYear());
 
   const [year, setYear] = useState(currentYear);
+
+  const [status, setStatus] = useState<Status>(3);
   const [viewType, setViewType] = useState<ViewType>(null);
 
   const [summary, setSummary] = useState<LeaveSummary | null>(null);
@@ -35,9 +39,16 @@ export default function LeavePage() {
           factory: currentUser.factory,
           employId: currentUser.userId,
         });
-        if (res.status === 1) setViewType("tw");
-        else if (res.status === 2) setViewType("ntw");
-        else setViewType("default");
+        if (res.status === 1) {
+          setStatus(res.status);
+          setViewType("tw");
+        } else if (res.status === 2) {
+          setStatus(res.status);
+          setViewType("ntw");
+        } else {
+          setStatus(3);
+          setViewType("default");
+        }
       } catch {
         setViewType("default");
       }
@@ -114,20 +125,7 @@ export default function LeavePage() {
 
   if (viewType === "ntw") {
     return (
-      <SupervisorLeaveNTW
-        summary={{
-          homeLeave_total: 0,
-          homeLeave_usedApproved: 0,
-          homeLeave_usedPending: 0,
-          homeLeave_remaining: 0,
-          transport_limitPerYear: 5,
-          transport_usedMonths: [],
-          transport_timelineMonths: ["MAR", "MAY", "JUL", "SEP", "DEC"],
-        }}
-        records={[]}
-        year={year}
-        onYearChange={setYear}
-      />
+      <SupervisorLeaveNTW year={year} onYearChange={setYear} status={status} />
     );
   }
 
