@@ -125,12 +125,12 @@ export default function SupervisorLeaveTW({
         const res = await supervisorLeaveApi.getLeaveList(payload);
         if (res.status) {
           const mapped: DataHistory[] = (res.dataHistory ?? []).map(
-            (d: any) => ({
+            (d: DataHistory) => ({
               ID: d.ID,
               LeaveLabelEN: d.LeaveLabelEN,
               LeaveLabelTW: d.LeaveLabelTW,
               DateRange: d.DateRange,
-              LeaveInfoEN: d.LeaveInfoEN ?? d.LeaveInfoEn,
+              LeaveInfoEN: d.LeaveInfoEN,
               LeaveInfoTW: d.LeaveInfoTW,
               Days: d.Days,
               Status: d.Status,

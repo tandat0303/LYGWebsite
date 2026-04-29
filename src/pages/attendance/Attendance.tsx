@@ -24,12 +24,31 @@ import { DayDetail } from "./DayDetail";
 import { DayCell } from "./DayCell";
 import { AppAlert } from "../../components/ui/AppAlert";
 import { getApiErrorMessage } from "../../libs/helper";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
+import "dayjs/locale/en";
+import "dayjs/locale/my";
+import "dayjs/locale/zh-tw";
+
+const LANG_TO_DAYJS_LOCALE: Record<string, string> = {
+  vi: "vi",
+  en: "en",
+  mm: "my",
+  tw: "zh-tw",
+};
+
+function getLocalizedMonthNames(langCode: string): string[] {
+  const locale = LANG_TO_DAYJS_LOCALE[langCode] ?? "en";
+  return Array.from({ length: 12 }, (_, i) =>
+    dayjs().locale(locale).month(i).format("MMM"),
+  );
+}
 
 function getDayCellStatus(
   value: string | undefined,
   isSunday: boolean,
 ): DayCellStatus {
-  if (isSunday) return "weekend";
+  if (isSunday && (value === undefined || value === "")) return "weekend";
   if (value === undefined || value === "") return "empty";
   if (value === "O") return "red";
   if (Number(value) >= 8) return "green";
@@ -44,8 +63,14 @@ export default function Attendance() {
   const { t } = useTranslation();
 
   const currentUser = useAppSelector((s) => s.auth.user);
+  const selectedLang = useAppSelector((s) => s.language.current);
   const FACTORY = currentUser.factory;
   const PERSON_ID = currentUser.userId;
+
+  const localizedMonthNames = useMemo(
+    () => getLocalizedMonthNames(selectedLang.code),
+    [selectedLang.code],
+  );
 
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -93,10 +118,7 @@ export default function Attendance() {
       const rawValue = timeKeeping
         ? ((timeKeeping[key as keyof TimeKeeping] as string | undefined) ?? "")
         : "";
-      const status = getDayCellStatus(
-        isSunday ? undefined : rawValue,
-        isSunday,
-      );
+      const status = getDayCellStatus(rawValue || undefined, isSunday);
       days.push({
         date: d,
         month: viewMonth,
@@ -170,7 +192,7 @@ export default function Attendance() {
             <div className="w-full lg:flex-3 min-w-0">
               <div className="rounded-[18px] sm:rounded-[22px] border transition-colors duration-300 bg-white dark:bg-[rgba(15,27,48,0.82)] border-slate-200 dark:border-white/7 shadow-[0_4px_24px_rgba(15,37,68,0.07)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.35)] p-3 sm:p-5">
                 {/* Calendar nav row */}
-                <div className="flex items-center justify-between gap-2 mb-4 flex-wrap gap-y-2">
+                <div className="flex items-center justify-center gap-2 mb-4 flex-wrap gap-y-2">
                   <div className="flex items-center gap-1">
                     <button
                       onClick={prevMonth}
@@ -204,7 +226,7 @@ export default function Attendance() {
                       {showYearPicker && (
                         <div className="absolute top-[calc(100%+6px)] left-0 z-50 rounded-2xl border p-2 bg-white dark:bg-[rgba(12,22,48,0.98)] border-slate-200 dark:border-white/10 shadow-xl shadow-black/10 dark:shadow-black/50 backdrop-blur-xl animate-[att-drop_0.16s_cubic-bezier(0.22,1,0.36,1)] min-w-[260px] sm:min-w-[280px]">
                           <div className="grid grid-cols-4 gap-1 mb-2">
-                            {monthNames.map((_, i) => (
+                            {localizedMonthNames.map((name, i) => (
                               <button
                                 key={i}
                                 onClick={() => {
@@ -214,7 +236,7 @@ export default function Attendance() {
                                 }}
                                 className={`rounded-lg text-[12px] font-semibold py-1.5 transition-colors ${viewMonth === i + 1 ? "bg-blue-600 text-white" : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer"}`}
                               >
-                                T.{i + 1}
+                                {name}
                               </button>
                             ))}
                           </div>
@@ -253,7 +275,7 @@ export default function Attendance() {
                   {DOW_LABELS.map((d, i) => (
                     <div
                       key={d}
-                      className={`text-center text-[9px] sm:text-[11px] font-bold uppercase tracking-wider py-0.5 sm:py-1 ${i === 0 || i === 6 ? "text-slate-300 dark:text-slate-700" : "text-slate-400 dark:text-slate-600"}`}
+                      className={`text-center text-[9px] sm:text-[11px] font-bold uppercase tracking-wider py-0.5 sm:py-1 ${i === 0 ? "text-slate-300 dark:text-slate-700" : "text-slate-400 dark:text-slate-600"}`}
                     >
                       {t(d)}
                     </div>
@@ -322,7 +344,7 @@ export default function Attendance() {
                   value={stats.workdays}
                   colorClass="bg-slate-100 dark:bg-white/[0.07] text-slate-500 dark:text-slate-400"
                 />
-                <div className="h-px bg-slate-100 dark:bg-white/[0.06]" />
+                <div className="h-px bg-slate-100 dark:bg-white/6" />
                 <InfoLabel
                   icon={AlertCircle}
                   label="tongNgayDiTre"
@@ -335,7 +357,6 @@ export default function Attendance() {
         </div>
       </div>
 
-      {/* DayDetail portal */}
       {modalDay && (
         <DayDetail
           day={modalDay}

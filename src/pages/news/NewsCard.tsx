@@ -1,4 +1,4 @@
-import { ArrowRight, Clock, Newspaper } from "lucide-react";
+import { Clock, Newspaper } from "lucide-react";
 import type { NewsCardProps } from "../../types/news";
 import { formatTime } from "../../libs/helper";
 import { Tag } from "./Tag";
@@ -54,14 +54,14 @@ export function NewsCard({
           >
             {item.title}
           </h3>
-          <button
+          {/* <button
             className="self-start flex items-center gap-1 text-[12px] font-semibold
               text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300
               transition-colors duration-150 bg-transparent border-none cursor-pointer"
             style={{ padding: 0 }}
           >
             Read More <ArrowRight size={11} />
-          </button>
+          </button> */}
         </div>
       </article>
     );

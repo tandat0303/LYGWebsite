@@ -76,6 +76,7 @@ function getTagClasses(tagType: string): { bg: string; text: string } {
   switch (tagType) {
     case "Home Leave":
     case "Local Leave":
+    case "Annual Leave":
       return {
         bg: "bg-blue-50 dark:bg-blue-500/[0.12]",
         text: "text-blue-700 dark:text-blue-300",

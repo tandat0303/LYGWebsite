@@ -9,6 +9,7 @@ import { RiContactsBook3Line } from "react-icons/ri";
 // import { IoSettingsOutline } from "react-icons/io5";
 import { RiHome3Line } from "react-icons/ri";
 import type { FieldKey } from "../types/user";
+import { IoNewspaperOutline } from "react-icons/io5";
 
 export const ROUTE_MAP: Record<string, string> = {
   home: "/",
@@ -93,6 +94,11 @@ export const NAV_ITEMS: NavItem[] = [
     id: "contact",
     label: "lienHe",
     icon: RiContactsBook3Line,
+  },
+  {
+    id: "news",
+    label: "banTin",
+    icon: IoNewspaperOutline,
   },
   // {
   //   id: "settings",

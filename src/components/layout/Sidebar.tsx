@@ -9,7 +9,7 @@ import { TbSpeakerphone } from "react-icons/tb";
 import { GiRunningShoe } from "react-icons/gi";
 import { SiGoogleclassroom } from "react-icons/si";
 import { IoNewspaperOutline } from "react-icons/io5";
-import { RiRobot2Line } from "react-icons/ri";
+// import { RiRobot2Line } from "react-icons/ri";
 import { FaAppStoreIos } from "react-icons/fa";
 import { GrKey } from "react-icons/gr";
 import { GoBook } from "react-icons/go";
@@ -117,7 +117,7 @@ export const Sidebar = () => {
           onClick: handleAccessBooking,
         },
         { id: "news", label: "banTin", icon: IoNewspaperOutline },
-        { id: "chatbot", label: "LY ChatBot", icon: RiRobot2Line },
+        // { id: "chatbot", label: "LY ChatBot", icon: RiRobot2Line },
       ],
     },
     {

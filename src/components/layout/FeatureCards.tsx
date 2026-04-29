@@ -9,11 +9,21 @@ import Notebook from "../../assets/icons/notebook.png";
 import UserInfo from "../../assets/icons/user-info.png";
 import Contact from "../../assets/icons/contact.png";
 import News from "../../assets/icons/news.png";
+import Affair from "../../assets/icons/affair.png";
+import Fee from "../../assets/icons/fee.png";
+import Summary from "../../assets/icons/summary.png";
+import Detail from "../../assets/icons/detail.png";
+import Kpi from "../../assets/icons/kpi.png";
+import Order from "../../assets/icons/order.png";
+import Payment from "../../assets/icons/payment.png";
+import Rft from "../../assets/icons/rft.png";
 import type { Feature, FeatureCardProps } from "../../types/features";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../hooks/auth";
 
 const FeatureCard = ({ feature }: FeatureCardProps) => {
   const { t } = useTranslation();
+
   const isLarge = feature.size === "large";
 
   const renderIcon = () => {
@@ -81,6 +91,10 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
 };
 
 export const FeatureCards = () => {
+  const { t } = useTranslation();
+
+  const user = useAppSelector((s) => s.auth.user);
+
   const navigate = useNavigate();
 
   const LARGE_FEATURES: Feature[] = [
@@ -152,6 +166,47 @@ export const FeatureCards = () => {
     },
   ];
 
+  const SUPERVISOR_FEATURES: Feature[] = [
+    { id: "affair", label: "generalAffairs", icon: Affair, size: "small" },
+    { id: "fee", label: "annualFees", icon: Fee, size: "small" },
+    {
+      id: "summary",
+      label: "consumptionSummary",
+      icon: Summary,
+      size: "small",
+    },
+    {
+      id: "detail",
+      label: "consumptionDetail",
+      icon: Detail,
+      size: "small",
+    },
+    {
+      id: "kpi",
+      label: "kpi",
+      icon: Kpi,
+      size: "small",
+    },
+    {
+      id: "order",
+      label: "orderStatus",
+      icon: Order,
+      size: "small",
+    },
+    {
+      id: "payment",
+      label: "summaryPayment",
+      icon: Payment,
+      size: "small",
+    },
+    {
+      id: "rft",
+      label: "rftOutput",
+      icon: Rft,
+      size: "small",
+    },
+  ];
+
   return (
     <div className="mb-20">
       <div
@@ -183,6 +238,25 @@ export const FeatureCards = () => {
           ))}
         </div>
       </div>
+
+      {user.userId === "34969" && (
+        <div className="max-[768px]:mb-6 max-[480px]:mb-5 mb-8">
+          <span className="font-bold">{t("quanLy")}</span>
+          <div
+            className="
+            grid gap-3.5 mt-4
+            grid-cols-[repeat(auto-fill,minmax(110px,1fr))]
+            max-[1024px]:grid-cols-[repeat(auto-fill,minmax(100px,1fr))] max-[1024px]:gap-3
+            max-[768px]:grid-cols-3 max-[768px]:gap-2.5
+            max-[480px]:grid-cols-3 max-[480px]:gap-2
+          "
+          >
+            {SUPERVISOR_FEATURES.map((feature) => (
+              <FeatureCard key={feature.id} feature={feature} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

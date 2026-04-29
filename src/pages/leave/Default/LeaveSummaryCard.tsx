@@ -154,7 +154,7 @@ export default function LeaveSummaryCard({ data, year, loading }: Props) {
             sub="ngay"
             accent="blue"
             icon={<CalendarDays size={12} />}
-            large
+            // large
           />
           <StatItem
             label="phepDaNghi"
