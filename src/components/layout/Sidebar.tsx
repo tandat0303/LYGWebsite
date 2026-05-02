@@ -214,8 +214,8 @@ export const Sidebar = () => {
 
         {/* ── Scrollable content ── */}
         <div
-          className="flex-1 overflow-y-auto overflow-x-hidden"
-          style={{ padding: "12px 0" }}
+          className="flex-1 overflow-y-auto overflow-x-hidden px-0 py-3"
+          // style={{ padding: "12px 0" }}
         >
           {SIDEBAR_SECTIONS.map((section) => (
             <div key={section.title} className="mb-1">

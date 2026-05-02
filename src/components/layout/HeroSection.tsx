@@ -71,10 +71,9 @@ export const HeroSection = () => {
       {/* Content Overlay */}
       <div
         className="
-          absolute inset-0 flex flex-col justify-end z-10
+          absolute inset-0 flex flex-col justify-end z-10 p-8
           bg-[linear-gradient(to_top,rgba(0,0,0,0.45)_0%,rgba(0,0,0,0.25)_40%,transparent_100%)]
         "
-        style={{ padding: "32px" }}
       >
         <div className="text-white max-[480px]:max-w-[90%]">
           <h1

@@ -125,7 +125,7 @@ export default function DataHistory({ items, loading, onSelect }: Props) {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-[76px] rounded-[14px] bg-slate-100 dark:bg-white/[0.04] animate-pulse"
+            className="h-[76px] rounded-[14px] bg-slate-100 dark:bg-white/4 animate-pulse"
           />
         ))}
       </div>

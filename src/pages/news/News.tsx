@@ -28,10 +28,9 @@ export default function News({ items, onSelect, loading = false }: NewsProps) {
         </h1>
 
         <div
-          className="flex items-center gap-1 rounded-xl
+          className="flex items-center gap-1 rounded-xl p-1
             bg-slate-100 dark:bg-white/6
             border border-slate-200 dark:border-white/[0.07]"
-          style={{ padding: "4px" }}
         >
           {tabs.map((tab) => (
             <button

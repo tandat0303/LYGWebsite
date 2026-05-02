@@ -24,7 +24,7 @@ function StatRow({ label, value }: { label: string; value: number }) {
   );
 }
 
-export default function AnnualTicket({ data, loading }: Props) {
+export default function AnnualTicketQuota({ data, loading }: Props) {
   const { t } = useTranslation();
 
   if (loading || !data) {

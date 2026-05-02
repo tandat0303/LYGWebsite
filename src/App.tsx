@@ -14,6 +14,7 @@ import ContactPage from "./pages/contact/ContactPage";
 import AppDownload from "./pages/AppDownload";
 import LeavePage from "./pages/leave/LeavePage";
 import OvertimePage from "./pages/overtime/OvertimePage";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -37,10 +38,12 @@ export default function App() {
 
             <Route path="/app-download" element={<AppDownload />} />
             <Route path="/change-password" element={<ChangePassword />} />
-            <Route path="note" element={<Note />} />
+            <Route path="/note" element={<Note />} />
             <Route path="/guide" element={<Guide />} />
           </Route>
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

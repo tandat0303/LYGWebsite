@@ -146,7 +146,6 @@ export const Header = () => {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  // ── Bell shake animation config (dễ tuỳ chỉnh) ──────────────────────────
   const RING_INTERVAL_SEC = 3; // chu kỳ lặp (giây)
   const RING_DURATION_MS = 1500; // thời gian rung mỗi lần (ms)
 
@@ -161,7 +160,6 @@ export const Header = () => {
     setBellShaking(true);
     const stopFirst = setTimeout(() => setBellShaking(false), RING_DURATION_MS);
 
-    // Rung lặp mỗi RING_INTERVAL_SEC giây
     const interval = setInterval(() => {
       setBellShaking(true);
       setTimeout(() => setBellShaking(false), RING_DURATION_MS);
@@ -173,7 +171,6 @@ export const Header = () => {
     };
   }, [unreadCount]);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!userDropdownRef.current?.contains(e.target as Node))
@@ -201,7 +198,6 @@ export const Header = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close modal on Escape
   useEffect(() => {
     if (!activeNotif) return;
     const handler = (e: KeyboardEvent) => {
@@ -211,7 +207,6 @@ export const Header = () => {
     return () => document.removeEventListener("keydown", handler);
   }, [activeNotif]);
 
-  // Prevent body scroll when modal open
   useEffect(() => {
     document.body.style.overflow = activeNotif ? "hidden" : "";
     return () => {
@@ -248,7 +243,6 @@ export const Header = () => {
   };
 
   const handleOpenNotif = (notif: Notification) => {
-    // Mark as read
     setNotifications((prev) =>
       prev.map((n) => (n.id === notif.id ? { ...n, read: true } : n)),
     );
@@ -260,7 +254,6 @@ export const Header = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
-  // Tính left offset để dropdown không tràn ra ngoài màn hình
   useEffect(() => {
     if (!notifOpen || !notifBtnRef.current) return;
     const DROPDOWN_W = Math.min(340, window.innerWidth - 24);
@@ -324,7 +317,7 @@ export const Header = () => {
             <div className="relative" ref={notifDropdownRef}>
               <button
                 ref={notifBtnRef}
-                className={`${iconBtnCls} ${notifOpen ? "bg-blue-600/[0.07] border-blue-600/20 text-[#1d4ed8] dark:bg-white/[0.08] dark:border-slate-400/20 dark:text-slate-200/95" : ""}`}
+                className={`${iconBtnCls} ${notifOpen ? "bg-blue-600/[0.07] border-blue-600/20 text-[#1d4ed8] dark:bg-white/8 dark:border-slate-400/20 dark:text-slate-200/95" : ""}`}
                 aria-label="Notifications"
                 title="Notifications"
                 onClick={() => {
@@ -356,11 +349,10 @@ export const Header = () => {
 
               {notifOpen && notifDropdownLeft !== null && (
                 <div
-                  className={`${dropdownMenuCls} fixed top-[56px]`}
+                  className={`${dropdownMenuCls} fixed top-14`}
                   style={{
                     left: notifDropdownLeft,
                     width: Math.min(340, window.innerWidth - 24),
-                    // override absolute from dropdownMenuCls
                     position: "fixed",
                   }}
                   role="menu"
@@ -422,11 +414,11 @@ export const Header = () => {
                             key={notif.id}
                             className={`
                               flex items-start gap-2.5 rounded-lg cursor-pointer
-                              transition-colors duration-[130ms] group relative
+                              transition-colors duration-130 group relative
                               ${
                                 notif.read
-                                  ? "hover:bg-slate-100/70 dark:hover:bg-white/[0.05]"
-                                  : "hover:bg-blue-50/80 dark:hover:bg-blue-500/[0.08]"
+                                  ? "hover:bg-slate-100/70 dark:hover:bg-white/5"
+                                  : "hover:bg-blue-50/80 dark:hover:bg-blue-500/8"
                               }
                             `}
                             style={{ padding: "9px 10px" }}
@@ -714,11 +706,10 @@ export const Header = () => {
         </div>
       </header>
 
-      {/* ── Notification Detail Modal ────────────────────────────────────────── */}
       {activeNotif && (
         <div
           className="
-            fixed inset-0 z-[9999] flex items-center justify-center
+            fixed inset-0 z-9999 flex items-center justify-center
             bg-black/40 dark:bg-black/60 backdrop-blur-sm
             animate-[fadeIn_0.18s_ease]
           "
@@ -733,7 +724,7 @@ export const Header = () => {
             className="
               relative w-full mx-4 rounded-2xl overflow-hidden
               bg-white dark:bg-[rgba(15,23,42,0.98)]
-              border border-black/[0.07] dark:border-white/[0.09]
+              border border-black/[0.07] dark:border-white/9
               shadow-[0_24px_80px_rgba(0,0,0,0.18),0_4px_16px_rgba(0,0,0,0.08)]
               dark:shadow-[0_32px_100px_rgba(0,0,0,0.6)]
               animate-[modalIn_0.22s_cubic-bezier(0.16,1,0.3,1)]
@@ -744,10 +735,10 @@ export const Header = () => {
             <div
               className={`h-1 w-full ${
                 activeNotif.kind === "warning"
-                  ? "bg-gradient-to-r from-amber-400 to-orange-400"
+                  ? "bg-linear-to-r from-amber-400 to-orange-400"
                   : activeNotif.kind === "success"
-                    ? "bg-gradient-to-r from-emerald-400 to-teal-400"
-                    : "bg-gradient-to-r from-blue-400 to-indigo-400"
+                    ? "bg-linear-to-r from-emerald-400 to-teal-400"
+                    : "bg-linear-to-r from-blue-400 to-indigo-400"
               }`}
             />
 
@@ -799,7 +790,7 @@ export const Header = () => {
             </div>
 
             {/* Divider */}
-            <div className="h-px bg-black/[0.06] dark:bg-white/[0.07] mx-[18px]" />
+            <div className="h-px bg-black/6 dark:bg-white/[0.07] mx-[18px]" />
 
             {/* Body */}
             <div style={{ padding: "16px 18px 20px" }}>
@@ -810,16 +801,16 @@ export const Header = () => {
 
             {/* Footer */}
             <div
-              className="flex justify-end gap-2 border-t border-black/[0.05] dark:border-white/[0.06]"
+              className="flex justify-end gap-2 border-t border-black/5 dark:border-white/6"
               style={{ padding: "12px 18px" }}
             >
               <button
                 className="
                   px-4 py-2 rounded-lg text-[13px] font-medium cursor-pointer
                   text-slate-500/90 dark:text-slate-400/90
-                  bg-slate-100/80 dark:bg-white/[0.06]
-                  hover:bg-slate-200/70 dark:hover:bg-white/[0.1]
-                  border border-transparent hover:border-slate-200 dark:hover:border-white/[0.1]
+                  bg-slate-100/80 dark:bg-white/6
+                  hover:bg-slate-200/70 dark:hover:bg-white/10
+                  border border-transparent hover:border-slate-200 dark:hover:border-white/10
                   transition-all duration-150
                 "
                 onClick={() => setActiveNotif(null)}

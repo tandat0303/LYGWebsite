@@ -7,10 +7,7 @@ export default function Contact({ groups, loading = false }: ContactProps) {
   const { t } = useTranslation();
 
   return (
-    <div
-      className="w-full min-h-full box-border overflow-x-hidden"
-      style={{ padding: "24px" }}
-    >
+    <div className="w-full min-h-full box-border overflow-x-hidden p-6">
       {/* Page header */}
       <div className="flex items-center gap-3" style={{ marginBottom: "22px" }}>
         <div
@@ -29,10 +26,7 @@ export default function Contact({ groups, loading = false }: ContactProps) {
         <div className="flex flex-col gap-6">
           {[3, 2].map((rows, gi) => (
             <div key={gi} className="flex flex-col gap-2">
-              <div
-                className="h-3 w-24 rounded-full bg-slate-200 dark:bg-white/[0.07] animate-pulse"
-                style={{ marginLeft: 4 }}
-              />
+              <div className="h-3 w-24 rounded-full bg-slate-200 dark:bg-white/[0.07] animate-pulse ml-1" />
               <div
                 className="rounded-2xl overflow-hidden border bg-white dark:bg-[rgba(15,27,48,0.65)]
                 border-slate-200 dark:border-white/[0.07]"

@@ -64,7 +64,7 @@ const AuthPage = () => {
       } else {
         AppAlert({ icon: "error", title: t(data.message) });
       }
-    } catch (error: any) {
+    } catch (error) {
       if (error?.response?.message === "saiThongTinDangNhap") {
         AppAlert({ icon: "error", title: "Invalid information" });
       } else {
@@ -133,10 +133,7 @@ const AuthPage = () => {
                        sm:flex-[0_0_50%] sm:border-r sm:border-r-white/8"
             style={{ padding: "48px 44px" }}
           >
-            <div
-              className="flex justify-center w-full"
-              style={{ marginBottom: "14px" }}
-            >
+            <div className="flex justify-center w-full mb-3.5">
               <img
                 src={Logo}
                 alt="Logo"
@@ -144,10 +141,7 @@ const AuthPage = () => {
               />
             </div>
 
-            <h1
-              className="text-[22px] font-bold text-white text-center tracking-[-0.3px]"
-              style={{ marginBottom: "6px" }}
-            >
+            <h1 className="text-[22px] font-bold text-white text-center tracking-[-0.3px] mb-1.5">
               {t("chaoMungQuayTroLai")}
             </h1>
 
@@ -172,10 +166,7 @@ const AuthPage = () => {
                        sm:flex-[0_0_50%] sm:border-l sm:border-l-white/8"
             style={{ padding: "48px 44px" }}
           >
-            <div
-              className="flex justify-center w-full"
-              style={{ marginBottom: "14px" }}
-            >
+            <div className="flex justify-center w-full mb-3.5">
               <img
                 src={Logo}
                 alt="Logo"
@@ -183,10 +174,7 @@ const AuthPage = () => {
               />
             </div>
 
-            <h1
-              className="text-[22px] font-bold text-white text-center tracking-[-0.3px]"
-              style={{ marginBottom: "6px" }}
-            >
+            <h1 className="text-[22px] font-bold text-white text-center tracking-[-0.3px] mb-1.5">
               {t("doiMatKhau")}
             </h1>
 

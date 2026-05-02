@@ -8,6 +8,8 @@ import { useClickOutside } from "../hooks/useClickOutside";
 import type { Book } from "../types/guide";
 import guideApi from "../api/guide";
 
+const FILES_BASE = import.meta.env.VITE_FILES_URL ?? null;
+
 export default function Note() {
   const { t } = useTranslation();
   const user = useAppSelector((s) => s.auth.user);
@@ -38,7 +40,7 @@ export default function Note() {
   }, [user.factory]);
 
   const fileUrl = selectedBook
-    ? `http://erp.lacty.com.vn:8000/webview/${user.factory}/${selectedBook.FileName}`
+    ? `${FILES_BASE}${user.factory}/${selectedBook.FileName}`
     : null;
 
   const {

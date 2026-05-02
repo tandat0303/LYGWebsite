@@ -22,8 +22,7 @@ export const LoginForm = ({ onFinish, loading }: LoginFormProps) => {
       onFinish={onFinish}
       layout="vertical"
       requiredMark={false}
-      className="lp-form"
-      style={{ width: "100%" }}
+      className="lp-form w-full"
       autoComplete="off"
     >
       <Form.Item

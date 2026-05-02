@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import LeaveSummaryCard from "./Default/LeaveSummaryCard";
-import LeaveList from "./Default/LeaveList";
+import LeaveSummaryCard from "./User/LeaveSummaryCard";
+import LeaveList from "./User/LeaveList";
 import SupervisorLeaveTW from "./Supervisor/Taiwan/SupervisorLeaveTW";
 import SupervisorLeaveNTW from "./Supervisor/NonTaiwan/SupervisorLeaveNTW";
 import { useAppSelector } from "../../hooks/auth";
@@ -104,22 +104,7 @@ export default function LeavePage() {
 
   if (viewType === "tw") {
     return (
-      <SupervisorLeaveTW
-        summary={{
-          homeLeave_total: 0,
-          homeLeave_usedApproved: 0,
-          homeLeave_usedPending: 0,
-          homeLeave_remaining: 0,
-          annualLeave_periods: [],
-          tickets_total: 0,
-          tickets_used: 0,
-          tickets_pending: 0,
-          tickets_remaining: 0,
-        }}
-        records={[]}
-        year={year}
-        onYearChange={setYear}
-      />
+      <SupervisorLeaveTW year={year} onYearChange={setYear} status={status} />
     );
   }
 

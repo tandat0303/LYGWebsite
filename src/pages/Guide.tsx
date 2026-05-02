@@ -8,6 +8,7 @@ import type { Book } from "../types/guide";
 import guideApi from "../api/guide";
 
 const TARGET_BOOK_ID = "BK0000000000001";
+const FILE_BASE = import.meta.env.VITE_FILES_URL ?? null;
 
 export default function Guide() {
   const { t } = useTranslation();
@@ -41,9 +42,7 @@ export default function Guide() {
     };
   }, [user.factory]);
 
-  const fileUrl = fileName
-    ? `http://erp.lacty.com.vn:8000/webview/${user.factory}/${fileName}`
-    : null;
+  const fileUrl = fileName ? `${FILE_BASE}${user.factory}/${fileName}` : null;
 
   const {
     objectUrl,

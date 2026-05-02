@@ -25,14 +25,14 @@ export function isoToDisplay(iso: string): string {
   return `${dd}/${mm}/${yyyy}`;
 }
 
-export function isValidDate(s: string) {
-  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return false;
-  const [dd, mm, yyyy] = s.split("/").map(Number);
-  const dt = new Date(yyyy, mm - 1, dd);
-  return (
-    dt.getFullYear() === yyyy && dt.getMonth() === mm - 1 && dt.getDate() === dd
-  );
-}
+// export function isValidDate(s: string) {
+//   if (!/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return false;
+//   const [dd, mm, yyyy] = s.split("/").map(Number);
+//   const dt = new Date(yyyy, mm - 1, dd);
+//   return (
+//     dt.getFullYear() === yyyy && dt.getMonth() === mm - 1 && dt.getDate() === dd
+//   );
+// }
 
 export function formatDateRaw(digits: string): string {
   const d = digits.slice(0, 8);

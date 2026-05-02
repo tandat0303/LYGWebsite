@@ -12,7 +12,6 @@ function useDateInput(initial: string, onChange?: (v: string) => void) {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Khi đang select-all: Backspace/Delete → xóa sạch; digit → replace toàn bộ
     if (isAllSelected) {
       if (e.key === "Backspace" || e.key === "Delete") {
         e.preventDefault();
@@ -26,7 +25,7 @@ function useDateInput(initial: string, onChange?: (v: string) => void) {
         setIsAllSelected(false);
         return;
       }
-      // Các key khác (arrow, tab...) chỉ bỏ select
+
       setIsAllSelected(false);
     }
 

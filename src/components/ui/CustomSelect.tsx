@@ -53,7 +53,6 @@ export const CustomSelect = ({
     setOpen((v) => !v);
   };
 
-  // Reposition on scroll/resize — keep dropdown anchored to trigger
   useEffect(() => {
     if (!open) return;
     const handleOutside = (e: MouseEvent) => {

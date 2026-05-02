@@ -9,7 +9,7 @@ interface LoadingProps {
 }
 
 const Loading: React.FC<LoadingProps> = ({
-  size = 150,
+  size = 400,
   fullScreen = false,
   overlay = false,
 }) => {
