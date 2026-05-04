@@ -22,6 +22,8 @@ export default function LeavePage() {
   const currentUser = useAppSelector((s) => s.auth.user);
   const currentYear = String(new Date().getFullYear());
 
+  const isLHG = currentUser.factory === "LHG";
+
   const [year, setYear] = useState(currentYear);
 
   const [status, setStatus] = useState<Status>(3);
@@ -132,7 +134,12 @@ export default function LeavePage() {
       </div>
 
       <div className="mb-7">
-        <LeaveSummaryCard data={summary} year={year} loading={loadingSummary} />
+        <LeaveSummaryCard
+          data={summary}
+          year={year}
+          loading={loadingSummary}
+          isLHG={isLHG}
+        />
       </div>
 
       <LeaveList

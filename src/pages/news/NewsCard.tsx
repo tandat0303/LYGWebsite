@@ -46,6 +46,8 @@ export function NewsCard({
               <Clock size={10} />
               {formatTime(item.post_time)}
             </span>
+
+            <Tag postType={item.post_type} />
           </div>
           <h3
             className="text-[13px] font-semibold leading-snug line-clamp-2

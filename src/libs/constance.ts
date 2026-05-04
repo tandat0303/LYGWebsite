@@ -2,6 +2,7 @@ import vnFlag from "../assets/flags/vn.svg";
 import enFlag from "../assets/flags/gb.svg";
 import mmFlag from "../assets/flags/mm.svg";
 import twFlag from "../assets/flags/tw.svg";
+import idFlag from "../assets/flags/id.svg";
 import type { Lang } from "../types/storage";
 import type { NavItem } from "../types/sidebar";
 import { PiCreditCard } from "react-icons/pi";
@@ -76,6 +77,12 @@ export const LANGS: Lang[] = [
     label: "tiengTrung",
     native: "繁體中文",
     flag: twFlag,
+  },
+  {
+    code: "indo",
+    label: "tiengIndo",
+    native: "Bahasa Indonesia",
+    flag: idFlag,
   },
 ];
 

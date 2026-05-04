@@ -52,14 +52,14 @@ export function LeaveItem({
     : `${fmtDate(item.Vacation_From_Date)} → ${fmtDate(item.Vacation_To_Date)}`;
 
   const durationLabel =
-    item.Vacation_Hour > 0
-      ? `${item.Vacation_Hour}.0 ${t("gio")}`
-      : `${item.Vacation_Day} ${t("ngay")}`;
+    item.Vacation_Day > 0.5
+      ? `${item.Vacation_Day} ${t("ngay")}`
+      : `${item.Vacation_Hour}.0 ${t("gio")}`;
 
   const durationAccent =
-    item.Vacation_Hour > 0
-      ? "text-violet-600 dark:text-violet-400 bg-violet-500/10 dark:bg-violet-500/15 border-violet-400/25"
-      : "text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/15 border-blue-400/25";
+    item.Vacation_Day > 0.5
+      ? "text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/15 border-blue-400/25"
+      : "text-violet-600 dark:text-violet-400 bg-violet-500/10 dark:bg-violet-500/15 border-violet-400/25";
 
   return (
     <div

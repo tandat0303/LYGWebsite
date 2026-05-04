@@ -114,17 +114,9 @@ function MonthAccordion({
 
   const [open, setOpen] = useState(false);
 
-  const totalDays = items.reduce(
-    (acc, i) => acc + (i.Vacation_Hour > 0 ? 0 : i.Vacation_Day),
-    0,
-  );
-  const totalHours = items.reduce((acc, i) => acc + i.Vacation_Hour, 0);
-  const durationStr = [
-    totalDays > 0 ? `${totalDays} ${t("ngay")}` : "",
-    totalHours > 0 ? `${totalHours}.0 ${t("gio")}` : "",
-  ]
-    .filter(Boolean)
-    .join(" + ");
+  const totalDays = new Set(items.map((i) => i.Vacation_From_Date)).size;
+
+  const durationStr = totalDays > 0 ? `${totalDays} ${t("ngay")}` : "";
 
   return (
     <div

@@ -1,8 +1,10 @@
+import type { TKey } from "../hooks/useTranslation";
+
 export type SidebarIcon = string | React.ReactNode | React.ElementType;
 
 interface SidebarMenuItem {
   id: string;
-  label: string;
+  label: TKey;
   icon: SidebarIcon;
   onClick?: () => void;
 }

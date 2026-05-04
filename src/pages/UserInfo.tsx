@@ -442,9 +442,8 @@ export default function UserInfo() {
               }
             >
               <span
-                className={`flex-1 text-sm font-medium wrap-break-words transition-colors duration-300 leading-normal
-                  text-slate-700 dark:text-white/88 truncate
-                  ${isMasked ? "tracking-[3px] text-xs text-slate-300 dark:text-white/16" : ""}`}
+                className={`flex-1 text-sm font-medium wrap-break-words transition-colors duration-300 leading-normal truncate
+                  ${isMasked ? "tracking-[3px] text-slate-300 dark:text-white/16" : "text-slate-700 dark:text-white/88"}`}
               >
                 {isMasked ? maskOf(displayText) : displayText}
               </span>
@@ -504,10 +503,9 @@ export default function UserInfo() {
             >
               {/* QR wrap */}
               <div
-                className="rounded-2xl flex items-center justify-center
+                className="rounded-2xl flex items-center justify-center p-4
                   transition-transform duration-180ms ease-out hover:scale-[1.03]
                   bg-gray-100 border border-slate-200 dark:bg-white/6 dark:border-transparent dark:shadow-[0_0_0_1px_rgba(255,255,255,0.08)]"
-                style={{ padding: "16px" }}
                 title="Phóng to QR"
               >
                 <Image

@@ -145,7 +145,7 @@ export default function AnnualLeaveQuota({ data, loading }: Props) {
       <div className="flex items-center gap-2 mb-[18px]">
         <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
         <span className="text-[11px] font-bold uppercase tracking-[0.09em] text-slate-500 dark:text-white/70">
-          {t("annualLeave", undefined, true)}
+          {t("annualTickets", undefined, true)}
         </span>
       </div>
 

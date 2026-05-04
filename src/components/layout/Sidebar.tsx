@@ -1,5 +1,5 @@
 import { useSidebar } from "../../contexts/SidebarContext";
-import { Eye, QrCode, Menu } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../hooks/auth";
 import type { SidebarIcon, SidebarSection } from "../../types/sidebar";
 import { TfiInfoAlt } from "react-icons/tfi";
@@ -16,7 +16,11 @@ import { GoBook } from "react-icons/go";
 import { LuNotebookPen } from "react-icons/lu";
 import { AiOutlineLogout } from "react-icons/ai";
 import { PiCreditCard } from "react-icons/pi";
-import { RiContactsBook3Line } from "react-icons/ri";
+import {
+  RiContactsBook3Line,
+  RiMenuFold2Line,
+  RiMenuFoldLine,
+} from "react-icons/ri";
 // import { IoSettingsOutline } from "react-icons/io5";
 import { RiHome3Line } from "react-icons/ri";
 import storage from "../../libs/storage";
@@ -24,6 +28,9 @@ import { logout } from "../../features/authSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTE_MAP } from "../../libs/constance";
 import { useTranslation } from "../../hooks/useTranslation";
+import { Image } from "antd";
+import { useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
 export const Sidebar = () => {
   const { t } = useTranslation();
@@ -32,6 +39,8 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isOpen, isCollapsed, toggleSidebar, closeSidebar } = useSidebar();
+
+  const [qrVisible, setQrVisible] = useState(false);
 
   const handleAccessGetInside = () =>
     window.open(
@@ -100,7 +109,7 @@ export const Sidebar = () => {
       items: [
         {
           id: "register",
-          label: "khaiBao",
+          label: { key: "khaiBao", fallbackKey: "khaiBaoVaoCongTy" },
           icon: TbSpeakerphone,
           onClick: handleAccessGetInside,
         },
@@ -121,7 +130,7 @@ export const Sidebar = () => {
       ],
     },
     {
-      title: "Trợ giúp",
+      title: "troGiup",
       items: [
         { id: "download", label: "taiLygChoIos", icon: FaAppStoreIos },
         { id: "change-pass", label: "doiMatKhau", icon: GrKey },
@@ -185,7 +194,11 @@ export const Sidebar = () => {
             aria-label="Toggle sidebar"
             title={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
           >
-            <Menu size={20} />
+            {isCollapsed ? (
+              <RiMenuFold2Line size={20} />
+            ) : (
+              <RiMenuFoldLine size={20} />
+            )}
           </button>
 
           <div className="sb-logo">
@@ -197,8 +210,54 @@ export const Sidebar = () => {
                 dark:bg-blue-300/10 dark:border-blue-300/30 dark:text-[#93c5fd]
               "
             >
-              <QrCode size={32} />
-              <Eye size={14} className="cursor-pointer" />
+              <Image
+                style={{ display: "none" }}
+                preview={{
+                  open: qrVisible,
+                  onOpenChange: (v) => setQrVisible(v),
+                  imageRender: () => (
+                    <div className="flex flex-col items-center gap-4">
+                      <QRCodeSVG
+                        value={user?.userId || "N/A"}
+                        size={280}
+                        bgColor="#ffffff"
+                        fgColor="#0f2544"
+                        style={{
+                          borderRadius: 12,
+                          padding: 16,
+                          background: "#fff",
+                        }}
+                      />
+                      {user?.fullName && (
+                        <p className="text-white text-[15px] font-semibold m-0 tracking-[0.3px]">
+                          {user.fullName}
+                        </p>
+                      )}
+                    </div>
+                  ),
+                  actionsRender: () => null,
+                }}
+              />
+              <div
+                role="button"
+                tabIndex={0}
+                style={{ cursor: "zoom-in" }}
+                onClick={() => setQrVisible(true)}
+                onKeyDown={(e) => e.key === "Enter" && setQrVisible(true)}
+              >
+                <QRCodeSVG
+                  value={user?.userId || "N/A"}
+                  size={30}
+                  bgColor="transparent"
+                  fgColor="currentColor"
+                  className="block transition-colors duration-300 text-slate-700 dark:text-white/90 w-full max-w-40 h-auto max-[900px]:max-w-[100px] max-[600px]:max-w-[130px]"
+                />
+              </div>
+              <Eye
+                size={14}
+                className="cursor-pointer"
+                onClick={() => setQrVisible(true)}
+              />
             </div>
             <h1
               className="
@@ -241,7 +300,7 @@ export const Sidebar = () => {
                           }
                         `}
                         onClick={() => handleItemClick(item.id, item.onClick)}
-                        title={item.label}
+                        // title={item.label}
                       >
                         {renderIcon(item.icon)}
                         <span className="sb-label flex-1 whitespace-nowrap overflow-hidden text-ellipsis">

@@ -335,7 +335,7 @@ export const Header = () => {
                 {unreadCount > 0 && (
                   <span
                     className="
-                      flex absolute top-1 right-1 w-3.5 h-3.5 rounded-full
+                      flex absolute top-1 right-1 w-3.5 h-3.5 pt-0.5 rounded-full
                       bg-[#ef4444] text-white text-[9px] font-bold
                       items-center justify-center leading-none
                       border-[1.5px]
@@ -534,7 +534,7 @@ export const Header = () => {
                 <img
                   src={selectedLang.flag}
                   alt={selectedLang.label}
-                  className="w-[22px] h-[22px] rounded-full object-cover shrink-0 border border-white/20"
+                  className="w-[22px] h-[22px] rounded-full object-cover shrink-0 border dark:border-white/20"
                 />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-[450] hidden md:block">
                   {t(selectedLang.label)}
@@ -572,7 +572,7 @@ export const Header = () => {
                         <img
                           src={lang.flag}
                           alt={lang.label}
-                          className="w-[22px] h-[22px] rounded-full object-cover shrink-0 border border-white/20"
+                          className="w-[22px] h-[22px] rounded-full object-cover shrink-0 border dark:border-white/20"
                         />
                         <span className="whitespace-nowrap hidden md:block text-[13px] font-medium">
                           {t(lang.label)}

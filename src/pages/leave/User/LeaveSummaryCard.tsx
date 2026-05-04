@@ -1,11 +1,12 @@
 import { useTranslation } from "../../../hooks/useTranslation";
 import type { LeaveSummary } from "../../../types/leave";
-import { CalendarDays, ArrowLeftRight } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 
 interface Props {
   data: LeaveSummary;
   year: string;
   loading?: boolean;
+  isLHG: boolean;
 }
 
 interface StatItemProps {
@@ -105,7 +106,12 @@ function SkeletonCard() {
   );
 }
 
-export default function LeaveSummaryCard({ data, year, loading }: Props) {
+export default function LeaveSummaryCard({
+  data,
+  year,
+  loading,
+  isLHG,
+}: Props) {
   if (loading) return <SkeletonCard />;
   if (!data) return null;
 
@@ -142,51 +148,76 @@ export default function LeaveSummaryCard({ data, year, loading }: Props) {
           @media (max-width: 640px) { .leave-summary-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; } }
         `}</style>
         <div className="leave-summary-grid contents">
-          <StatItem
-            label="tongPhep"
-            value={
-              data.TONGPHEPTHUCTE
-                ? data.TONGPHEPTHUCTE
-                : data.TONGPHEPTAMTINH
-                  ? data.TONGPHEPTAMTINH
-                  : 0
-            }
-            sub="ngay"
-            accent="blue"
-            icon={<CalendarDays size={12} />}
-            // large
-          />
-          <StatItem
-            label="phepDaNghi"
-            value={data.DANGHI ? data.DANGHI : 0}
-            sub="ngay"
-            accent="red"
-          />
-          <StatItem
-            label="phepConLai"
-            value={data.CONLAI ? data.CONLAI : 0}
-            sub="ngay"
-            accent="green"
-          />
-          <StatItem
-            label="phepTon"
-            value={data.TONPHEPNAMTRUOC ? data.TONPHEPNAMTRUOC : 0}
-            sub="ngay"
-            accent="slate"
-            icon={<ArrowLeftRight size={12} />}
-          />
-          <StatItem
-            label="daNghiPtt"
-            value={data.DANGHIPTT ? data.DANGHIPTT : 0}
-            sub="ngay"
-            accent="amber"
-          />
-          <StatItem
-            label="conLaiPtt"
-            value={data.CONLAIPTT ? data.CONLAIPTT : 0}
-            sub="ngay"
-            accent="amber"
-          />
+          {isLHG ? (
+            <>
+              <StatItem
+                label="tongPhep"
+                value={data.TONG_PHEP ? data.TONG_PHEP : 0}
+                sub="ngay"
+                accent="blue"
+                // icon={<CalendarDays size={12} />}
+              />
+              <StatItem
+                label="phepDaNghi"
+                value={data.DA_NGHI ? data.DA_NGHI : 0}
+                sub="ngay"
+                accent="red"
+              />
+              <StatItem
+                label="phepConLai"
+                value={data.CON_LAI ? data.CON_LAI : 0}
+                sub="ngay"
+                accent="green"
+              />
+            </>
+          ) : (
+            <>
+              <StatItem
+                label="tongPhep"
+                value={
+                  data.TONGPHEPTHUCTE
+                    ? data.TONGPHEPTHUCTE
+                    : data.TONGPHEPTAMTINH
+                      ? data.TONGPHEPTAMTINH
+                      : 0
+                }
+                sub="ngay"
+                accent="blue"
+                // icon={<CalendarDays size={12} />}
+              />
+              <StatItem
+                label="phepDaNghi"
+                value={data.DANGHI ? data.DANGHI : 0}
+                sub="ngay"
+                accent="red"
+              />
+              <StatItem
+                label="phepConLai"
+                value={data.CONLAI ? data.CONLAI : 0}
+                sub="ngay"
+                accent="green"
+              />
+              <StatItem
+                label="phepTon"
+                value={data.TONPHEPNAMTRUOC ? data.TONPHEPNAMTRUOC : 0}
+                sub="ngay"
+                accent="slate"
+                // icon={<ArrowLeftRight size={12} />}
+              />
+              <StatItem
+                label="daNghiPtt"
+                value={data.DANGHIPTT ? data.DANGHIPTT : 0}
+                sub="ngay"
+                accent="amber"
+              />
+              <StatItem
+                label="conLaiPtt"
+                value={data.CONLAIPTT ? data.CONLAIPTT : 0}
+                sub="ngay"
+                accent="amber"
+              />
+            </>
+          )}
         </div>
       </div>
     </div>

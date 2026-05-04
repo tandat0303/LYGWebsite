@@ -13,7 +13,7 @@ export const getApiErrorMessage = (error: any): string => {
 };
 
 export const maskOf = (val: React.ReactNode): string =>
-  "•".repeat(String(val ?? "").length || 5);
+  "•".repeat(String(val ?? "").length);
 
 export function isoToDisplay(iso: string): string {
   if (!iso) return "";

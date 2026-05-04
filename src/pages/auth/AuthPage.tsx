@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRightOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import BgImg from "../../assets/images/bgImg.jpg";
 import Logo from "../../assets/images/logo-LY.png";
@@ -33,6 +33,13 @@ const AuthPage = () => {
   const [sliderContent, setSliderContent] = useState<Mode>("login");
 
   const isLogin = mode === "login";
+
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -125,9 +132,20 @@ const AuthPage = () => {
             "0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
       >
-        <div className="flex w-full h-full">
+        <div
+          className="flex h-full will-change-transform sm:w-full sm:transform-none sm:transition-none"
+          style={
+            isMobile
+              ? {
+                  width: "200%",
+                  transform: isLogin ? "translateX(0)" : "translateX(-50%)",
+                  transition: "transform 720ms cubic-bezier(0.77,0,0.175,1)",
+                }
+              : undefined
+          }
+        >
           <div
-            className="flex-[0_0_100%] h-full flex flex-col items-center justify-center
+            className="flex-[0_0_50%] h-full flex flex-col items-center justify-center
                        bg-white/7 backdrop-blur-[28px] border border-white/10
                        transition-opacity duration-500 ease-in-out
                        sm:flex-[0_0_50%] sm:border-r sm:border-r-white/8"
@@ -157,10 +175,18 @@ const AuthPage = () => {
               onFinish={handleLogin}
               loading={loading && isLogin}
             />
+            <div className="flex justify-end w-full mt-1 sm:hidden">
+              <button
+                className="text-white cursor-pointer underline"
+                onClick={switchToForgot}
+              >
+                {t("quenMatKhau")}
+              </button>
+            </div>
           </div>
 
           <div
-            className="flex-[0_0_100%] h-full flex flex-col items-center justify-center
+            className="flex-[0_0_50%] h-full flex flex-col items-center justify-center
                        bg-white/7 backdrop-blur-[28px] border border-white/10
                        transition-opacity duration-500 ease-in-out
                        sm:flex-[0_0_50%] sm:border-l sm:border-l-white/8"
@@ -175,7 +201,7 @@ const AuthPage = () => {
             </div>
 
             <h1 className="text-[22px] font-bold text-white text-center tracking-[-0.3px] mb-1.5">
-              {t("doiMatKhau")}
+              {t("quenMatKhau")}
             </h1>
 
             {/* <p
@@ -190,6 +216,15 @@ const AuthPage = () => {
               onFinish={handleForgot}
               loading={loading && !isLogin}
             />
+
+            <div className="flex justify-end w-full mt-1">
+              <button
+                className="text-white cursor-pointer underline sm:hidden"
+                onClick={switchToLogin}
+              >
+                {t("dangNhap")} ?
+              </button>
+            </div>
           </div>
         </div>
 
@@ -217,10 +252,7 @@ const AuthPage = () => {
 
           {sliderContent === "login" ? (
             <>
-              <h2
-                className="relative z-2 text-[clamp(26px,3.5vw,36px)] font-bold italic text-white leading-[1.2] mb-6"
-                style={{ marginBottom: "24px" }}
-              >
+              <h2 className="relative z-2 text-[clamp(26px,3.5vw,36px)] font-bold italic text-white leading-[1.2] mb-6">
                 {t("quenMatKhau")}
               </h2>
 

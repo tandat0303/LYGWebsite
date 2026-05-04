@@ -70,17 +70,8 @@ export function DayDetail({ day, factory, personId, open, onClose }: Props) {
     return () => document.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
-  // Lock body scroll when open
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
+  // Prevent scroll-through on the backdrop only — do NOT touch body styles
+  // because the app's scroll container is not body, locking body causes layout collapse
 
   // Fetch check-in/out
   useEffect(() => {
@@ -122,6 +113,8 @@ export function DayDetail({ day, factory, personId, open, onClose }: Props) {
         "transition-all duration-280 ease-[cubic-bezier(0.22,1,0.36,1)]",
         visible ? "opacity-100" : "opacity-0 pointer-events-none",
       ].join(" ")}
+      onWheel={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
     >
       {/* Backdrop */}
       <div

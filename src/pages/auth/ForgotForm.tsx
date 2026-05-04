@@ -104,7 +104,7 @@ export const ForgotForm = ({ onFinish, loading }: ForgotFormProps) => {
         rules={[{ required: true, message: t(REQUIRE_MESSAGE) }]}
       >
         <CustomSelect
-          placeholder={t("ngaySinh")}
+          placeholder={t("nhaMay")}
           options={FACTORY_OPTIONS}
           icon={<Building2 size={15} />}
         />
