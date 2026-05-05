@@ -6,7 +6,7 @@ import { useTranslation } from "../hooks/useTranslation";
 import { useAppSelector } from "../hooks/auth";
 import { useClickOutside } from "../hooks/useClickOutside";
 import type { Book } from "../types/guide";
-import guideApi from "../api/guide";
+import guideApi from "../api/features/guide";
 
 const FILES_BASE = import.meta.env.VITE_FILES_URL ?? null;
 
@@ -117,7 +117,7 @@ export default function Note() {
           {/* Icon */}
           <div
             className="
-              w-[34px] h-[34px] rounded-[9px] flex items-center justify-center shrink-0
+              w-8.5 h-8.5 rounded-[9px] flex items-center justify-center shrink-0
               transition-colors duration-300
               bg-blue-600/8 text-[#2563eb]
               dark:bg-blue-300/10 dark:text-[#93c5fd]
@@ -140,7 +140,7 @@ export default function Note() {
 
           {/* File selector */}
           <div
-            className="relative flex-1 min-w-0 max-w-[320px] max-[768px]:max-w-[180px] max-[480px]:max-w-40"
+            className="relative flex-1 min-w-0 max-w-[320px] max-[768px]:max-w-45 max-[480px]:max-w-40"
             ref={selectRef}
           >
             <button

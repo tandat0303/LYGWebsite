@@ -63,8 +63,8 @@ export const BottomNavigation = () => {
             className={`
               flex flex-col items-center justify-center gap-1 border-none
               bg-transparent cursor-pointer transition-all duration-200
-              relative flex-1 min-h-[60px] md:min-h-16
-              text-[11px] font-medium text-center leading-[1.2] max-w-[60px]
+              relative flex-1 min-h-15 md:min-h-16
+              text-[11px] font-medium text-center leading-[1.2] max-w-15
               ${
                 isActive
                   ? "text-[#2563eb]"

@@ -38,7 +38,7 @@ export default function Contact({ groups, loading = false }: ContactProps) {
                       ${i < rows - 1 ? "border-b border-slate-100 dark:border-white/5" : ""}`}
                     style={{ padding: "13px 16px" }}
                   >
-                    <div className="w-[42px] h-[42px] rounded-full bg-slate-200 dark:bg-white/8 shrink-0" />
+                    <div className="w-10.5 h-10.5 rounded-full bg-slate-200 dark:bg-white/8 shrink-0" />
                     <div className="flex flex-col gap-2 flex-1">
                       <div className="h-3 w-32 rounded bg-slate-200 dark:bg-white/8" />
                       <div className="h-3 w-48 rounded bg-slate-200 dark:bg-white/6" />

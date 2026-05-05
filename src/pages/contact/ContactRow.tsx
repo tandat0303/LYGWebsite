@@ -54,7 +54,7 @@ export function ContactRow({ item, colorClass, isLast }: ContactRowProps) {
     >
       {/* Avatar */}
       <div
-        className={`w-[42px] h-[42px] rounded-full shrink-0 flex items-center justify-center
+        className={`w-10.5 h-10.5 rounded-full shrink-0 flex items-center justify-center
           text-white font-bold text-[13px] tracking-wide
           bg-linear-to-br ${colorClass}
           shadow-[0_2px_8px_rgba(0,0,0,0.18)]`}

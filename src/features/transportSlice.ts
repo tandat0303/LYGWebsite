@@ -3,7 +3,7 @@ import {
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import userApi from "../api/user";
+import userApi from "../api/features/user";
 import type { Vehicle } from "../types/user";
 
 export const fetchVehicles = createAsyncThunk(

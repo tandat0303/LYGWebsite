@@ -5,7 +5,7 @@ import FileViewer from "../components/FileViewer";
 import { useTranslation } from "../hooks/useTranslation";
 import { useAppSelector } from "../hooks/auth";
 import type { Book } from "../types/guide";
-import guideApi from "../api/guide";
+import guideApi from "../api/features/guide";
 
 const TARGET_BOOK_ID = "BK0000000000001";
 const FILE_BASE = import.meta.env.VITE_FILES_URL ?? null;
@@ -92,7 +92,7 @@ export default function Guide() {
         <div className="flex items-center gap-2.5 min-w-0">
           <div
             className="
-              w-[34px] h-[34px] rounded-[9px] flex items-center justify-center not-only:shrink-0
+              w-8.5 h-8.5 rounded-[9px] flex items-center justify-center not-only:shrink-0
               transition-colors duration-300
               bg-blue-600/8 text-[#2563eb]
               dark:bg-blue-300/10 dark:text-[#93c5fd]

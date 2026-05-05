@@ -34,7 +34,7 @@ export const LanguageBadge = () => {
       <div
         className={`inline-flex items-center gap-2 rounded-full
                     cursor-pointer bg-white/7 backdrop-blur-lg border border-white/15 text-white
-                    text-[13px] font-medium transition-all duration-220 ease-in select-none min-w-[150px] justify-between
+                    text-[13px] font-medium transition-all duration-220 ease-in select-none min-w-37.5 justify-between
                     hover:bg-white/13 hover:border-[rgba(147,197,253,0.55)] hover:-translate-y-px
                     ${open ? "bg-white/12 border-[rgba(147,197,253,0.7)] shadow-[0_0_0_3px_rgba(147,197,253,0.12)] -translate-y-px" : ""}`}
         style={{ padding: "9px 14px 9px 10px" }}
@@ -43,7 +43,7 @@ export const LanguageBadge = () => {
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span className="w-[22px] h-[22px] rounded-full overflow-hidden border border-white/20 shrink-0 bg-white/5">
+        <span className="w-5.5 h-5.5 rounded-full overflow-hidden border border-white/20 shrink-0 bg-white/5">
           <img
             src={lang.flag}
             alt={lang.label}
@@ -79,7 +79,7 @@ export const LanguageBadge = () => {
       {/* ── Dropdown — lp-lang__dropdown ── */}
       {open && (
         <div
-          className="absolute top-[calc(100%+8px)] right-0 w-[210px] p-1.5 rounded-[14px]
+          className="absolute top-[calc(100%+8px)] right-0 w-52.5 p-1.5 rounded-[14px]
                      bg-[rgba(8,20,45,0.95)] backdrop-blur-xl border border-white/10
                      shadow-[0_20px_60px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(255,255,255,0.05)]
                      animate-lp-lang-down"
@@ -105,7 +105,7 @@ export const LanguageBadge = () => {
                 style={{ padding: "9px 10px" }}
                 onClick={() => handleSelectLang(l)}
               >
-                <span className="w-[26px] h-[26px] rounded-full overflow-hidden border border-white/12 shrink-0 bg-white/5">
+                <span className="w-6.5 h-6.5 rounded-full overflow-hidden border border-white/12 shrink-0 bg-white/5">
                   <img
                     src={l.flag}
                     alt={l.label}
@@ -126,7 +126,7 @@ export const LanguageBadge = () => {
 
                 {active && (
                   <span
-                    className="w-[18px] h-[18px] rounded-full bg-[rgba(37,99,235,0.3)] border border-[rgba(147,197,253,0.5)]
+                    className="w-4.5 h-4.5 rounded-full bg-[rgba(37,99,235,0.3)] border border-[rgba(147,197,253,0.5)]
                                flex items-center justify-center shrink-0"
                     aria-hidden
                   >

@@ -14,110 +14,18 @@ import {
   LogOut,
   RotateCcwKey,
   X,
-  CheckCheck,
-  Info,
-  AlertTriangle,
-  CheckCircle2,
   Clock,
+  Megaphone,
 } from "lucide-react";
 import { LANGS } from "../../libs/constance";
 import type { Lang } from "../../types/storage";
 import { useNavigate } from "react-router-dom";
 import { changeLanguage } from "../../features/languageSlice";
 import { useTranslation } from "../../hooks/useTranslation";
-
-type NotifKind = "info" | "warning" | "success";
-
-interface Notification {
-  id: number;
-  kind: NotifKind;
-  title: string;
-  summary: string;
-  detail: string;
-  time: string;
-  read: boolean;
-}
-
-const MOCK_NOTIFICATIONS: Notification[] = [
-  {
-    id: 1,
-    kind: "warning",
-    title: "Cảnh báo hệ thống",
-    summary: "Máy chủ DB-02 sắp hết dung lượng lưu trữ.",
-    detail:
-      "Máy chủ cơ sở dữ liệu DB-02 hiện đang sử dụng 91% dung lượng ổ đĩa. Vui lòng liên hệ bộ phận IT để mở rộng dung lượng hoặc xóa dữ liệu không cần thiết trước 17:00 hôm nay để tránh gián đoạn dịch vụ.",
-    time: "5 phút trước",
-    read: false,
-  },
-  {
-    id: 2,
-    kind: "success",
-    title: "Xuất báo cáo thành công",
-    summary: "Báo cáo tháng 4/2026 đã được xuất và gửi qua email.",
-    detail:
-      "Báo cáo tổng hợp tháng 4/2026 đã được tạo thành công lúc 08:32. File PDF đã được gửi tới danh sách email nhận báo cáo định kỳ. Bạn cũng có thể tải xuống trực tiếp từ mục Báo cáo trong hệ thống.",
-    time: "32 phút trước",
-    read: false,
-  },
-  {
-    id: 3,
-    kind: "info",
-    title: "Lịch bảo trì định kỳ",
-    summary: "Hệ thống sẽ bảo trì vào 22:00 – 23:00 tối nay.",
-    detail:
-      "Bộ phận kỹ thuật thông báo hệ thống sẽ được bảo trì nâng cấp vào khung giờ 22:00 – 23:00 ngày 29/04/2026. Trong thời gian này, tất cả các chức năng sẽ tạm ngưng. Vui lòng lưu công việc trước 21:50. Xin lỗi vì bất tiện.",
-    time: "1 giờ trước",
-    read: true,
-  },
-  {
-    id: 4,
-    kind: "info",
-    title: "Cập nhật phiên bản mới",
-    summary: "Phiên bản 3.4.1 đã sẵn sàng, bao gồm nhiều cải tiến hiệu năng.",
-    detail:
-      "Phiên bản 3.4.1 vừa được phát hành với các cải tiến: tăng tốc độ tải trang lên 30%, sửa lỗi hiển thị trên Safari, cập nhật thư viện bảo mật. Để áp dụng bản cập nhật, admin cần đăng xuất và đăng nhập lại.",
-    time: "3 giờ trước",
-    read: true,
-  },
-  {
-    id: 5,
-    kind: "success",
-    title: "Đồng bộ dữ liệu hoàn tất",
-    summary: "1.240 bản ghi đã được đồng bộ thành công từ ERP.",
-    detail:
-      "Quá trình đồng bộ tự động từ hệ thống ERP đã hoàn thành lúc 06:00 sáng nay. Tổng cộng 1.240 bản ghi được cập nhật, trong đó 980 bản ghi mới và 260 bản ghi chỉnh sửa. Không có lỗi nào được ghi nhận.",
-    time: "Hôm nay, 06:01",
-    read: true,
-  },
-];
-
-// ── Kind config ─────────────────────────────────────────────────────────────
-
-const kindConfig: Record<
-  NotifKind,
-  { icon: React.ReactNode; dot: string; bg: string; iconColor: string }
-> = {
-  warning: {
-    icon: <AlertTriangle size={15} />,
-    dot: "bg-amber-400",
-    bg: "bg-amber-500/10 dark:bg-amber-400/10",
-    iconColor: "text-amber-500 dark:text-amber-400",
-  },
-  success: {
-    icon: <CheckCircle2 size={15} />,
-    dot: "bg-emerald-400",
-    bg: "bg-emerald-500/10 dark:bg-emerald-400/10",
-    iconColor: "text-emerald-500 dark:text-emerald-400",
-  },
-  info: {
-    icon: <Info size={15} />,
-    dot: "bg-blue-400",
-    bg: "bg-blue-500/10 dark:bg-blue-400/10",
-    iconColor: "text-blue-500 dark:text-blue-400",
-  },
-};
-
-// ── Component ────────────────────────────────────────────────────────────────
+import type { Notification } from "../../types/notification";
+import notificationApi from "../../api/common/notification";
+import { AppAlert } from "../ui/AppAlert";
+import { getApiErrorMessage, isoToDisplay, timeAgo } from "../../libs/helper";
 
 export const Header = () => {
   const { t } = useTranslation();
@@ -132,8 +40,8 @@ export const Header = () => {
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications, setNotifications] =
-    useState<Notification[]>(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifLoading, setNotifLoading] = useState(false);
   const [activeNotif, setActiveNotif] = useState<Notification | null>(null);
   const [notifDropdownLeft, setNotifDropdownLeft] = useState<number | null>(
     null,
@@ -144,12 +52,32 @@ export const Header = () => {
   const notifDropdownRef = useRef<HTMLDivElement>(null);
   const notifBtnRef = useRef<HTMLButtonElement>(null);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((n) => n.isReaded !== 1).length;
 
   const RING_INTERVAL_SEC = 3; // chu kỳ lặp (giây)
   const RING_DURATION_MS = 1500; // thời gian rung mỗi lần (ms)
 
   const [bellShaking, setBellShaking] = useState(false);
+
+  useEffect(() => {
+    const fetchNotification = async () => {
+      try {
+        setNotifLoading(true);
+
+        const res = await notificationApi.getAllNotifications({
+          factory: user.factory,
+          userId: user.userId,
+        });
+        setNotifications(res);
+      } catch (error) {
+        AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+      } finally {
+        setNotifLoading(false);
+      }
+    };
+
+    fetchNotification();
+  }, []);
 
   useEffect(() => {
     if (unreadCount === 0) {
@@ -244,14 +172,10 @@ export const Header = () => {
 
   const handleOpenNotif = (notif: Notification) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === notif.id ? { ...n, read: true } : n)),
+      prev.map((n) => (n.ID === notif.ID ? { ...n, isReaded: 1 } : n)),
     );
-    setActiveNotif({ ...notif, read: true });
+    setActiveNotif({ ...notif, isReaded: 1 });
     setNotifOpen(false);
-  };
-
-  const handleMarkAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
   useEffect(() => {
@@ -367,21 +291,11 @@ export const Header = () => {
                         {t("thongBao")}
                       </span>
                       {unreadCount > 0 && (
-                        <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
+                        <span className="flex items-center justify-center min-w-4.5 h-4.5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
                           {unreadCount}
                         </span>
                       )}
                     </div>
-                    {unreadCount > 0 && (
-                      <button
-                        className="flex items-center gap-1 text-[11.5px] text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors cursor-pointer"
-                        onClick={handleMarkAllRead}
-                        title="Đánh dấu tất cả đã đọc"
-                      >
-                        <CheckCheck size={13} />
-                        Đọc tất cả
-                      </button>
-                    )}
                   </div>
 
                   <div
@@ -399,6 +313,15 @@ export const Header = () => {
                       scrollbarColor: "rgba(100,116,139,0.25) transparent",
                     }}
                   >
+                    {notifLoading && (
+                      <span
+                        className="
+                          w-9 h-9 rounded-full border-[3px] border-transparent
+                          border-t-[#2563eb] dark:border-t-blue-300/70
+                          animate-spin
+                        "
+                      />
+                    )}
                     {notifications.length === 0 ? (
                       <div className="flex flex-col items-center justify-center py-8 gap-2 text-slate-400/60 dark:text-slate-500/60">
                         <Bell size={28} strokeWidth={1.5} />
@@ -408,15 +331,14 @@ export const Header = () => {
                       </div>
                     ) : (
                       notifications.map((notif) => {
-                        const cfg = kindConfig[notif.kind];
                         return (
                           <div
-                            key={notif.id}
+                            key={notif.ID}
                             className={`
                               flex items-start gap-2.5 rounded-lg cursor-pointer
                               transition-colors duration-130 group relative
                               ${
-                                notif.read
+                                notif.isReaded === 1
                                   ? "hover:bg-slate-100/70 dark:hover:bg-white/5"
                                   : "hover:bg-blue-50/80 dark:hover:bg-blue-500/8"
                               }
@@ -427,9 +349,9 @@ export const Header = () => {
                           >
                             {/* Kind icon */}
                             <div
-                              className={`flex items-center justify-center w-8 h-8 rounded-[9px] shrink-0 mt-0.5 ${cfg.bg} ${cfg.iconColor}`}
+                              className={`flex items-center justify-center w-8 h-8 rounded-[9px] shrink-0 mt-0.5 bg-blue-500/10 dark:bg-blue-400/10 text-blue-500 dark:text-blue-400`}
                             >
-                              {cfg.icon}
+                              <Megaphone size={15} />
                             </div>
 
                             {/* Content */}
@@ -437,33 +359,30 @@ export const Header = () => {
                               <div className="flex items-start justify-between gap-2">
                                 <span
                                   className={`text-[12.5px] font-semibold leading-[1.3] ${
-                                    notif.read
+                                    notif.isReaded === 1
                                       ? "text-slate-600/80 dark:text-slate-300/70"
                                       : "text-slate-800 dark:text-slate-100"
                                   }`}
                                 >
-                                  {notif.title}
+                                  {notif.Subjects}
                                 </span>
-                                {!notif.read && (
+                                {notif.isReaded !== 1 && (
                                   <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1" />
                                 )}
                               </div>
-                              <p
+                              {/* <p
                                 className={`text-[11.5px] leading-[1.4] mt-0.5 line-clamp-2 ${
-                                  notif.read
+                                  notif.isReaded === 1
                                     ? "text-slate-400/70 dark:text-slate-500/70"
                                     : "text-slate-500/90 dark:text-slate-400/85"
                                 }`}
                               >
-                                {notif.summary}
-                              </p>
-                              <div className="flex items-center gap-1 mt-1.5">
-                                <Clock
-                                  size={10}
-                                  className="text-slate-400/60 dark:text-slate-500/60"
-                                />
-                                <span className="text-[10.5px] text-slate-400/60 dark:text-slate-500/60">
-                                  {notif.time}
+                                {notif.Content}
+                              </p> */}
+                              <div className="flex items-center gap-1 mt-1.5 text-slate-400/90 dark:text-slate-500/70">
+                                <Clock size={10} />
+                                <span className="text-[10.5px]">
+                                  {timeAgo(notif.Modify_Date)}
                                 </span>
                               </div>
                             </div>
@@ -485,14 +404,14 @@ export const Header = () => {
             >
               <span
                 className="
-                  relative w-[46px] h-[25px] rounded-full block transition-colors duration-300
+                  relative w-11.5 h-6.25 rounded-full block transition-colors duration-300
                   bg-[rgba(251,191,36,0.15)] border-[1.5px] border-[rgba(251,191,36,0.45)]
                   dark:bg-[rgba(139,92,246,0.18)] dark:border-[rgba(139,92,246,0.45)]
                 "
               >
                 <span
                   className="
-                    flex absolute top-1/2 -translate-y-1/2 w-[19px] h-[19px]
+                    flex absolute top-1/2 -translate-y-1/2 w-4.75 h-4.75
                     rounded-full items-center justify-center text-white
                     [transition:left_0.28s_cubic-bezier(0.34,1.56,0.64,1),background_0.3s_ease,box-shadow_0.3s_ease]
                     left-0.5 bg-[#f59e0b] shadow-[0_2px_8px_rgba(245,158,11,0.5)]
@@ -510,7 +429,7 @@ export const Header = () => {
 
             {/* Divider */}
             <div
-              className="w-px h-[22px] shrink-0 hidden md:block bg-black/10 dark:bg-white/10"
+              className="w-px h-5.5 shrink-0 hidden md:block bg-black/10 dark:bg-white/10"
               style={{ margin: "0 4px" }}
             />
 
@@ -534,7 +453,7 @@ export const Header = () => {
                 <img
                   src={selectedLang.flag}
                   alt={selectedLang.label}
-                  className="w-[22px] h-[22px] rounded-full object-cover shrink-0 border dark:border-white/20"
+                  className="w-5.5 h-5.5 rounded-full object-cover shrink-0 border dark:border-white/20"
                 />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-[450] hidden md:block">
                   {t(selectedLang.label)}
@@ -572,7 +491,7 @@ export const Header = () => {
                         <img
                           src={lang.flag}
                           alt={lang.label}
-                          className="w-[22px] h-[22px] rounded-full object-cover shrink-0 border dark:border-white/20"
+                          className="w-5.5 h-5.5 rounded-full object-cover shrink-0 border dark:border-white/20"
                         />
                         <span className="whitespace-nowrap hidden md:block text-[13px] font-medium">
                           {t(lang.label)}
@@ -589,7 +508,7 @@ export const Header = () => {
 
             {/* Divider */}
             <div
-              className="w-px h-[22px] shrink-0 hidden md:block bg-black/10 dark:bg-white/10"
+              className="w-px h-5.5 shrink-0 hidden md:block bg-black/10 dark:bg-white/10"
               style={{ margin: "0 4px" }}
             />
 
@@ -597,7 +516,7 @@ export const Header = () => {
             <div className="relative" ref={userDropdownRef}>
               <button
                 className="
-                  flex items-center gap-[7px] rounded-full cursor-pointer
+                  flex items-center gap-1.75 rounded-full cursor-pointer
                   transition-all duration-200
                   border
                   border-blue-600/22 bg-blue-600/7 text-blue-700/90
@@ -612,7 +531,7 @@ export const Header = () => {
               >
                 <div
                   className="
-                    w-[26px] h-[26px] rounded-full shrink-0
+                    w-6.5 h-6.5 rounded-full shrink-0
                     bg-linear-to-br from-[#3b82f6] to-[#1d4ed8]
                     text-white flex items-center justify-center text-[11px] font-bold
                     shadow-[0_1px_4px_rgba(59,130,246,0.4)]
@@ -636,7 +555,7 @@ export const Header = () => {
               </button>
 
               {userDropdownOpen && (
-                <div className={`${dropdownMenuCls} min-w-[200px]`} role="menu">
+                <div className={`${dropdownMenuCls} min-w-50`} role="menu">
                   {/* User info header */}
                   <div
                     className="flex items-center gap-2.5"
@@ -644,7 +563,7 @@ export const Header = () => {
                   >
                     <div
                       className="
-                        w-[34px] h-[34px] rounded-[9px] shrink-0
+                        w-8.5 h-8.5 rounded-[9px] shrink-0
                         bg-linear-to-br from-[#3b82f6] to-[#1d4ed8]
                         text-white flex items-center justify-center text-xs font-bold
                         shadow-[0_2px_8px_rgba(59,130,246,0.3)]
@@ -732,15 +651,7 @@ export const Header = () => {
             style={{ maxWidth: "460px" }}
           >
             {/* Colored top accent bar */}
-            <div
-              className={`h-1 w-full ${
-                activeNotif.kind === "warning"
-                  ? "bg-linear-to-r from-amber-400 to-orange-400"
-                  : activeNotif.kind === "success"
-                    ? "bg-linear-to-r from-emerald-400 to-teal-400"
-                    : "bg-linear-to-r from-blue-400 to-indigo-400"
-              }`}
-            />
+            <div className="h-1 w-full bg-linear-to-r from-blue-400 to-indigo-400" />
 
             {/* Modal header */}
             <div
@@ -748,28 +659,20 @@ export const Header = () => {
               style={{ padding: "18px 18px 14px" }}
             >
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-[11px] shrink-0 ${kindConfig[activeNotif.kind].bg} ${kindConfig[activeNotif.kind].iconColor}`}
+                className="flex items-center justify-center w-10 h-10 rounded-[11px] shrink-0
+                        bg-blue-500/10 dark:bg-blue-400/10 text-blue-500 dark:text-blue-400"
               >
-                {activeNotif.kind === "warning" ? (
-                  <AlertTriangle size={19} />
-                ) : activeNotif.kind === "success" ? (
-                  <CheckCircle2 size={19} />
-                ) : (
-                  <Info size={19} />
-                )}
+                <Megaphone size={19} />
               </div>
 
               <div className="flex-1 min-w-0">
                 <h3 className="text-[15px] font-semibold leading-[1.3] text-slate-800 dark:text-slate-100">
-                  {activeNotif.title}
+                  {activeNotif.Subjects}
                 </h3>
-                <div className="flex items-center gap-1 mt-1">
-                  <Clock
-                    size={11}
-                    className="text-slate-400/60 dark:text-slate-500/60"
-                  />
-                  <span className="text-[11px] text-slate-400/70 dark:text-slate-500/70">
-                    {activeNotif.time}
+                <div className="flex items-center gap-1 mt-1 text-slate-400/90 dark:text-slate-500/70">
+                  <Clock size={11} />
+                  <span className="text-[11px]">
+                    {isoToDisplay(activeNotif.Modify_Date)}
                   </span>
                 </div>
               </div>
@@ -790,12 +693,12 @@ export const Header = () => {
             </div>
 
             {/* Divider */}
-            <div className="h-px bg-black/6 dark:bg-white/[0.07] mx-[18px]" />
+            <div className="h-px bg-black/6 dark:bg-white/[0.07] mx-4.5" />
 
             {/* Body */}
             <div style={{ padding: "16px 18px 20px" }}>
               <p className="text-[13.5px] leading-[1.65] text-slate-600/90 dark:text-slate-300/80">
-                {activeNotif.detail}
+                {activeNotif.Content}
               </p>
             </div>
 

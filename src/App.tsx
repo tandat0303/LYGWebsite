@@ -15,6 +15,7 @@ import AppDownload from "./pages/AppDownload";
 import LeavePage from "./pages/leave/LeavePage";
 import OvertimePage from "./pages/overtime/OvertimePage";
 import NotFound from "./pages/NotFound";
+import Salary from "./pages/salary/Salary";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
 
             <Route path="/user-info" element={<UserInfo />} />
+            <Route path="/salary" element={<Salary />} />
             <Route path="/holidays" element={<LeavePage />} />
             <Route path="/overtime" element={<OvertimePage />} />
 

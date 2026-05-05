@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../../hooks/auth";
 import type { ContactItem } from "../../types/contact";
-import contactApi from "../../api/contact";
+import contactApi from "../../api/features/contact";
 import { AppAlert } from "../../components/ui/AppAlert";
 import { getApiErrorMessage } from "../../libs/helper";
 import Contact from "./Contact";

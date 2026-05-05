@@ -31,7 +31,7 @@ export default function TransportAllowanceCard({ data, loading }: Props) {
 
   if (loading || !data) {
     return (
-      <div className="h-[168px] rounded-[18px] bg-slate-100 dark:bg-white/4 animate-pulse" />
+      <div className="h-42 rounded-[18px] bg-slate-100 dark:bg-white/4 animate-pulse" />
     );
   }
 
@@ -40,7 +40,7 @@ export default function TransportAllowanceCard({ data, loading }: Props) {
   return (
     <div className="rounded-[18px] p-5 bg-white border border-slate-200 shadow-[0_2px_12px_rgba(15,37,68,0.07)] dark:bg-[rgba(15,27,48,0.6)] dark:border-white/8 dark:shadow-none transition-[background,border-color] duration-300">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-[18px]">
+      <div className="flex items-center gap-2 mb-4.5">
         <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
         <span className="text-[11px] font-bold uppercase tracking-[0.09em] text-slate-500 dark:text-white/70">
           {tNT("annualTransportationAllowance")}
@@ -62,7 +62,7 @@ export default function TransportAllowanceCard({ data, loading }: Props) {
 
       {/* Timeline */}
       <div className="relative flex items-start justify-between px-1">
-        <div className="absolute top-[13px] left-4 right-4 h-0.5 bg-slate-100 dark:bg-white/8 z-0" />
+        <div className="absolute top-3.25 left-4 right-4 h-0.5 bg-slate-100 dark:bg-white/8 z-0" />
 
         {data.map((entry, i) => {
           const ticked = entry.IsPaid === 1;

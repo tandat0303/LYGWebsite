@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { useClickOutside } from "../../../../hooks/useClickOutside";
 import { useAppSelector } from "../../../../hooks/auth";
-import supervisorLeaveApi from "../../../../api/supervisorLeave";
+import supervisorLeaveApi from "../../../../api/features/leave/supervisorLeave";
 import { AppAlert } from "../../../../components/ui/AppAlert";
 import { getApiErrorMessage } from "../../../../libs/helper";
 import type {
@@ -36,7 +36,7 @@ function YearPicker({
   return (
     <div className="relative" ref={ref}>
       <button
-        className="flex items-center gap-2 px-3.5 py-[7px] rounded-[10px] border border-slate-900/[0.14] bg-slate-900/4 text-slate-800 text-[13px] font-semibold cursor-pointer transition-[background] duration-150 hover:bg-slate-900/8 dark:border-white/12] dark:bg-white/6 dark:text-white dark:hover:bg-white/9"
+        className="flex items-center gap-2 px-3.5 py-1.75 rounded-[10px] border border-slate-900/[0.14] bg-slate-900/4 text-slate-800 text-[13px] font-semibold cursor-pointer transition-[background] duration-150 hover:bg-slate-900/8 dark:border-white/12] dark:bg-white/6 dark:text-white dark:hover:bg-white/9"
         onClick={() => setOpen((v) => !v)}
       >
         <span className="text-[12px] font-medium text-slate-400 dark:text-[rgba(180,200,255,0.6)]">
@@ -51,7 +51,7 @@ function YearPicker({
         />
       </button>
       {open && (
-        <div className="absolute top-[calc(100%+6px)] right-0 z-50 bg-white border border-slate-900/10 rounded-[14px] p-2 min-w-[190px] shadow-[0_8px_30px_rgba(15,37,68,0.12)] grid grid-cols-3 gap-1 dark:bg-[#0f1f3d] dark:border-white/10 dark:shadow-[0_16px_40px_rgba(0,0,0,0.5)]">
+        <div className="absolute top-[calc(100%+6px)] right-0 z-50 bg-white border border-slate-900/10 rounded-[14px] p-2 min-w-47.5 shadow-[0_8px_30px_rgba(15,37,68,0.12)] grid grid-cols-3 gap-1 dark:bg-[#0f1f3d] dark:border-white/10 dark:shadow-[0_16px_40px_rgba(0,0,0,0.5)]">
           {years.map((y) => (
             <button
               key={y}

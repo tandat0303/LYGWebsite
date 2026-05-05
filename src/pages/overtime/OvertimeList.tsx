@@ -157,7 +157,7 @@ function MonthAccordion({
 
       <div
         className={`overflow-hidden transition-all duration-260 ease-in-out
-          ${open ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"}`}
+          ${open ? "max-h-500 opacity-100" : "max-h-0 opacity-0"}`}
       >
         <div className="border-t border-slate-100 dark:border-white/5">
           {items.map((item, i) => (
@@ -211,7 +211,7 @@ export default function OvertimeList({
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-[18px] h-[62px] border animate-pulse
+              className="rounded-[18px] h-15.5 border animate-pulse
                 bg-white border-slate-200 dark:bg-[rgba(15,27,48,0.5)] dark:border-white/[0.07]"
             />
           ))}

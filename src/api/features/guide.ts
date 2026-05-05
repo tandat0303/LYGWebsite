@@ -1,5 +1,5 @@
-import type { Book } from "../types/guide";
-import apiClient from "./apiClient";
+import type { Book } from "../../types/guide";
+import apiClient from "../apiClient";
 
 const guideApi = {
   getAllFiles: async (factory: string): Promise<Book[]> => {

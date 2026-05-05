@@ -1,5 +1,5 @@
-import type { NewsItem } from "../types/news";
-import apiClient from "./apiClient";
+import type { NewsItem } from "../../types/news";
+import apiClient from "../apiClient";
 
 const newsApi = {
   getAllNews: async (personId: string): Promise<NewsItem[]> => {

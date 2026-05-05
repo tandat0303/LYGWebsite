@@ -22,7 +22,7 @@ export function NewsCard({
           hover:shadow-[0_4px_24px_rgba(59,130,246,0.1)]"
         onClick={() => onSelect(item)}
       >
-        <div className="w-24 h-[72px] rounded-xl overflow-hidden shrink-0 bg-slate-200/20 dark:bg-white/5">
+        <div className="w-24 h-18 rounded-xl overflow-hidden shrink-0 bg-slate-200/20 dark:bg-white/5">
           {imgSrc ? (
             <img
               src={imgSrc}

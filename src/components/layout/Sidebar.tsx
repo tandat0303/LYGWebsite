@@ -250,7 +250,7 @@ export const Sidebar = () => {
                   size={30}
                   bgColor="transparent"
                   fgColor="currentColor"
-                  className="block transition-colors duration-300 text-slate-700 dark:text-white/90 w-full max-w-40 h-auto max-[900px]:max-w-[100px] max-[600px]:max-w-[130px]"
+                  className="block transition-colors duration-300 text-slate-700 dark:text-white/90 w-full max-w-40 h-auto max-[900px]:max-w-25 max-[600px]:max-w-32.5"
                 />
               </div>
               <Eye

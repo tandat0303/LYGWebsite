@@ -3,8 +3,8 @@ import type {
   ChangePasswordResponse,
   LoginPayload,
   LoginResponse,
-} from "../types/auth";
-import apiClient from "./apiClient";
+} from "../../types/auth";
+import apiClient from "../apiClient";
 
 const authApi = {
   login: async (payload: LoginPayload): Promise<LoginResponse> => {

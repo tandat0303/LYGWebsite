@@ -9,7 +9,7 @@ import type {
   ChangePasswordValues,
 } from "../../types/auth";
 import { useAppSelector } from "../../hooks/auth";
-import authApi from "../../api/auth";
+import authApi from "../../api/features/auth";
 import { AppAlert } from "../../components/ui/AppAlert";
 import { useTranslation } from "../../hooks/useTranslation";
 
@@ -61,8 +61,8 @@ export default function ChangePassword() {
       {/* Card */}
       <div
         className="
-          w-full max-w-[900px] flex flex-row overflow-hidden rounded-3xl
-          min-h-[520px]
+          w-full max-w-225 flex flex-row overflow-hidden rounded-3xl
+          min-h-130
           shadow-[0_8px_40px_rgba(15,37,68,0.12)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.4)]
           animate-[cp-rise_0.38s_cubic-bezier(0.22,1,0.36,1)_both]
           max-[768px]:flex-col max-[768px]:min-h-[unset] max-[768px]:rounded-[20px]
@@ -80,11 +80,11 @@ export default function ChangePassword() {
         >
           {/* Deco circles */}
           <div
-            className="absolute -top-[60px] -right-[60px] w-[220px] h-[220px] bg-[rgba(255,255,255,0.08)] rounded-full pointer-events-none"
+            className="absolute -top-15 -right-15 w-55 h-55 bg-[rgba(255,255,255,0.08)] rounded-full pointer-events-none"
             aria-hidden="true"
           />
           <div
-            className="absolute -bottom-20 -left-10 w-[260px] h-[260px] bg-[rgba(255,255,255,0.05)] rounded-full pointer-events-none"
+            className="absolute -bottom-20 -left-10 w-65 h-65 bg-[rgba(255,255,255,0.05)] rounded-full pointer-events-none"
             aria-hidden="true"
           />
 
@@ -122,8 +122,7 @@ export default function ChangePassword() {
             max-[768px]:items-center p-10
           "
         >
-          {/* All children constrained to max 360px */}
-          <div className="w-full max-w-[360px]">
+          <div className="w-full max-w-90">
             <div className="mb-7">
               <h1
                 className="

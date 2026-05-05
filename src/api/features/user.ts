@@ -8,8 +8,8 @@ import type {
   UserInfo,
   UserInfoPayload,
   Vehicle,
-} from "../types/user";
-import apiClient from "./apiClient";
+} from "../../types/user";
+import apiClient from "../apiClient";
 
 const userApi = {
   getUserInfo: async (payload: UserInfoPayload): Promise<UserInfo> => {

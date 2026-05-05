@@ -11,7 +11,7 @@ import type {
   UserInfoPayload,
 } from "../types/user";
 import { useAppSelector } from "../hooks/auth";
-import userApi from "../api/user";
+import userApi from "../api/features/user";
 import { AppAlert } from "../components/ui/AppAlert";
 import { DATE_FIELDS, EDITABLE_FIELDS, MASKED_FIELDS } from "../libs/constance";
 import InlineSelect from "../components/ui/inlineEdit/InlineSelect";
@@ -385,7 +385,7 @@ export default function UserInfo() {
     return (
       <div
         key={fieldKey}
-        className={`flex flex-col gap-[5px] min-w-0 ${spanClass} ${
+        className={`flex flex-col gap-1.25 min-w-0 ${spanClass} ${
           disabled ? "opacity-[0.38] pointer-events-none" : ""
         } [&::after]:content-[''] [&::after]:block [&::after]:h-px [&::after]:mt-1 [&::after]:bg-slate-100 dark:[&::after]:bg-white/6`}
       >
@@ -395,7 +395,7 @@ export default function UserInfo() {
         </span>
 
         {/* Body */}
-        <div className="relative min-h-[26px] flex items-center">
+        <div className="relative min-h-6.5 flex items-center">
           {isEditing ? (
             <>
               {isDate && (
@@ -488,7 +488,7 @@ export default function UserInfo() {
             {/* Decorative dot */}
             {theme === "dark" && (
               <div
-                className="absolute -top-10 -right-10 w-[180px] h-[180px] rounded-full pointer-events-none
+                className="absolute -top-10 -right-10 w-45 h-45 rounded-full pointer-events-none
                 bg-[radial-gradient(circle,rgba(37,99,235,0.18)_0%,transparent_70%)]
                 max-[900px]:hidden"
                 aria-hidden="true"
@@ -549,14 +549,14 @@ export default function UserInfo() {
                     bgColor="transparent"
                     fgColor="currentColor"
                     className="block transition-colors duration-300 text-slate-700 dark:text-white/90
-                      w-full max-w-40 h-auto max-[900px]:max-w-[100px] max-[600px]:max-w-[130px]"
+                      w-full max-w-40 h-auto max-[900px]:max-w-25 max-[600px]:max-w-32.5"
                   />
                 </div>
               </div>
 
               {/* Identity */}
               <div
-                className="text-center flex flex-col gap-[3px] w-full
+                className="text-center flex flex-col gap-0.75 w-full
                   max-[900px]:text-left max-[600px]:text-center"
               >
                 <p className="text-[15px] font-bold m-0 leading-[1.3] transition-colors duration-300 text-slate-800 dark:text-white/92">
@@ -575,7 +575,7 @@ export default function UserInfo() {
 
               {/* Eye button */}
               <button
-                className="inline-flex items-center gap-[7px] bg-transparent border border-blue-400/40 dark:border-blue-300/[0.28]
+                className="inline-flex items-center gap-1.75 bg-transparent border border-blue-400/40 dark:border-blue-300/[0.28]
                   rounded-full text-[13px] font-semibold cursor-pointer
                   transition-all duration-180 ease-in-out
                   text-blue-600/80 dark:text-blue-300/82 hover:bg-blue-400/8 dark:hover:bg-blue-300/7"

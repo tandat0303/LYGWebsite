@@ -304,7 +304,7 @@ export default function LeaveDetailModal({
       >
         {/* Sheet / Modal */}
         <div
-          className="w-full md:max-w-[500px] md:mx-4
+          className="w-full md:max-w-125 md:mx-4
             bg-white dark:bg-[#0e1f3b]
             border-t border-slate-200/80 dark:border-white/8
             md:border md:border-slate-200/80 md:dark:border-white/10

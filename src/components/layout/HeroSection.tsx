@@ -45,7 +45,7 @@ export const HeroSection = () => {
         relative w-full overflow-hidden rounded-2xl flex flex-col justify-end
         shadow-[0_12px_40px_rgba(0,0,0,0.15)]
         h-60
-        max-[768px]:h-[200px] max-[768px]:rounded-[14px]
+        max-[768px]:h-50 max-[768px]:rounded-[14px]
         max-[480px]:h-40 max-[480px]:rounded-xl
       "
     >

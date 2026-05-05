@@ -6,8 +6,8 @@ import type {
   LeaveList,
   LeaveDetail,
   TransportAllowance,
-} from "../types/supervisorLeave";
-import apiClient from "./apiClient";
+} from "../../../types/supervisorLeave";
+import apiClient from "../../apiClient";
 
 const supervisorLeaveApi = {
   checkTaiwan: async (

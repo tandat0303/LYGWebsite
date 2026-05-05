@@ -63,7 +63,7 @@ function StatItem({
     >
       <div className="flex items-center gap-1.5">
         {icon && <span className={`${a.text} opacity-70`}>{icon}</span>}
-        <span className="text-[11px] font-semibold uppercase tracking-[0.6px] text-slate-400/80 dark:text-white/35">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.6px] text-slate-600 dark:text-white/40">
           {t(label)}
         </span>
       </div>
@@ -74,7 +74,7 @@ function StatItem({
           {value}
         </span>
         {sub && (
-          <span className="text-[11px] text-slate-400/70 dark:text-white/30">
+          <span className="text-[11px] text-slate-500 dark:text-white/30">
             {t(sub)}
           </span>
         )}
@@ -98,7 +98,7 @@ function SkeletonCard() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl h-[76px] bg-slate-100 dark:bg-white/5"
+            className="rounded-xl h-19 bg-slate-100 dark:bg-white/5"
           />
         ))}
       </div>

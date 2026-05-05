@@ -133,7 +133,7 @@ export default function FileViewer({
       {/* Audio */}
       {fileType === "audio" && (
         <div className="w-full h-full flex items-center justify-center p-6">
-          <audio src={objectUrl} controls className="w-full max-w-[480px]" />
+          <audio src={objectUrl} controls className="w-full max-w-120" />
         </div>
       )}
 

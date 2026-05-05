@@ -1,5 +1,9 @@
-import type { LeaveData, LeavePayload, LeaveSummary } from "../types/leave";
-import apiClient from "./apiClient";
+import type {
+  LeaveData,
+  LeavePayload,
+  LeaveSummary,
+} from "../../../types/leave";
+import apiClient from "../../apiClient";
 
 const leaveApi = {
   getLeaveSummary: async (payload: LeavePayload): Promise<LeaveSummary[]> => {

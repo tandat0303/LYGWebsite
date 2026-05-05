@@ -44,7 +44,7 @@ export default function NewsDetail({ item, onBack }: NewsDetailProps) {
 
       {/* ── Content card ── */}
       <div
-        className="w-full max-w-[860px] mx-auto rounded-[20px]
+        className="w-full max-w-215 mx-auto rounded-[20px]
           bg-white border border-slate-200/70
           dark:bg-[rgba(15,27,48,0.7)] dark:border-white/[0.07]
           shadow-[0_8px_32px_rgba(0,0,0,0.06)]

@@ -124,7 +124,7 @@ export default function AnnualLeaveQuota({ data, loading }: Props) {
 
   if (loading || !data) {
     return (
-      <div className="h-[220px] rounded-[18px] bg-slate-100 dark:bg-white/4 animate-pulse" />
+      <div className="h-55 rounded-[18px] bg-slate-100 dark:bg-white/4 animate-pulse" />
     );
   }
 
@@ -142,7 +142,7 @@ export default function AnnualLeaveQuota({ data, loading }: Props) {
 
   return (
     <div className="rounded-[18px] p-5 bg-white border border-slate-200 shadow-[0_2px_12px_rgba(15,37,68,0.07)] dark:bg-[rgba(15,27,48,0.6)] dark:border-white/8 dark:shadow-none transition-[background,border-color] duration-300">
-      <div className="flex items-center gap-2 mb-[18px]">
+      <div className="flex items-center gap-2 mb-4.5">
         <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
         <span className="text-[11px] font-bold uppercase tracking-[0.09em] text-slate-500 dark:text-white/70">
           {t("annualTickets", undefined, true)}

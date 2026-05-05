@@ -3,7 +3,7 @@ import {
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import translationApi from "../api/translation";
+import translationApi from "../api/common/translation";
 import type { TranslationMap, TranslationResponse } from "../types/translation";
 
 export const fetchTranslations = createAsyncThunk(

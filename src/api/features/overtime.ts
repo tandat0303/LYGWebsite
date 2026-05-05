@@ -1,5 +1,5 @@
-import type { OvertimeData, OvertimePayload } from "../types/overtime";
-import apiClient from "./apiClient";
+import type { OvertimeData, OvertimePayload } from "../../types/overtime";
+import apiClient from "../apiClient";
 
 const overtimeApi = {
   getOvertimeData: async (

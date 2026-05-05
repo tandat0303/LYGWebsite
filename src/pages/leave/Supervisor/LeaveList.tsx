@@ -79,7 +79,7 @@ function LeaveItem({
       onClick={() => onClick(item)}
     >
       {/* Left: label + badge */}
-      <div className="min-w-[76px]">
+      <div className="min-w-19">
         <div className="text-[13px] font-bold text-slate-800 dark:text-white/88 mb-1.5">
           {leaveLabel}
         </div>
@@ -125,7 +125,7 @@ export default function DataHistory({ items, loading, onSelect }: Props) {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-[76px] rounded-[14px] bg-slate-100 dark:bg-white/4 animate-pulse"
+            className="h-19 rounded-[14px] bg-slate-100 dark:bg-white/4 animate-pulse"
           />
         ))}
       </div>

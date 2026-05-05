@@ -3,7 +3,7 @@ import { type NewsItem } from "../../types/news";
 import News from "./News";
 import NewsDetail from "./NewsDetail";
 import { useAppSelector } from "../../hooks/auth";
-import newsApi from "../../api/news";
+import newsApi from "../../api/features/news";
 import { AppAlert } from "../../components/ui/AppAlert";
 import { getApiErrorMessage } from "../../libs/helper";
 

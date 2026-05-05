@@ -1,5 +1,5 @@
-import type { ContactItem } from "../types/contact";
-import apiClient from "./apiClient";
+import type { ContactItem } from "../../types/contact";
+import apiClient from "../apiClient";
 
 const contactApi = {
   getContactInfo: async (factory: string): Promise<ContactItem[]> => {

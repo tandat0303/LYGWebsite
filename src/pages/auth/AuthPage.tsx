@@ -14,13 +14,15 @@ import { ForgotForm } from "./ForgotForm";
 import { LanguageBadge } from "../../components/ui/LanguageBadge";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/auth";
-import authApi from "../../api/auth";
+import authApi from "../../api/features/auth";
 import { setToken } from "../../features/authSlice";
 import { AppAlert } from "../../components/ui/AppAlert";
 import { getApiErrorMessage } from "../../libs/helper";
 import Loading from "../../components/ui/Loading";
 import { fetchVehicles } from "../../features/transportSlice";
 import { useTranslation } from "../../hooks/useTranslation";
+import type { AppVersion } from "../../types/appVersion";
+import appVersionApi from "../../api/common/appVersion";
 
 type Mode = "login" | "forgot";
 
@@ -31,6 +33,10 @@ const AuthPage = () => {
   const [navigating, setNavigating] = useState(false);
   const [mode, setMode] = useState<Mode>("login");
   const [sliderContent, setSliderContent] = useState<Mode>("login");
+  const [appVersion, setAppVersion] = useState<AppVersion>({
+    iOS: { "com.lactydev.mobilehr": "", "com.lactydev.mobilehr2": "" },
+    Android: { "com.lactydev.mobilehr": "" },
+  });
 
   const isLogin = mode === "login";
 
@@ -39,6 +45,19 @@ const AuthPage = () => {
     const handler = () => setIsMobile(window.innerWidth < 640);
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
+  }, []);
+
+  useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const res = await appVersionApi.getAppVersion();
+        setAppVersion(res);
+      } catch (error) {
+        AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+      }
+    };
+
+    fetchVersion();
   }, []);
 
   const navigate = useNavigate();
@@ -293,6 +312,11 @@ const AuthPage = () => {
             </>
           )}
         </div>
+      </div>
+
+      <div className="absolute bottom-4.5 left-4.5 z-50 text-white/70">
+        <span className="font-bold">{t("phienBanUngDung")}: </span>
+        {appVersion.iOS["com.lactydev.mobilehr2"]}
       </div>
     </div>
   );

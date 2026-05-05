@@ -42,7 +42,7 @@ export default function AppDownload() {
           >
             {theme === "dark" && (
               <div
-                className="absolute -top-10 -right-10 w-[180px] h-[180px] rounded-full pointer-events-none
+                className="absolute -top-10 -right-10 w-45 h-45 rounded-full pointer-events-none
                   bg-[radial-gradient(circle,rgba(37,99,235,0.18)_0%,transparent_70%)]
                   max-[900px]:hidden"
                 aria-hidden="true"
@@ -100,13 +100,13 @@ export default function AppDownload() {
                     bgColor="transparent"
                     fgColor="currentColor"
                     className="block transition-colors duration-300 text-slate-700 dark:text-white/90
-                        w-full max-w-40 h-auto max-[900px]:max-w-[100px] max-[600px]:max-w-[130px]"
+                        w-full max-w-40 h-auto max-[900px]:max-w-25 max-[600px]:max-w-32.5"
                   />
                 </div>
               </div>
 
               <div
-                className="text-center flex flex-col gap-[3px] w-full
+                className="text-center flex flex-col gap-0.75 w-full
                     max-[900px]:text-left max-[600px]:text-center"
               >
                 <p className="text-[15px] font-bold m-0 leading-[1.3] transition-colors duration-300 text-slate-800 dark:text-white/92">

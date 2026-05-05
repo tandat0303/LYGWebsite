@@ -3,8 +3,8 @@ import type {
   TimeCheckingResponse,
   TimeKeeping,
   TimeKeepingPayload,
-} from "../types/timeKeeping";
-import apiClient from "./apiClient";
+} from "../../types/timeKeeping";
+import apiClient from "../apiClient";
 
 const timeKeepingApi = {
   getTimeKeeping: async (payload: TimeKeepingPayload): Promise<TimeKeeping> => {

@@ -18,7 +18,7 @@ import { InfoLabel } from "./InfoLabel";
 import { DOW_LABELS, monthNames } from "../../libs/constance";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useTranslation } from "../../hooks/useTranslation";
-import timeKeepingApi from "../../api/timeKeeping";
+import timeKeepingApi from "../../api/features/timeKeeping";
 import { useAppSelector } from "../../hooks/auth";
 import { DayDetail } from "./DayDetail";
 import { DayCell } from "./DayCell";
@@ -172,7 +172,7 @@ export default function Attendance() {
     <div className="w-full min-h-full flex flex-col box-border overflow-x-hidden">
       {/* ── Page Header ─────────────────────────────────────────────────── */}
       <div className="shrink-0 flex items-center gap-3 border-b transition-colors duration-300 bg-white/80 border-black/[0.07] backdrop-blur-sm dark:bg-[rgba(15,27,48,0.6)] dark:border-white/[0.07] px-4 sm:px-6 py-3.5">
-        <div className="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center shrink-0 bg-blue-600/10 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400">
+        <div className="w-8.5 h-8.5 rounded-[9px] flex items-center justify-center shrink-0 bg-blue-600/10 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400">
           <ClipboardList size={18} />
         </div>
         <div className="flex flex-col min-w-0">
@@ -187,7 +187,7 @@ export default function Attendance() {
 
       {/* ── Body ────────────────────────────────────────────────────────── */}
       <div className="flex-1 p-3 sm:p-5">
-        <div className="w-full max-w-[1200px] mx-auto animate-[att-rise_0.35s_cubic-bezier(0.22,1,0.36,1)_both]">
+        <div className="w-full max-w-300 mx-auto animate-[att-rise_0.35s_cubic-bezier(0.22,1,0.36,1)_both]">
           <div className="flex flex-col lg:flex-row gap-4 items-start">
             <div className="w-full lg:flex-3 min-w-0">
               <div className="rounded-[18px] sm:rounded-[22px] border transition-colors duration-300 bg-white dark:bg-[rgba(15,27,48,0.82)] border-slate-200 dark:border-white/7 shadow-[0_4px_24px_rgba(15,37,68,0.07)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.35)] p-3 sm:p-5">
@@ -224,7 +224,7 @@ export default function Attendance() {
                       </button>
 
                       {showYearPicker && (
-                        <div className="absolute top-[calc(100%+6px)] left-0 z-50 rounded-2xl border p-2 bg-white dark:bg-[rgba(12,22,48,0.98)] border-slate-200 dark:border-white/10 shadow-xl shadow-black/10 dark:shadow-black/50 backdrop-blur-xl animate-[att-drop_0.16s_cubic-bezier(0.22,1,0.36,1)] min-w-[260px] sm:min-w-[280px]">
+                        <div className="absolute top-[calc(100%+6px)] left-0 z-50 rounded-2xl border p-2 bg-white dark:bg-[rgba(12,22,48,0.98)] border-slate-200 dark:border-white/10 shadow-xl shadow-black/10 dark:shadow-black/50 backdrop-blur-xl animate-[att-drop_0.16s_cubic-bezier(0.22,1,0.36,1)] min-w-65 sm:min-w-70">
                           <div className="grid grid-cols-4 gap-1 mb-2">
                             {localizedMonthNames.map((name, i) => (
                               <button
@@ -319,7 +319,7 @@ export default function Attendance() {
               </div>
             </div>
 
-            <div className="w-full lg:w-[260px] xl:w-[280px] shrink-0 flex flex-col gap-3">
+            <div className="w-full lg:w-65 xl:w-70 shrink-0 flex flex-col gap-3">
               {/* Stat badges: row on mobile, stacked on desktop */}
               <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
                 <StatBadge

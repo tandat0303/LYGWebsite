@@ -104,7 +104,7 @@ function SkeletonCard() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl h-[76px] bg-slate-100 dark:bg-white/5"
+            className="rounded-xl h-19 bg-slate-100 dark:bg-white/5"
           />
         ))}
       </div>

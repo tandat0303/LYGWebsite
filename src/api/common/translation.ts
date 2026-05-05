@@ -1,5 +1,5 @@
-import type { TranslationResponse } from "../types/translation";
-import apiClient from "./apiClient";
+import type { TranslationResponse } from "../../types/translation";
+import apiClient from "../apiClient";
 
 const translationApi = {
   getLanguages: async (): Promise<TranslationResponse> => {

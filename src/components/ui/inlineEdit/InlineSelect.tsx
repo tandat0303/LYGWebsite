@@ -35,7 +35,7 @@ export default function InlineSelect({
       {/* Trigger */}
       <div
         className="
-          flex items-center gap-[7px] w-full bg-transparent border-x-0 border-t-0
+          flex items-center gap-1.75 w-full bg-transparent border-x-0 border-t-0
           border-b-[1.5px] cursor-pointer text-[14px] font-medium
           transition-colors duration-180
           text-slate-800 border-b-blue-500/50
