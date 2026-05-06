@@ -29,7 +29,8 @@ export function Row({
   return (
     <div
       className={`flex items-center justify-between gap-3 py-2 border-b border-slate-100 dark:border-white/5 last:border-0
-        ${indent ? "pl-3 sm:pl-5" : ""}`}
+        ${indent ? "pl-3 sm:pl-5" : ""}
+        `}
     >
       <span
         className={`text-[12.5px] sm:text-[13px] leading-snug min-w-0

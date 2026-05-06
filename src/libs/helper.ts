@@ -93,10 +93,13 @@ export function timeAgo(isoDate: string): string {
 }
 
 export function fmt(
-  value: number | undefined | null,
+  value: number | string | undefined | null,
   revealed: boolean,
+  nonMoneyNum?: boolean,
 ): string {
   if (!revealed) return "••••••";
   if (value === undefined || value === null) return "—";
-  return value.toLocaleString("vi-VN") + " đ";
+  if (typeof value === "string") return value;
+  if (nonMoneyNum) return value.toLocaleString("vi-VN");
+  return value.toLocaleString("vi-VN") + " VNĐ";
 }

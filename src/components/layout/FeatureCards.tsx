@@ -3,7 +3,7 @@ import Clock from "../../assets/icons/clock.png";
 import Vacation from "../../assets/icons/vacations.png";
 import Overtime from "../../assets/icons/overtime.png";
 import Salary from "../../assets/icons/salary.png";
-import Reward from "../../assets/icons/reward.png";
+import Bonus from "../../assets/icons/reward.png";
 import FireSalary from "../../assets/icons/fire-salary.png";
 import Notebook from "../../assets/icons/notebook.png";
 import UserInfo from "../../assets/icons/user-info.png";
@@ -128,12 +128,25 @@ export const FeatureCards = () => {
   ];
 
   const SMALL_FEATURES: Feature[] = [
-    { id: "salary", label: "luong", icon: Salary, size: "small" },
-    { id: "reward", label: "luongThuong", icon: Reward, size: "small" },
+    {
+      id: "salary",
+      label: "luong",
+      icon: Salary,
+      onclick: () => navigate("/salary", { replace: true }),
+      size: "small",
+    },
+    {
+      id: "bonus",
+      label: "luongThuong",
+      icon: Bonus,
+      onclick: () => navigate("/bonus", { replace: true }),
+      size: "small",
+    },
     {
       id: "fire-salary",
       label: "luongThoiViec",
       icon: FireSalary,
+      onclick: () => navigate("/severance-salary", { replace: true }),
       size: "small",
     },
     {
@@ -166,8 +179,14 @@ export const FeatureCards = () => {
     },
   ];
 
-  const SUPERVISOR_FEATURES: Feature[] = [
-    { id: "affair", label: "generalAffairs", icon: Affair, size: "small" },
+  const MANAGER_FEATURES: Feature[] = [
+    {
+      id: "affair",
+      label: "generalAffairs",
+      icon: Affair,
+      onclick: () => navigate("/general-affair", { replace: true }),
+      size: "small",
+    },
     { id: "fee", label: "annualFees", icon: Fee, size: "small" },
     {
       id: "summary",
@@ -239,7 +258,7 @@ export const FeatureCards = () => {
         </div>
       </div>
 
-      {user.userId === "34969" && (
+      {Number(user.level) > 0 && (
         <div className="max-[768px]:mb-6 max-[480px]:mb-5 mb-8">
           <span className="font-bold">{t("quanLy")}</span>
           <div
@@ -251,7 +270,7 @@ export const FeatureCards = () => {
             max-[480px]:grid-cols-3 max-[480px]:gap-2
           "
           >
-            {SUPERVISOR_FEATURES.map((feature) => (
+            {MANAGER_FEATURES.map((feature) => (
               <FeatureCard key={feature.id} feature={feature} />
             ))}
           </div>

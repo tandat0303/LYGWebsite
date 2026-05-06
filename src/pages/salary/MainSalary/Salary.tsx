@@ -6,16 +6,16 @@ import "dayjs/locale/vi";
 import "dayjs/locale/en";
 import "dayjs/locale/my";
 import "dayjs/locale/zh-tw";
-import type { Salary } from "../../types/salary";
-import salaryApi from "../../api/features/salary";
-import { useAppSelector } from "../../hooks/auth";
-import { AppAlert } from "../../components/ui/AppAlert";
-import { getApiErrorMessage } from "../../libs/helper";
-import { useClickOutside } from "../../hooks/useClickOutside";
+import type { PersonalIncomeTax, Salary } from "../../../types/salary";
+import salaryApi from "../../../api/features/salary";
+import { useAppSelector } from "../../../hooks/auth";
+import { AppAlert } from "../../../components/ui/AppAlert";
+import { getApiErrorMessage } from "../../../libs/helper";
+import { useClickOutside } from "../../../hooks/useClickOutside";
 import { SalarySummary } from "./SalarySummary";
 import { AdditionSection } from "./AdditionSection";
 import { DeductionSection } from "./DeductionSection";
-import { useTranslation } from "../../hooks/useTranslation";
+import { useTranslation } from "../../../hooks/useTranslation";
 
 const LANG_TO_DAYJS_LOCALE: Record<string, string> = {
   vi: "vi",
@@ -140,6 +140,7 @@ export default function Salary() {
   const [showPicker, setShowPicker] = useState(false);
 
   const [salary, setSalary] = useState<Salary | null>(null);
+  const [incomeTax, setIncomeTax] = useState<PersonalIncomeTax | null>(null);
   const [loading, setLoading] = useState(true);
   const [revealed, setRevealed] = useState(false);
 
@@ -173,6 +174,31 @@ export default function Salary() {
     [currentUser.factory, currentUser.userId],
   );
 
+  const fetchTaxFor = useCallback(
+    async (year: number, month: number) => {
+      setLoading(true);
+      setIncomeTax(null);
+
+      try {
+        const monthYear = toMonthYear(year, month);
+        const taxData = await salaryApi.getPersonalIncomeTax({
+          factory: currentUser.factory,
+          personId: currentUser.userId,
+          monthYear: monthYear,
+        });
+
+        const first = taxData?.[0];
+        const isEmpty = taxData.length === 0;
+        setIncomeTax(isEmpty ? null : first);
+      } catch (error) {
+        AppAlert({ icon: "error", title: getApiErrorMessage(error) });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentUser.factory, currentUser.userId],
+  );
+
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
@@ -191,6 +217,7 @@ export default function Salary() {
           setViewYear(y);
           setViewMonth(m);
           await fetchSalaryFor(y, m);
+          await fetchTaxFor(y, m);
         } else {
           setLoading(false);
         }
@@ -200,7 +227,7 @@ export default function Salary() {
       }
     };
     init();
-  }, [fetchSalaryFor]);
+  }, [fetchSalaryFor, fetchTaxFor, currentUser.factory, currentUser.userId]);
 
   const goToPrev = () => {
     const newMonth = viewMonth === 1 ? 12 : viewMonth - 1;
@@ -346,7 +373,11 @@ export default function Salary() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
               <AdditionSection data={salary} revealed={revealed} />
-              <DeductionSection data={salary} revealed={revealed} />
+              <DeductionSection
+                salaryData={salary}
+                taxData={incomeTax}
+                revealed={revealed}
+              />
             </div>
           </div>
         )}

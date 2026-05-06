@@ -1,9 +1,9 @@
-import type { Salary } from "../../types/salary";
-import { fmt } from "../../libs/helper";
-import { Collapsible } from "./Collapsible";
-import { Row } from "./Row";
+import type { Salary } from "../../../types/salary";
+import { fmt } from "../../../libs/helper";
+import { Collapsible } from "../Collapsible";
+import { Row } from "../Row";
 import { TbMoneybagPlus } from "react-icons/tb";
-import { useTranslation } from "../../hooks/useTranslation";
+import { useTranslation } from "../../../hooks/useTranslation";
 
 interface AdditionSectionProps {
   data: Salary;
@@ -41,7 +41,7 @@ export function AdditionSection({ data, revealed }: AdditionSectionProps) {
       </div>
 
       <div className="px-4 sm:px-6 pt-3 pb-4">
-        <Collapsible title="Lương & Phụ cấp cơ bản" defaultOpen>
+        <Collapsible title="luongPhuCap" defaultOpen>
           <Row
             label="luongChinh"
             value={fmt(data.Main_Salary, revealed)}
@@ -76,7 +76,7 @@ export function AdditionSection({ data, revealed }: AdditionSectionProps) {
           />
         </Collapsible>
 
-        <Collapsible title="Tăng ca & Ca đêm">
+        <Collapsible title="tangCa">
           <Row label="tienLamThem" value={fmt(data.Overtime_Pay, revealed)} />
           <Row
             label="tienNghiNgoiTangCa"
@@ -88,7 +88,7 @@ export function AdditionSection({ data, revealed }: AdditionSectionProps) {
           />
         </Collapsible>
 
-        <Collapsible title="Tiền ngừng việc">
+        <Collapsible title="tienNgungViec">
           <Row label="tienNgungViec" value={fmt(data.NV_Money, revealed)} />
           <Row
             label="tienNgungViec / (NV1)"
@@ -116,7 +116,7 @@ export function AdditionSection({ data, revealed }: AdditionSectionProps) {
           />
         </Collapsible>
 
-        <Collapsible title="Phụ cấp & Thưởng khác">
+        <Collapsible title="pcKhac">
           <Row label="tienChuyenCan" value={fmt(data.Hard_Working, revealed)} />
           <Row label="phiSinhHoat" value={fmt(data.Living_Costs, revealed)} />
           <Row label="tienBinhBau" value={fmt(data.Rating_Money, revealed)} />

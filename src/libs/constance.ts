@@ -16,6 +16,7 @@ export const ROUTE_MAP: Record<string, string> = {
   home: "/",
 
   info: "/user-info",
+  salary: "/salary",
   holidays: "/holidays",
   overtime: "/overtime",
 

@@ -107,3 +107,56 @@ export interface Salary {
   NV6_Money: number;
   Final_Salary: number;
 }
+
+export interface PersonalIncomeTax {
+  STT: string;
+  Year: string;
+  Person_ID: string;
+  Person_Name: string;
+  Position_ID: string;
+  Contract_Name: string;
+  Tax_Code: string;
+  ID: string;
+  Real_Salary: number;
+  Tax_Exempt_Income: number;
+  Taxable_Income: number;
+  Personal_Deductions: number;
+  NumberOfDependents: number;
+  Dependent_Deductions: number;
+  Personal_and_Dependent_Deductions: number;
+  Compulsory_Insurance: number;
+  Total_Deductions: number;
+  Tax_Base_Income: number;
+  Personal_Income_Tax: number;
+  Tax_UpTo_10M: number;
+  Tax_10M_To_30M: number;
+  Tax_30M_To_60M: number;
+  Tax_60M_To_100M: number;
+  Tax_Over_100M: number;
+}
+
+export interface ThirteenthSalary {
+  Year: string;
+  Person_ID: string;
+  Person_Name: string;
+  Date_Come_In: string;
+  Department_Name: string;
+  Position_ID: string;
+  Salary_And_Allowance: number;
+  Rating: string;
+  Standard_Type: string;
+  Number_Month_Bonus: number;
+  Rating_Coefficient: number;
+  Salary_Month_13: number;
+  Rating_Bonus: number;
+  High_Workday_Bonus: number;
+  Total_Bonus: number;
+  Personal_Income_Tax: number;
+  Actually_Received: number;
+  Note: string | null;
+  YN: string | null;
+}
+
+export interface ThirteenthSalaryPayload extends Partial<LastMonthPayload> {
+  year: string;
+}

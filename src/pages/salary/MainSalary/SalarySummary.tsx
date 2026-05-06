@@ -1,6 +1,6 @@
 import { Eye, EyeOff } from "lucide-react";
-import type { Salary } from "../../types/salary";
-import { useTranslation } from "../../hooks/useTranslation";
+import type { Salary } from "../../../types/salary";
+import { useTranslation } from "../../../hooks/useTranslation";
 
 function fmtNum(
   value: number | string | undefined | null,
@@ -130,7 +130,7 @@ export function SalarySummary({
       >
         {summaryItems.map((item) => (
           <div key={item.label} className="flex flex-col gap-1 px-4 py-3.5">
-            <span className="text-[10.5px] font-medium text-slate-400 dark:text-white/40 leading-snug">
+            <span className="text-[11px] font-medium text-slate-400 dark:text-white/40 leading-snug">
               {t(item.label)}
             </span>
             <span className="text-[15px] font-bold tabular-nums text-slate-800 dark:text-white/90 leading-none">
