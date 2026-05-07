@@ -47,7 +47,7 @@ export default function Breadcrumb<T = unknown>({
               >
                 {isRoot && (
                   <Home
-                    size={12}
+                    size={20}
                     strokeWidth={2.4}
                     className="shrink-0 opacity-70"
                   />
@@ -66,7 +66,7 @@ export default function Breadcrumb<T = unknown>({
                   focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2"
               >
                 {isRoot && (
-                  <Home size={12} strokeWidth={2.4} className="shrink-0" />
+                  <Home size={20} strokeWidth={2.4} className="shrink-0" />
                 )}
                 {displayLabel}
               </button>

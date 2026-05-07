@@ -148,6 +148,7 @@ export default function GeneralAffair({
   onSelectRecord,
 }: GeneralAffairProps) {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   const isDark = theme === "dark";
 
@@ -219,7 +220,7 @@ export default function GeneralAffair({
     return (
       <div className="w-full flex items-center justify-center py-20">
         <p className="text-sm text-slate-400 dark:text-white/30">
-          No data available.
+          {t("khongCoDuLieu")}
         </p>
       </div>
     );
